@@ -1,8 +1,10 @@
 
 package autobackup.Data;
 
+import autobackup.filesystem.Endungen;
+
 /**
- *
+ * Hier werden alle wichtigen Einstellungen gespeichert.
  * @author Christoph Wildhagen 
  */
 public class Settings {
@@ -28,13 +30,13 @@ public class Settings {
     /**
      * Dies gibt an welche Dateitypen verboten sind. Wenn es leer sind ist alles erlaubt.
      */
-    public static Endungen verboteneTypen;
+    public static Endungen[] verboteneTypen;
     
     /**
      * Dies gibt an welche Dateitypen erlaubt sind. Wenn es leer sind ist alles erlaubt.
-     * WEnn ein Typ erlaubt und verboten ist, dann ist er wieder erlaubt.
+     * Wenn ein Typ erlaubt und verboten ist, dann ist er wieder erlaubt.
      */
-    public static Endungen erlaubteTypen;
+    public static Endungen[] erlaubteTypen;
     
     /**
      * writeLog gibt an, ob einLog angelegt werden soll. Dieser entsteht an dem in {@link Settings#logFolder} angegebenne Ordner. 
@@ -45,5 +47,10 @@ public class Settings {
      * Der Ordner in dem die Logs gespeichert werden sollen.
      */
     public static String logFolder;
+    
+    /**
+     * Dies gitb an wie viele Log maximal abgespeichert werden können.
+     */
+    public static int maxLogs;
 
 }
