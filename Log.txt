@@ -1,0 +1,3 @@
+[Warnung] [0:14:22] [ class autobackup.AutoBackup ] Die angegebene Configfile kann nicht gefunden werden
+[Warnung] [0:14:22] [ class autobackup.AutoBackup ] Es wird die standarmäßige Configfile genommen: 
+[Warnung] [0:14:22] [ class autobackup.AutoBackup ] C:\Users\wildh\AppData\Roaming\AutoBackup\settings
