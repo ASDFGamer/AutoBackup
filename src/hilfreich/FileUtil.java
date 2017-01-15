@@ -83,7 +83,7 @@ public class FileUtil {
      */
     private static String getConfigFolderLinux(String name)
     {
-        //TODO
+        //TODO Den Ordner für Linux herausfinden.
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

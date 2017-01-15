@@ -17,12 +17,26 @@ import java.util.Properties;
  */
 public class Settings implements ISettings{
     
+    /**
+     * Dies sind die einzelnen Einstellungen die aus der Datei geladen wurden.
+     */
     private Properties einstellungen = new Properties();
     
+    /**
+     * Die Configfile
+     */
     private File configfile;
     
+    /**
+     * Dies ist der Log der verwendet wird.
+     */
     private Log log = new Log(super.getClass().toString());
     
+    /**
+     * Hiermit können Einstellungen aus einer Datei geladen werden
+     * @param configfile Die Datei aus der die Einstellungen geldaden werden sollen.
+     * @throws IllegalArgumentException Falls die Datei nicht existert.
+     */
     public Settings(String configfile) throws IllegalArgumentException
     {
         try
@@ -90,7 +104,7 @@ public class Settings implements ISettings{
         {
             FileWriter file = new FileWriter(configfile);
             BufferedWriter writer = new BufferedWriter(file);
-            this.einstellungen.store(writer, "Dies ist die Standardeinstellungsdatei für AutoBackup.");
+            this.einstellungen.store(writer, "Dies ist die Standardeinstellungsdatei für AutoBackup."); //TODO überprüfen ob in einstellungen alle EInstellungen vorhanden sind und ansonsten hinzufügen.
         }
         catch (IOException e)
         {
