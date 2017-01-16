@@ -36,6 +36,7 @@ public class AutoBackup
      */
     public static void main(String[] args)
     {
+        
         AutoBackup autoBackup = new AutoBackup();
         autoBackup.analyzeArgs(args);
         autoBackup.load();
@@ -50,6 +51,7 @@ public class AutoBackup
      */
     private void analyzeArgs(String[] args)
     {
+        log.write("Iwas");
         if (args.length>0)
         {
             for (String arg : args)

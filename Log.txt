@@ -1,3 +1,6 @@
-[Warnung] [0:14:22] [ class autobackup.AutoBackup ] Die angegebene Configfile kann nicht gefunden werden
-[Warnung] [0:14:22] [ class autobackup.AutoBackup ] Es wird die standarmäßige Configfile genommen: 
-[Warnung] [0:14:22] [ class autobackup.AutoBackup ] C:\Users\wildh\AppData\Roaming\AutoBackup\settings
+[Info] [13:50:5] [ class autobackup.AutoBackup ] Iwas
+[Warnung] [13:50:5] [ class autobackup.AutoBackup ] Es wird die standarmäßige Configfile genommen: 
+[__FEHLER__] [13:50:6] [ Static aufruf ] Die Configfile konnte nicht erstellt werden.
+[Warnung] [13:50:6] [ class autobackup.AutoBackup ] C:\Users\Ursel\AppData\Roaming\AutoBackup\settings.txt
+[__FEHLER__] [13:50:6] [ Static aufruf ] Die Configfile konnte nicht erstellt werden.
+[Info] [13:50:6] [ class autobackup.AutoBackup ] Die Einstellungen werden geladen.
