@@ -87,10 +87,24 @@ public interface ILog {
      */
     public boolean getStdFile();
     
+    /**
+     * Diese Methode setzt den Pfad der Logdatei. Dies ist für alle Objekte.
+     * @param path Der Pfad zu der Logdatei
+     * @return true, falls alles gut ging, sonst false
+     */
     public boolean setStdFilePath(String path);
     
+    /**
+     * Diese Methode setzt den Pfad der Logdatei. Dies ist für alle Objekte.
+     * @param path Der Pfad zu der Logdatei
+     * @return true, falls alles gut ging, sonst false
+     */
     public boolean setStdFilePath(File path);
     
+    /**
+     * Dies gibt den Pfad zur Logdatei zurück.
+     * @return Den Pfad als String.
+     */
     public String getStdFilePath();
     
 }
