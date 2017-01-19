@@ -1,6 +1,7 @@
 
 package autobackup.copyFile;
 
+import hilfreich.FileUtil;
 import java.io.File;
 
 /**
@@ -27,7 +28,7 @@ public class Backup implements IBackup{
     /**
      * Dies ist der Pfad zu der Datei in der der Dateibaum mit letzter änderung staht (für remote)
      */
-    private String dateibaumpfad;
+    private File dateibaumpfad;
     
     /**
      * Dies gibt an ob alte Dateien überschrieben werden sollen, oder ob eine neue Version erzeugt werden soll.
@@ -63,34 +64,44 @@ public class Backup implements IBackup{
     public boolean setDestinationFolder(String path)
     {
         this.zielordner = path;
+        return true;
     }
 
     @Override
     public boolean setOverwrite(boolean overwrite)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.overwrite = overwrite;
+        return true;
     }
 
     @Override
     public boolean setVersions(int versions)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.versions = versions;
+        return true;
     }
 
     @Override
     public boolean setOnlyChange(boolean onlyChange)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.onlyChange = onlyChange;
+        return true;
     }
 
     @Override
     public boolean setDateibaumPfad(String pfad) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (!FileUtil.isFile(pfad))
+        {
+            return false;
+        }
+        this.dateibaumpfad = new File(pfad);
+        return true;
     }
 
     @Override
     public boolean setDateibaumPfad(File pfad) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.dateibaumpfad = pfad;
+        return true;
     }
 
 }

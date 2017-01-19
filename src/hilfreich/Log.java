@@ -5,11 +5,14 @@
  */
 package hilfreich;
 
-import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Calendar;
 
 /**
- *
- * @author Ursel
+ * Dies ist eine einfache und relativ Performante Logausgabe.
+ * TODO Möglichkeit für Versionierung und mehreren Logs
+ * @author Christoph
  */
 public class Log implements ILog{
     
@@ -17,9 +20,9 @@ public class Log implements ILog{
     
     //--Klassenvariablen--
     /**
-     * Der Pfad zu dem Log
+     * Der Pfad zu dem Log oder dem Ordner
      */
-    private static File path;
+    private static String path;
     
     /**
      * Dies legt fest ob es standardmäßig eine ausgabe in der Konsole geben soll.
@@ -35,6 +38,11 @@ public class Log implements ILog{
      * Dies legt fest ob die Uhrzeit in den Logeinträgen angezeigt werden soll.
      */
     private static boolean stdZeitausgabe = true;
+    
+    /**
+     * Dies gibt das minimale Logginglevel an.
+     */
+    private static int stdMinLoglevel = 0;
     
     //--Objektvariablen--
     /**
@@ -52,12 +60,21 @@ public class Log implements ILog{
      */
     private String klasse = null;
     
+    /**
+     * Dies gibt das minimale logginglevel für dieses Objekt an.
+     */
+    private int minLoglevel = stdMinLoglevel;
+    
     //--sinnvolle Hilfsvariablen--
     /**
      * Dies kann für den wechsel zwischen static und nicht static Methoden genutzt werden.
      */
     private static Log log = new Log("stat. Aufruf");
     
+    /**
+     * Dies ist ein Kalender, für die Zeitabfrage, für Ressourcen als globale Variable.
+     */
+    private Calendar rightNow = Calendar.getInstance();
     
     //----Methoden----
     //---public Methoden---
@@ -135,20 +152,23 @@ public class Log implements ILog{
     }
 
     @Override
-    public boolean write(String text, int Level) {
+    public boolean write(String text, int level) {
         boolean result = true;
-        if (this.consolenausgabe)
+        if (level >= this.minLoglevel)
         {
-            if (!consoleWrite(text,Level))
+            if (this.consolenausgabe)
             {
-                result = false;
+                if (!consoleWrite(text,level))
+                {
+                    result = false;
+                }
             }
-        }
-        if (this.fileausgabe)
-        {
-            if (!fileWrite(text,Level))
+            if (this.fileausgabe)
             {
-                result = false;
+                if (!fileWrite(text,level))
+                {
+                    result = false;
+                }
             }
         }
         return result;
@@ -164,113 +184,202 @@ public class Log implements ILog{
     //-Konsole-
     @Override
     public boolean setConsole(boolean an) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.consolenausgabe = an;
+        return true;
     }
 
     @Override
     public boolean setStdConsole(boolean an) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Log.stdConsolenausgabe = an;
+        return true;
     }
 
     @Override
     public boolean getConsole() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.consolenausgabe;
     }
 
     @Override
     public boolean getStdConsole() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return Log.stdConsolenausgabe;
     }
     
     //-Datei-
     @Override
-    public boolean setFile(boolean an) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean setFileausgabe(boolean an) {
+        this.fileausgabe = an;
+        return true;
     }
 
     @Override
-    public boolean setStdFile(boolean an) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean setStdFileausgabe(boolean an) {
+        Log.stdFileausgabe = an;
+        return true;
     }
 
     @Override
-    public boolean getFile() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean getFileausgabe() {
+        return this.fileausgabe;
     }
 
     @Override
-    public boolean getStdFile() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean getStdFileausgabe() {
+        return Log.stdFileausgabe;
     }
     
     //-Dateipfad-
     @Override
     public boolean setStdFilePath(String path) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean setStdFilePath(File path) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Log.path = path;
+        return true;
     }
 
     @Override
     public String getStdFilePath() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return Log.path;
     }
     
     //-Zeitanzeige-
     @Override
     public boolean setStdTimeStamp(boolean an)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Log.stdZeitausgabe = an;
+        return true;
     }
 
     @Override
     public boolean getStdTimeStamp()
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return Log.stdZeitausgabe;
+    }
+    
+    //-Min. Loglevel-
+    @Override
+    public boolean setMinLoglevel(int level)
+    {
+        this.minLoglevel = level;
+        return true;
+    }
+
+    @Override
+    public int getMinLoglevel()
+    {
+        return this.minLoglevel;
+    }
+
+    @Override
+    public boolean setStdMinLoglevel(int level)
+    {
+        Log.stdMinLoglevel = level;
+        return true;
+    }
+
+    @Override
+    public int getStdMinLoglevel()
+    {
+        return Log.stdMinLoglevel;
     }
     
     //---private Methoden---
-
+    
+    /**
+     * Dies schreibt den Text dem level entsprechend in die Console
+     * @param text Der Text
+     * @param level Das Logginglevel
+     * @return true, falls alles gut ging, sonst false.
+     */
     private boolean consoleWrite(String text, int level)
     {
         
-        String Logtext = getLogtext(text,level);
+        String logtext = getLogtext(text,level);
+        if (level < LogLevel.ERROR_LEVEL)
+        {
+            System.out.println(logtext);
+        }
+        else
+        {
+            System.err.println(logtext);
+        }
         return true;
     }
-
+    
+    /**
+     * Dies schreibt den Text dem level entsprechend in die angegebene Datei
+     * @param text Der Text
+     * @param level Das Logginglevel
+     * @return true, falls alles gut ging, sonst false.
+     */
     private boolean fileWrite(String text, int level)
     {
-        String Logtext = getLogtext(text,level);
+        String logtext = getLogtext(text,level);
+        try {
+            FileWriter datei_schreiben = new FileWriter(path,true);
+            datei_schreiben.write(logtext+System.getProperty("line.separator"));
+            datei_schreiben.flush();
+            datei_schreiben.close();
+        } 
+        catch (IOException e)
+        {
+            return false;
+        }
         return true;
     }
 
-
-
+    /**
+     * Dies gibt den Text aus der geloggt werden soll.
+     * @param text Der text der gelogt werden soll.
+     * @param level Das logginglevel
+     * @return Den gesamten Text der gelogt werden soll (mit Zeit, logginlevel)
+     */
     private String getLogtext(String text, int level)
     {
-        String timestamp = getTimestamp();
         String loglevel = getLevelText(level);
-        String logtext = null;
+        String logtext = "";
         if (stdZeitausgabe) {
-            logtext += timestamp;
+            logtext += getTimestamp();
         }
         logtext += loglevel;
         logtext += text;
         return logtext;
     }
     
+    /**
+     * Dies gibt die aktuelle Zeit als String zurück
+     * @return Die aktuelle Zeit als String
+     */
     private String getTimestamp()
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        rightNow = Calendar.getInstance(); //Geht vllt. effizienter
+        return  "[" +rightNow.get(Calendar.HOUR_OF_DAY)+ ":" +rightNow.get(Calendar.MINUTE)+":"+rightNow.get(Calendar.SECOND) +"] ";
+
     }
     
+    /**
+     * Dies gibt das Lgginglevel als Text zurück.
+     * @param level Das Logginglevel als int.
+     * @return Das Logginglevel als String.
+     */
     private String getLevelText(int level)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        switch (level)
+        {
+            case LogLevel.VERBOSE:      return "[Verbose]    ";
+            
+            case LogLevel.DEBUG:        return "[Debug]      ";
+            
+            case LogLevel.INFO:         return "[Info]       ";
+            
+            case LogLevel.WARNUNG:      return "[Warnung]    ";
+            
+            case LogLevel.FEHLER:       return "[Fehler]     ";
+            
+            case LogLevel.FATAL_ERROR:  return "[Fatal Error]";
+            
+            default:                    return "[Info]       ";
+        }
     }
+
+    
 
 
     

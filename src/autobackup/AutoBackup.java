@@ -51,7 +51,6 @@ public class AutoBackup
      */
     private void analyzeArgs(String[] args)
     {
-        log.write("Iwas");
         if (args.length>0)
         {
             for (String arg : args)
@@ -92,7 +91,17 @@ public class AutoBackup
     private boolean load()
     {
         log.write("Die Einstellungen werden geladen.");
-        config = new Settings(this.configfilePath);
+        try
+        {
+            config = new Settings(this.configfilePath);
+        }
+        catch(IllegalArgumentException e)
+        {
+            log.write("Es gab ein Problem beim öffnen der Einstellungsdatei, es werden Stdandardeinstellungen benutzt.");
+            stdEinstellungen();
+            return false;
+        }
+        
         if (!config.loadSettings())
         {
             log.write("Die Einstellungen konnten nicht geladen werden, es werden Standardeinstellungen benutzt.");

@@ -66,26 +66,26 @@ public interface ILog {
      * @param an true, falls an, sonst aus.
      * @return true, falls alles gut ging, sonst false.
      */
-    public boolean setFile(boolean an);
+    public boolean setFileausgabe(boolean an);
     
     /**
      * Dies gitb an ob es Ausgabe in der Datei für alle Objekte gibt.
      * @param an true, falls an, sonst aus.
      * @return true, falls alles gut ging, sonst false.
      */
-    public boolean setStdFile(boolean an);
+    public boolean setStdFileausgabe(boolean an);
     
     /**
      * Dies gibt zurück, ob die Ausgabe in Dateien angeschaltet ist für dieses Objekt.
      * @return true, falls angeschaltet, sonst false.
      */
-    public boolean getFile();
+    public boolean getFileausgabe();
     
     /**
      * Dies gibt zurück, ob die Ausgabe in Dateien angeschaltet ist für alle Objekte.
      * @return true, falls angeschaltet, sonst false.
      */
-    public boolean getStdFile();
+    public boolean getStdFileausgabe();
     
     /**
      * Diese Methode setzt den Pfad der Logdatei. Dies ist für alle Objekte.
@@ -93,13 +93,6 @@ public interface ILog {
      * @return true, falls alles gut ging, sonst false
      */
     public boolean setStdFilePath(String path);
-    
-    /**
-     * Diese Methode setzt den Pfad der Logdatei. Dies ist für alle Objekte.
-     * @param path Der Pfad zu der Logdatei
-     * @return true, falls alles gut ging, sonst false
-     */
-    public boolean setStdFilePath(File path);
     
     /**
      * Dies gibt den Pfad zur Logdatei zurück.
@@ -120,5 +113,31 @@ public interface ILog {
      * @return Ob der Timestamp an.
      */
     public boolean getStdTimeStamp();
+    
+    /**
+     * Dies legt das minimale Logginglevel fest ab welchem Einträge verarbeitet werden für dieses Objekt.
+     * @param level Das minimale Level
+     * @return true, falls alles gut ging, sonst false.
+     */
+    public boolean setMinLoglevel(int level);
+    
+    /**
+     * Dies gibt das minimale Logginglevel welches bei diesem Objekt berücksichtigt wird zurück.
+     * @return Das minimale Logginglevel.
+     */
+    public int getMinLoglevel();
+    
+    /**
+     * Dies legt das standardmäßige minimale Logginglevel fest ab welchem Einträge verarbeitet werden.
+     * @param level Das minimale Level
+     * @return true, falls alles gut ging, sonst false.
+     */
+    public boolean setStdMinLoglevel(int level);
+    
+    /**
+     * Dies gibt das minimale Logginglevel welches standardmäßig berücksichtigt wird zurück.
+     * @return Das minimale Logginglevel.
+     */
+    public int getStdMinLoglevel();
     
 }
