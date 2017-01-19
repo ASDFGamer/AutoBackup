@@ -1,5 +1,7 @@
 package autobackup.copyFile;
 
+import java.io.File;
+
 /**
  * Dieses Interface soll benutzt werden um das Backup zu steuern
  * @author Christoph Wildhagen
@@ -47,4 +49,18 @@ public interface IBackup
      * @return true, falls alles geklappt hat, sonst false.
      */
     public abstract boolean setOnlyChange(boolean onlyChange);
+    
+    /**
+     * Dies legt den Pfad fest in dem der Dateibaum gespeichert wird. Standardmäßig wird das Logverzeichnis verwendet.
+     * @param pfad Der Pfad zu der Dateibaumdatei
+     * @return true, falls alles gut gelaufen ist, sonst fasle.
+     */
+    public abstract boolean setDateibaumPfad(String pfad);
+    
+    /**
+     * Dies legt den Pfad fest in dem der Dateibaum gespeichert wird. Standardmäßig wird das Logverzeichnis verwendet.
+     * @param pfad Der Pfad zu der Dateibaumdatei
+     * @return true, falls alles gut gelaufen ist, sonst fasle.
+     */
+    public abstract boolean setDateibaumPfad(File pfad);
 }
