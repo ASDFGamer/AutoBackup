@@ -24,7 +24,7 @@ public interface ILog {
     /**
      * Hiermit wird der Text im angegbenen Logginglevel geschrieben.
      * @param text Der Logtext
-     * @param Level Das Logginglevel
+     * @param Level Das Logginglevel ({@link LogLevel})
      * @return true, falls alles gut ging, sonst false.
      */
     public boolean write(String text, int Level);
@@ -106,5 +106,19 @@ public interface ILog {
      * @return Den Pfad als String.
      */
     public String getStdFilePath();
+    
+    /**
+     * Dies stellt den Uhrzeit vor einem Logeintrag an oder aus.
+     * Hiervon gibt es nur die Version für alle Objekte.
+     * @param an Den Timestamp an- oder ausschalten.
+     * @return true, falls alles gut ging, sonst false.
+     */
+    public boolean setStdTimeStamp(boolean an);
+    
+    /**
+     * Dies gibt zurück, ob der Timestamp an oder ausgaeschaltet ist.
+     * @return Ob der Timestamp an.
+     */
+    public boolean getStdTimeStamp();
     
 }

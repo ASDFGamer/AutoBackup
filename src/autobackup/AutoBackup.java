@@ -59,7 +59,7 @@ public class AutoBackup
                 //Check for Arguments
                 if (arg.contains("-quiet"))
                 {
-                    log.std_setConsole(false);
+                    log.setStdConsole(false);
                 }
                 
                 if (arg.contains("-conf:") && arg.length()>5)
