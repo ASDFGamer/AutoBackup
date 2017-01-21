@@ -5,6 +5,9 @@ import autobackup.copyFile.*;
 import autobackup.settings.*;
 import hilfreich.FileUtil;
 import hilfreich.Log;
+import hilfreich.LogLevel;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 
 /**
  * Dieses Programm soll als automatisches Backup Programm benutzt werden können.
@@ -36,13 +39,29 @@ public class AutoBackup
      */
     public static void main(String[] args)
     {
+        try 
+        {
+            AutoBackup autoBackup = new AutoBackup();
+            autoBackup.analyzeArgs(args);
+            autoBackup.load();
+            autoBackup.run();
+            autoBackup.save();
+            autoBackup.end();
+        }
+        catch (Exception e)
+        {
+            Log.Write("Es gab einen kritischen Fehler der nicht abgefangen wurde", LogLevel.FATAL_ERROR);
+            e.printStackTrace();
+            try
+            {
+                e.printStackTrace(new PrintStream(Einstellungen.logFolder));
+            }
+            catch (Exception ex)
+            {
+                Log.Write("Die Logfile wurde auch nicht gefunden :(", LogLevel.FEHLER);
+            }
+        }
         
-        AutoBackup autoBackup = new AutoBackup();
-        autoBackup.analyzeArgs(args);
-        autoBackup.load();
-        autoBackup.run();
-        autoBackup.save();
-        autoBackup.end();
     }
     
     /**

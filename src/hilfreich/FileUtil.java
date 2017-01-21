@@ -3,6 +3,7 @@ package hilfreich;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 
 /**
@@ -42,7 +43,54 @@ public class FileUtil {
     public static boolean isFile(File path)
     {
         return (path.exists() && !path.isDirectory());
-
+    }
+ 
+    /**
+     * Diese Methode überprüft, ob ein Pfad zu einder Datei wirklich auf eine Datei zeigt.
+     * @param path Der Pfad zur Datei als Path.
+     * @return true, falls es eine Datei ist, sonnst false.
+     */
+    public static boolean isFile(Path path)
+    {
+        return isFile(path.toFile());
+    }
+    
+    /**
+     * Diese Methode überprüft, ob ein Pfad zu eindem Ordner wirklich auf einen Ordner zeigt.
+     * @param path Der Pfad zum Ordner als String.
+     * @return true, falls es ein Ordner ist, sonnst false.
+     */
+    public static boolean isFolder(String path)
+    {
+        File folder;
+        try{
+            folder = new File(path);
+        }
+        catch (NullPointerException e)
+        {
+            return false;
+        }
+        return isFolder(folder);
+    }
+    
+    /**
+     * Diese Methode überprüft, ob ein Pfad zu eindem Ordner wirklich auf einen Ordner zeigt.
+     * @param path Der Pfad zum Ordner als File.
+     * @return true, falls es ein Ordner ist, sonnst false.
+     */
+    public static boolean isFolder(File path)
+    {
+        return (path.exists() && path.isDirectory());
+    }
+    
+    /**
+     * Diese Methode überprüft, ob ein Pfad zu eindem Ordner wirklich auf einen Ordner zeigt.
+     * @param path Der Pfad zum Ordner als Path.
+     * @return true, falls es ein Ordner ist, sonnst false.
+     */
+    public static boolean isFolder(Path path)
+    {
+        return isFolder(path.toFile());
     }
     
     /**

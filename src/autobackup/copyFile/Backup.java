@@ -1,11 +1,24 @@
 
 package autobackup.copyFile;
 
+import hilfreich.Convertable;
 import hilfreich.FileUtil;
+import hilfreich.Log;
+import hilfreich.LogLevel;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.LinkedList;
+import java.util.Properties;
+import static java.nio.file.StandardCopyOption.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- *
+ *TODO File wenn notwendig durch Path austauschen
  * @author Christoph Wildhagen 
  */
 public class Backup implements IBackup{
@@ -13,12 +26,12 @@ public class Backup implements IBackup{
     /**
      * Dies ist der Ordner der gesichert werden soll.
      */
-    private String quellordner;
+    private Path quellordner;
     
     /**
      * Dies ist der Ordner in den gespeichert werden soll.
      */
-    private String zielordner;
+    private Path zielordner;
     
     /**
      * Dies gibt an, ob der Ordner im Netzwerk liegt (für weniger lesezugriffe)
@@ -44,26 +57,66 @@ public class Backup implements IBackup{
      * Dies legt fest, ob ein vollständiges Backup gemacht werden soll, oder nur die veränderten Dateien gesichert werden sollen.
      */
     private boolean onlyChange = true;
+    
+    /**
+     * Der Dateibaum wird geladen als Properties, TODO schauen ob es performanter geht.
+     */
+    private Properties dateibaum;
+    
+    /**
+     * Dies sind die Dateien die geändert wurden oder neu sind
+     */
+    private LinkedList<Path> neueDateien;
+    
+    //--Hilfsvariablen--
+    
+    /**
+     * Dies ist für die Logausgabe.
+     */
+    Log log = new Log(super.getClass().toString());
+    
     //----Methoden----
     //---public---
     //--Overwrite--
     @Override
     public boolean backup()
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if ( !checkDateibaum())
+        {
+            log.write("Es konnte kein Dateibaum gelesen werden, es werden alle Dateien gesichert.", LogLevel.FEHLER);
+            if ( !checkBackupFiles())
+            {
+                log.write("Der Backupordner enthält kein Backup, entweder dies ist der erste Durchlauf, oder es gab ein großes Problem.", LogLevel.FEHLER);
+                checkAllFiles();
+            }
+            if ( !createDateibaum() )
+            {
+                log.write("Es konnte kein Dateibaum erstellt werden dies wird für weitere Backups weitere Probleme veruhrsachen.", LogLevel.FEHLER);
+            }
+        }
+        return backupFiles();
+        
     }
 
     @Override
     public boolean setSourceFolder(String path)
     {
-        this.quellordner = path;
+        if (!FileUtil.isFolder(path))
+        {
+            return false;
+        }
+        this.quellordner = Paths.get(path);
         return true;
     }
 
     @Override
     public boolean setDestinationFolder(String path)
     {
-        this.zielordner = path;
+        if (!FileUtil.isFolder(path))
+        {
+            return false;
+        }
+        this.zielordner = Paths.get(path);
         return true;
     }
 
@@ -102,6 +155,170 @@ public class Backup implements IBackup{
     public boolean setDateibaumPfad(File pfad) {
         this.dateibaumpfad = pfad;
         return true;
+    }
+    
+    //---Private Methoden---
+    /**
+     * Überprüft den Dateibaum aus der Datei auf änderungen in der jetzigen Dateistruktur. 
+     * Die Änderungen werden in {@link Backup#neueDateien gespeichert.
+     * @return true, wenn die überprüfung geklappt hat, sonst false.
+     */
+    private boolean checkDateibaum()
+    {
+        //Laden des Dateibaums
+        try 
+        {
+            FileInputStream in = new FileInputStream(this.dateibaumpfad);
+            this.dateibaum.load(in);
+            in.close();
+        }
+        catch (IOException e)
+        {
+            return false;
+        }
+        
+        //Vergleichen der Dateien
+        neueDateien = vergleicheDateien(this.quellordner.toFile());
+        
+        return true;
+    }
+
+    private boolean checkBackupFiles()
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private boolean checkAllFiles()
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private boolean createDateibaum()
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    /**
+     * Diese Funktion sichert die ausgewählten Dateien in den Zielordner und legt falls nötig Versionen an.
+     * @return true, falls das Backup geklappt hat, sonst false (für true muss die versionierung nicht geklappt haben).
+     */
+    private boolean backupFiles()
+    {
+        boolean result = true;
+        Path kurzpfad;
+        Path zielpfad;
+        int quellNameCount = this.quellordner.getNameCount();
+        for (Path datei : this.neueDateien)
+        {
+            kurzpfad = datei.subpath(quellNameCount, datei.getNameCount());
+            zielpfad = this.zielordner.resolve(kurzpfad);
+            versionierung(zielpfad,1);
+            try
+            {
+                Files.copy(datei, zielpfad, COPY_ATTRIBUTES);
+            } catch (IOException ex)
+            {
+                log.write("Die Datei: " + datei.toString() + " konnte nicht kopiert werden", LogLevel.FEHLER);
+                result = false;
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * Dies listet alle Ordner/Dateien in einem Ordner auf
+     * @param ordner der übergeordnete Ordner
+     * @return Die Dateistruktur als List
+     */
+    private LinkedList<String> dateistrukturEinlesen(File ordner)
+    {
+        LinkedList<String> dateistruktur = new LinkedList<>();
+        File[] dateien = ordner.listFiles();
+        for (File datei : dateien)
+        {
+            dateistruktur.add(datei.getAbsolutePath());
+            if (datei.isDirectory())
+            {
+                dateistruktur.addAll(dateistrukturEinlesen(datei));
+            }
+        }
+        return dateistruktur;
+    }
+    
+    /**
+     * Dies vergleicht die Dateien die in der Einstellungsdatei waren mit
+     * @param ordner Der übergeordnete Ordner
+     * @return Eine liste mit allen geänderten Dateien.
+     */
+    private LinkedList<Path> vergleicheDateien(File ordner)
+    {
+        File[] dateien = ordner.listFiles();
+        LinkedList<Path> geaendert = new LinkedList<>();
+        String path;
+        for (File datei : dateien)
+        {
+            path = datei.getAbsolutePath();
+            if ((!this.dateibaum.contains(path)) || !Convertable.toLong(this.dateibaum.getProperty(path)))
+            {
+                geaendert.add(Paths.get(datei.getAbsolutePath()));
+            }
+            else if (datei.lastModified()>(long)this.dateibaum.get(path))
+            {
+                geaendert.add(Paths.get(datei.getAbsolutePath()));
+            }
+            //TODO über Hash gehen, da es Probleme mit der änderungszeit gben könnte.
+            if (datei.isDirectory())
+            {
+                geaendert.addAll(vergleicheDateien(datei));
+            }
+        }
+        return geaendert;
+    }
+    
+    /**
+     * Dies erstellt alte versionen von einer Datei, falls möglich, wobei maximal {@link Backup#versions} Versionen erstellt werden.
+     * @param pfad Der Pfad zu der Datei von der eine weitere Version angelegt werden soll
+     * @param version Die Versionsnummer von der Version die jetzt angelegt werden soll.
+     * @return true, falls es geklappt hat, sonst false.
+     */
+    private boolean versionierung(Path pfad, int version)
+    {
+        boolean result = true;
+        if (this.overwrite && this.versions >= version)
+        {
+            if (version == 1)
+            {
+                log.write("Es werden die alten Version von "+pfad.toString() +" verschoben/gelöscht");
+            }
+            if (FileUtil.isFile(pfad))
+            {
+                Path newpfad;
+                if (version > 1)
+                {
+                    newpfad = Paths.get(pfad.toString().substring(0, pfad.toString().length()-2)+version);
+                }
+                else
+                {
+                    newpfad = Paths.get(pfad.toString()+".1");
+                }
+                result = versionierung(newpfad, version+1);
+                try
+                {
+                    Files.move(pfad, newpfad, REPLACE_EXISTING);
+                } 
+                catch (IOException ex)
+                {
+                    log.write("Es konnte " + pfad.toString() + " nicht umbenannt werden",LogLevel.WARNUNG);
+                    return false;
+                }
+            }
+            return result;
+        }
+        else
+        {
+            log.write("Es werden keine verschiedenen Versionen gespeichert oder es ist das versionslimit erreicht.",LogLevel.DEBUG); //Aussage ist sehr verweicht, aber eine bessere Aussage würde zu viel Leistung kosten.
+            return true;
+        }
     }
 
 }

@@ -104,7 +104,7 @@ public class Settings implements ISettings{
         {
             FileWriter file = new FileWriter(configfile);
             BufferedWriter writer = new BufferedWriter(file);
-            this.einstellungen.store(writer, "Dies ist die Standardeinstellungsdatei für AutoBackup."); //TODO überprüfen ob in einstellungen alle EInstellungen vorhanden sind und ansonsten hinzufügen.
+            this.einstellungen.store(writer, "Dies ist die Standardeinstellungsdatei für AutoBackup."); //TODO überprüfen ob in einstellungen alle Einstellungen vorhanden sind und ansonsten hinzufügen.
         }
         catch (IOException e)
         {
