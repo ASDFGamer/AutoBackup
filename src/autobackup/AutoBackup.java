@@ -3,10 +3,10 @@ package autobackup;
 import autobackup.Data.*;
 import autobackup.copyFile.*;
 import autobackup.settings.*;
+import hilfreich.Convertable;
 import hilfreich.FileUtil;
 import hilfreich.Log;
 import hilfreich.LogLevel;
-import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
 /**
@@ -98,9 +98,10 @@ public class AutoBackup
         }
         if (this.configfilePath==null)
         {
+            String configFile = FileUtil.getConfigFile(Const.PROGRAMM_NAME,"settings.txt");
             log.write("Es wird die standarmäßige Configfile genommen: ",1);
-            log.write(FileUtil.getConfigFile(Const.PROGRAMM_NAME,"settings.txt"),1);
-            this.configfilePath = FileUtil.getConfigFile(Const.PROGRAMM_NAME,"settings");
+            log.write(configFile,1);
+            this.configfilePath = configFile;
         }
         
     }
@@ -129,14 +130,38 @@ public class AutoBackup
         }
         
         //Die einzelnen Einstellungen:
-        Einstellungen.ausgangsOrdner =  config.getSetting("ausgangsOrdner");
-        Einstellungen.backuptiefe =     Integer.parseInt(config.getSetting("backuptiefe"));
+        if (config.settingexists("ausgangsOrdner"))
+        {
+            Einstellungen.ausgangsOrdner =  config.getSetting("ausgangsOrdner");
+        }
+        if (config.settingexists("backuptiefe"))
+        {
+            if (Convertable.toInt(config.getSetting("backuptiefe")))
+            {
+                Einstellungen.backuptiefe =  Integer.parseInt(config.getSetting("backuptiefe"));
+            }
+        }
         //TODO Einstellungen.erlaubteTypen;
-        Einstellungen.logFolder =       config.getSetting("logFolder");
-        Einstellungen.maxLogs =         Integer.parseInt(config.getSetting("maxLogs"));
+        if (config.settingexists("logFolder"))
+        {
+            Einstellungen.logFolder =  config.getSetting("logFolder");
+        }
+        if (config.settingexists("maxLogs"))
+        {
+            if (Convertable.toInt(config.getSetting("maxLogs")))
+            {
+                Einstellungen.maxLogs =  Integer.parseInt(config.getSetting("maxLogs"));
+            }
+        }
         //TODO Einstellungen.verboteneTypen;
-        Einstellungen.writeLog =        Boolean.parseBoolean(config.getSetting("writeLog"));
-        Einstellungen.zielOrdner =      config.getSetting("zielOrdner");
+        if (config.settingexists("writeLog"))
+        {
+            Einstellungen.writeLog =  Boolean.parseBoolean(config.getSetting("writeLog"));//TODO sicherer vor Falscheingaben machen mit abfangen von x=/="true" x->false
+        }
+        if (config.settingexists("zielOrdner"))
+        {
+            Einstellungen.zielOrdner =  config.getSetting("zielOrdner");
+        }
         log.write("Die Einstellungen wurden geladen.");
         //TODO überprüfen ob die Einstellungen hinkommen.
         return true;

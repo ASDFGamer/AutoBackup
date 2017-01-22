@@ -13,45 +13,45 @@ public class Einstellungen {
      * zielOrdner gibt an in welchen Ordner das Backup kopiert werden soll.
      * Dies kann ein einfacher Ordner im Dateisystem sein oder ein externer Ordner im Netzwerk.
      */
-    public static String zielOrdner;
+    public static String zielOrdner = stdEinstellungen.zielOrdner;
     
     /**
      * ausgangsordner gibt an welcher Ordner gesichert werden soll. 
      * Dies sollte ein lokaler Ordner sein, kann aber auch im Netzwerk liegen.
      */
-    public static String ausgangsOrdner;
+    public static String ausgangsOrdner = stdEinstellungen.ausgangsOrdner;
     
     /**
      * Die backuptiefe gibt an wie viele Unterordner mit gesichert werden sollen.
      * Wenn alles gesichert werden soll, dann ist die Backuptiefe -1. 
      */
-    public static int backuptiefe;
+    public static int backuptiefe = stdEinstellungen.backuptiefe;
     
     /**
      * Dies gibt an welche Dateitypen verboten sind. Wenn es leer sind ist alles erlaubt.
      */
-    public static Endung[] verboteneTypen;
+    public static Endung[] verboteneTypen = stdEinstellungen.verboteneTypen;
     
     /**
      * Dies gibt an welche Dateitypen erlaubt sind. Wenn es leer sind ist alles erlaubt.
      * Wenn ein Typ erlaubt und verboten ist, dann ist er wieder erlaubt.
      */
-    public static Endung[] erlaubteTypen;
+    public static Endung[] erlaubteTypen = stdEinstellungen.erlaubteTypen;
     
     /**
      * writeLog gibt an, ob einLog angelegt werden soll. Dieser entsteht an dem in {@link Einstellungen#logFolder} angegebenne Ordner. 
      */
-    public static boolean writeLog;
+    public static boolean writeLog = stdEinstellungen.writeLog;
     
     /**
      * Der Ordner in dem die Logs gespeichert werden sollen.
      */
-    public static String logFolder;
+    public static String logFolder = stdEinstellungen.logFolder;
     
     /**
      * Dies gitb an wie viele Log maximal abgespeichert werden können.
      */
-    public static int maxLogs;
+    public static int maxLogs = stdEinstellungen.maxLogs;
     
     /**
      * Dies ist nur für den internen Gebrauch und zeigt ob Einstellungen geändert wurden 

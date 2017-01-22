@@ -28,7 +28,7 @@ public interface ISettings
     public abstract boolean settingexists(String key);
     
     /**
-     * Hiermit wird der Wert der Einstellung key zurückgegeben, falls es einen gitb.
+     * Hiermit wird der Wert der Einstellung key zurückgegeben, falls es einen gibt.
      * @param key Der Name der Einstellung.
      * @return Der Wert der Einstellung, falls dieser nicht existert, dann null.
      */

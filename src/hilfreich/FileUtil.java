@@ -3,7 +3,12 @@ package hilfreich;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -42,7 +47,7 @@ public class FileUtil {
      */
     public static boolean isFile(File path)
     {
-        return (path.exists() && !path.isDirectory());
+        return (path.exists());//&& !path.isDirectory());
     }
  
     /**
@@ -153,19 +158,81 @@ public class FileUtil {
      */
     public static String getConfigFile(String progname, String filename)
     {
-        String sfile = getConfigFolder(progname)+filename;
-        File file = new File(sfile);
-        if (!file.exists())
+        String sfile = /*"E:\\test\\";//*/getConfigFolder(progname)+filename;
+        Path file = Paths.get(sfile);
+        if (!FileUtil.isFile(file))
         {
-            try
-            {
-                file.createNewFile();
-            } catch (IOException ex)
-            {
-                Log.Write("Die Configfile konnte nicht erstellt werden.", 2);//TODO welche aktion soll dies auslösen? andere Configfile vorschlagen? Standardwerte?
-            }
+            createFile(file);
         }
         return sfile;
+    }
+    
+    /**
+     * Dies erstellt die datei und wenn nötig auch jeden übergeordneten Ordner.
+     * @param datei Die Datei die erstellt werden soll.
+     * @return true, falls es geklappt hat, sonst false.
+     */
+    public static boolean createFile(Path datei)
+    {
+        if (isFile(datei))
+        {
+            Log.Write("Die Datei " + datei.toString() + " exitert schon und muss nicht erstellt werden.");
+            return true;
+        }
+        if( datei.getRoot() == null)
+        {
+            Log.Write("Die angegebene Datei hat keine Root komponente und kann deshalb nicht erstellt werden.",LogLevel.WARNUNG);
+            return false;
+        }
+        if( !isFolder(datei.getParent()))
+        {
+            Log.Write("Der übergeordnete Ordner " + datei.getParent().toString() + " existert nicht und wird jetzt erstellt.", LogLevel.INFO);
+            createFolder(datei.getParent());
+        }
+        
+        try
+        {
+            Files.createFile(datei);
+        } catch (IOException ex)
+        {
+            Log.Write("Das erstellen der Datei " + datei.toString() + " hat nicht geklappt.",LogLevel.FEHLER);
+            return false;
+        }
+        return true;
+    }
+    
+    /**
+     * Dies erstellt den Ordner und wenn nötig auch jeden übergeordneten Ordner.
+     * @param ordner Der Ordner der erstellt werden soll.
+     * @return true, falls es geklappt hat, sonst false.
+     */
+    public static boolean createFolder(Path ordner)
+    {
+        if (isFolder(ordner))
+        {
+            Log.Write("Der Ordner " + ordner.toString() + " exitert schon und muss nicht erstellt werden.");
+            return true;
+        }
+        if( ordner.getRoot() == null)
+        {
+            Log.Write("Die angegebene Datei hat keine Root komponente und kann deshalb nicht erstellt werden.",LogLevel.WARNUNG);
+            return false;
+        }
+        if( !isFolder(ordner.getParent()))
+        {
+            Log.Write("Der übergeordnete Ordner " + ordner.getParent().toString() + " existert nicht und wird jetzt erstellt.", LogLevel.INFO);
+            createFile(ordner.getParent());
+        }
+        
+        try
+        {
+            Files.createDirectory(ordner);
+        } catch (IOException ex)
+        {
+            Log.Write("Das erstellen des Ordners " + ordner.toString() + " hat nicht geklappt.",LogLevel.FEHLER);
+            return false;
+        }
+        return true;
     }
 
 }
