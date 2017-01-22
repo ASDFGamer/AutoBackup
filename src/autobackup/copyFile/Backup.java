@@ -84,17 +84,19 @@ public class Backup implements IBackup{
         if ( !checkDateibaum())
         {
             log.write("Es konnte kein Dateibaum gelesen werden, es werden alle Dateien gesichert.", LogLevel.FEHLER);
-            if ( !checkBackupFiles())
+            if ( !checkBackupFiles(this.quellordner.toFile()))
             {
                 log.write("Der Backupordner enthält kein Backup, entweder dies ist der erste Durchlauf, oder es gab ein großes Problem.", LogLevel.FEHLER);
-                checkAllFiles();
+                checkAllFiles(this.quellordner.toFile());
             }
-            if ( !createDateibaum() )
-            {
-                log.write("Es konnte kein Dateibaum erstellt werden dies wird für weitere Backups weitere Probleme veruhrsachen.", LogLevel.FEHLER);
-            }
+            
         }
-        return backupFiles();
+        boolean result = backupFiles();
+        if ( !createDateibaum() )
+            {
+                log.write("Es konnte kein Dateibaum erstellt werden dies wird für weitere Backups weitere Probleme verursachen.", LogLevel.FEHLER);
+            }
+        return result;
         
     }
 
@@ -182,20 +184,106 @@ public class Backup implements IBackup{
         
         return true;
     }
-
-    private boolean checkBackupFiles()
+    
+    /**
+     * Dies überprüft die Dateien im Zielordner, ob sie neuer sind und trägt neue Dateien zum sichern ein
+     * @return true, falls alles geklappt hat, sonst false.
+     */
+    private boolean checkBackupFiles(File ordner)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (ordner.isDirectory())
+        {
+            File[] dateien = ordner.listFiles();
+            for (File datei : dateien)
+            {
+                if (datei.isDirectory())
+                {
+                    checkBackupFiles(datei);
+                }
+                else
+                {
+                    vergleicheDatei(datei.toPath());
+                }
+            }
+        }
+        else
+        {
+            vergleicheDatei(ordner.toPath());
+        }
+        return true;
     }
-
-    private boolean checkAllFiles()
+    
+    /**
+     * Dies vergleicht eine Datei aus dem Quellordner mit ihrem Equivalent im Zielordner und fügt sie zu den zu sichernden Dateien hinzugefügt.
+     * @param datei Die Datei die überprüft werden soll.
+     * @return true, falls alles geklappt hat, sonst false.
+     */
+    private boolean vergleicheDatei(Path datei)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Path zielpfad = this.zielordner.resolve(datei.subpath(this.quellordner.getNameCount(), datei.getNameCount())); //Hergeleitet von backupFiles()
+        if (zielpfad.toFile().lastModified()<datei.toFile().lastModified())
+        {
+            this.neueDateien.add(datei);
+        }
+        return true;
     }
-
+    
+    /**
+     * Dies markiert alle Dateien aus dem Quellordner zum sichern.
+     * @return true, falls es geklappt hat, sonst false.
+     */
+    private boolean checkAllFiles(File ordner)
+    {
+        
+        if (ordner.isDirectory())
+        {
+            File[] dateien = ordner.listFiles();
+            for (File datei : dateien)
+            {
+                if (datei.isDirectory())
+                {
+                    checkAllFiles(datei);
+                }
+                else
+                {
+                    this.neueDateien.add(datei.toPath());
+                }
+            }
+        }
+        else
+        {
+            this.neueDateien.add(ordner.toPath());
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Dies erstellt den Dateibaum für den Ordner
+     * @return true, falls alles geklappt hat, sonst false.
+     */
     private boolean createDateibaum()
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (this.dateibaum.isEmpty())
+        {
+            log.write("Es exitiert noch kein Dateibaum, ein neuer wird angelegt.");
+        }
+        else
+        {
+            log.write("Es werden die Element die sich geneuert haben im Dateibaum geändert.");
+            for (Path neueDatei : this.neueDateien)
+            {
+                if (this.dateibaum.contains(neueDatei))
+                {
+                    this.dateibaum.replace(neueDatei.toString(), neueDatei.toFile().lastModified());
+                }
+                else
+                {
+                    this.dateibaum.put(neueDatei.toString(), neueDatei.toFile().lastModified());
+                }
+            }
+        }
+        return true;
     }
     
     /**
@@ -257,7 +345,7 @@ public class Backup implements IBackup{
         String path;
         for (File datei : dateien)
         {
-            path = datei.getAbsolutePath();
+            path = datei.getAbsolutePath();//Könnte Probleme wegen File/Path umwandlung geben.
             if ((!this.dateibaum.contains(path)) || !Convertable.toLong(this.dateibaum.getProperty(path)))
             {
                 geaendert.add(Paths.get(datei.getAbsolutePath()));
