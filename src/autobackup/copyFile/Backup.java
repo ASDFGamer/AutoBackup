@@ -176,6 +176,11 @@ public class Backup implements IBackup{
         }
         catch (IOException e)
         {
+            log.write("Die Datei mit dem Dateibaum konnte nicht geöffnet werden.");
+            return false;
+        }
+        catch (Exception e)
+        {
             return false;
         }
         

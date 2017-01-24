@@ -129,7 +129,7 @@ public class AutoBackup
             return false;
         }
         
-        //Die einzelnen Einstellungen:
+        //Die einzelnen Einstellungen: TODO Eintellungen werden nicht richtig geladen, wird oft zu null
         if (config.settingexists("ausgangsOrdner"))
         {
             Einstellungen.ausgangsOrdner =  config.getSetting("ausgangsOrdner");
