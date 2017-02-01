@@ -44,6 +44,11 @@ public class Log implements ILog{
      */
     private static int stdMinLoglevel = 0;
     
+    /**
+     * Dies legt fest ob angezeigt wird, von welcher Klasse der Logeintrag geschrieben wurde.
+     * //TODO in Interface einfügen und GEtter/Setter hinzufügen
+     */
+    private static boolean stdKlassenausgabe = true;
     //--Objektvariablen--
     /**
      * Dies legt fest ob es für dieses Objekt eine Ausgebe in die Konsole geben soll.
@@ -76,6 +81,11 @@ public class Log implements ILog{
      */
     private Calendar rightNow = Calendar.getInstance();
     
+    /**
+     * Dies speichert den Text der ausgegeben werden soll als KLassentext für weitere verwendung.
+     */
+    private String klassenausgabe = null;
+    
     //----Methoden----
     //---public Methoden---
     //--Konstruktoren--
@@ -89,7 +99,7 @@ public class Log implements ILog{
     
     /**
      * Dies erstellt einen neuen Log mit den Standardeinstellungen und der Name der Klasse aus der dies aufgerufen wird kann angegeben werden (oder jeder andere String).
-     * @param klasse Der Name der Klasse (z.B. über super.getClass().toString()).
+     * @param klasse Der Name der Klasse (z.B. über super.getClass().getSimpleName()).
      */
     public Log(String klasse)
     {
@@ -112,7 +122,7 @@ public class Log implements ILog{
      * Außerdem kann der Name der Aufrufenden Klasse angegeben werden.
      * @param console Gibt an ob die Konsolenausgabe an oder aus sein soll.
      * @param file Gibt an ob die Dateiausgabe an oder aus sein soll.
-     * @param klasse Der Name der Klasse (z.B. über super.getClass().toString()).
+     * @param klasse Der Name der Klasse (z.B. über super.getClass().getSimpleName()).
      */
     public Log(boolean console, boolean file, String klasse)
     {
@@ -335,6 +345,10 @@ public class Log implements ILog{
     {
         String loglevel = getLevelText(level);
         String logtext = "";
+        if (stdKlassenausgabe)
+        {
+            logtext += getKlassentext();
+        }
         if (stdZeitausgabe) {
             logtext += getTimestamp();
         }
@@ -350,7 +364,7 @@ public class Log implements ILog{
     private String getTimestamp()
     {
         rightNow = Calendar.getInstance(); //Geht vllt. effizienter
-        return  "[" +rightNow.get(Calendar.HOUR_OF_DAY)+ ":" +rightNow.get(Calendar.MINUTE)+":"+rightNow.get(Calendar.SECOND) +"] ";
+        return  "[" +rightNow.get(Calendar.HOUR_OF_DAY)+ ":" +rightNow.get(Calendar.MINUTE)+":"+rightNow.get(Calendar.SECOND) +"] "; //TODO alles immer zeistellig
 
     }
     
@@ -377,6 +391,19 @@ public class Log implements ILog{
             
             default:                    return "[Info]       ";
         }
+    }
+    
+    private String getKlassentext()
+    {
+        if (this.klassenausgabe == null)
+        {
+            this.klassenausgabe = "[" + this.klasse + "]";
+            while (this.klassenausgabe.length()<=20) //vllt andere große besser (z.b. 15)
+            {
+                this.klassenausgabe += " ";
+            }
+        }
+        return this.klassenausgabe;
     }
 
     

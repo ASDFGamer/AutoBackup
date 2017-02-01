@@ -14,8 +14,6 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.Properties;
 import static java.nio.file.StandardCopyOption.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *TODO File wenn notwendig durch Path austauschen
@@ -73,7 +71,7 @@ public class Backup implements IBackup{
     /**
      * Dies ist für die Logausgabe.
      */
-    Log log = new Log(super.getClass().toString());
+    Log log = new Log(super.getClass().getSimpleName());
     
     //----Methoden----
     //---public---
@@ -81,6 +79,11 @@ public class Backup implements IBackup{
     @Override
     public boolean backup()
     {
+        if ( !einstellungenGesetzt())
+        {
+            log.write("Es wurden nicht alle notwendigen Einstellungen für das Backup festgelegt.", LogLevel.WARNUNG);
+            return false;
+        }
         if ( !checkDateibaum())
         {
             log.write("Es konnte kein Dateibaum gelesen werden, es werden alle Dateien gesichert.", LogLevel.FEHLER);
@@ -412,6 +415,22 @@ public class Backup implements IBackup{
             log.write("Es werden keine verschiedenen Versionen gespeichert oder es ist das versionslimit erreicht.",LogLevel.DEBUG); //Aussage ist sehr verweicht, aber eine bessere Aussage würde zu viel Leistung kosten.
             return true;
         }
+    }
+
+    private boolean einstellungenGesetzt()
+    {
+        boolean result = true;
+        if(this.zielordner==null)
+        {
+            log.write("Es wurde kein Zielordner angageben", LogLevel.FEHLER);
+            result = false;
+        }
+        if(this.quellordner==null)
+        {
+            log.write("Es wurde kein Quellordner angageben", LogLevel.FEHLER);
+            result = false;
+        }
+        return result;
     }
 
 }

@@ -25,7 +25,7 @@ public class AutoBackup
     /**
      * Dies ist der Log der verwendet wird.
      */
-    private final Log log = new Log(super.getClass().toString());
+    private final Log log = new Log(super.getClass().getSimpleName());
     
     /**
      * Dieses Objekt ist für das Laden und Speichern der EInstellungen zuständig.
@@ -130,11 +130,11 @@ public class AutoBackup
         }
         
         //Die einzelnen Einstellungen: TODO Eintellungen werden nicht richtig geladen, wird oft zu null
-        if (config.settingexists("ausgangsOrdner"))
+        if (config.settingexists("ausgangsOrdner") && config.getSetting("ausgangsOrdner") != null)
         {
             Einstellungen.ausgangsOrdner =  config.getSetting("ausgangsOrdner");
         }
-        if (config.settingexists("backuptiefe"))
+        if (config.settingexists("backuptiefe") && config.getSetting("backuptiefe") != null)
         {
             if (Convertable.toInt(config.getSetting("backuptiefe")))
             {
@@ -142,11 +142,11 @@ public class AutoBackup
             }
         }
         //TODO Einstellungen.erlaubteTypen;
-        if (config.settingexists("logFolder"))
+        if (config.settingexists("logFolder") && config.getSetting("logFolder") != null)
         {
             Einstellungen.logFolder =  config.getSetting("logFolder");
         }
-        if (config.settingexists("maxLogs"))
+        if (config.settingexists("maxLogs") && config.getSetting("maxLogs") != null)
         {
             if (Convertable.toInt(config.getSetting("maxLogs")))
             {
@@ -154,11 +154,11 @@ public class AutoBackup
             }
         }
         //TODO Einstellungen.verboteneTypen;
-        if (config.settingexists("writeLog"))
+        if (config.settingexists("writeLog") && config.getSetting("writeLog") != null)
         {
             Einstellungen.writeLog =  Boolean.parseBoolean(config.getSetting("writeLog"));//TODO sicherer vor Falscheingaben machen mit abfangen von x=/="true" x->false
         }
-        if (config.settingexists("zielOrdner"))
+        if (config.settingexists("zielOrdner") && config.getSetting("zielOrdner") != null)
         {
             Einstellungen.zielOrdner =  config.getSetting("zielOrdner");
         }
@@ -190,7 +190,7 @@ public class AutoBackup
         }
         else
         {
-            log.write("Das Backup wurde nicht werfolgreich abgeschlossen.", 2);
+            log.write("Das Backup wurde nicht erfolgreich abgeschlossen.", 2);
         }
     }
     

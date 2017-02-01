@@ -3,6 +3,7 @@ package hilfreich;
 
 /**
  * Dies sind die verschiedenen Logginglevel.
+ * TODO zu Enum umbauen
  * @author Christoph Wildhagen 
  */
 public class LogLevel {

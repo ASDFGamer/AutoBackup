@@ -30,7 +30,7 @@ public class Settings implements ISettings{
     /**
      * Dies ist der Log der verwendet wird.
      */
-    private Log log = new Log(super.getClass().toString());
+    private Log log = new Log(super.getClass().getSimpleName());
     
     /**
      * Hiermit können Einstellungen aus einer Datei geladen werden
@@ -88,7 +88,15 @@ public class Settings implements ISettings{
     @Override
     public boolean settingexists(String key)
     {
-        return this.einstellungen.containsKey(key);
+        if (this.einstellungen.contains(key))
+        {
+            log.write("Die Einstellung " + key + " existiert.");
+        }
+        else
+        {
+            log.write("Die Einstellung " + key + " existiert nicht.");
+        }
+        return this.einstellungen.contains(key);
     }
 
     @Override
