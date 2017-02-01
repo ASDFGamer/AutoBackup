@@ -23,14 +23,32 @@ public class Settings implements ISettings{
     private Properties einstellungen = new Properties();
     
     /**
-     * Die Configfile
-     */
-    private File configfile;
-    
-    /**
      * Dies ist der Log der verwendet wird.
      */
     private Log log = new Log(super.getClass().getSimpleName());
+    
+    /**
+     * Dies gibt den Schlüssel an mit dem gezeigt wird, das die geladene Datei von einer anderen Datei abhänig ist/geerbt hat.
+     * Der Dateiname der anderen Datei muss in diesesen Schlüssel geschrieben werden.
+     */
+    private final static String einstellungen_super = "EinstellungenPfad";
+    
+    /**
+     * Dies gitb die maximale Anzahl der übergeordneten Configfiles an.
+     */
+    private int maxConfigFiles = 64;
+    
+    /**
+     * Hier werden alle Einstellungsdateien die benutzt wurden gespeichert, damit es im zusammenhang mit {@link Settings#einstellungen_super} nicht zu endlosschleifen durch kreisverweise kommt.
+     * Desweiterem ist dies der verweis auf die gerade aktuelle Configfile.
+     */
+    private File[] configfiles = new File[maxConfigFiles];
+    
+    /**
+     * Dies gibt die gerade aktive Configfile an.
+     */
+    private int activeconfigfile = 0;
+    
     
     /**
      * Hiermit können Einstellungen aus einer Datei geladen werden
@@ -41,13 +59,13 @@ public class Settings implements ISettings{
     {
         try
         {
-            this.configfile = new File(configfile); 
+            this.configfiles[this.activeconfigfile] = new File(configfile); 
         }
         catch (NullPointerException e)
         {
             throw new IllegalArgumentException("Der übergebene String ist leer.");
         }
-        if (!FileUtil.isFile(this.configfile))
+        if (!FileUtil.isFile(this.configfiles[this.activeconfigfile]))
         {
             throw new IllegalArgumentException("Der Pfad zeigt nicht auf eine Datei.");
         }
@@ -58,10 +76,16 @@ public class Settings implements ISettings{
     @Override
     public boolean loadSettings()
     {
+        String supersettings = null;
         try
         {
-            FileInputStream in = new FileInputStream(configfile);
+            //TODO verhindern das alte Einstellungen überschrieben werden (außer einstellungen_super)
+            FileInputStream in = new FileInputStream(configfiles[this.activeconfigfile]);
             this.einstellungen.load(in);
+            if (this.einstellungen.containsKey(einstellungen_super) && this.einstellungen.getProperty(einstellungen_super) != null)
+            {
+                supersettings = this.einstellungen.getProperty(einstellungen_super);
+            }
             in.close();
         } 
         catch (FileNotFoundException e)
@@ -74,7 +98,29 @@ public class Settings implements ISettings{
             log.write("Es gab ein Problem beim einlesen der Datei.", 3);
             return false;
         }
-        log.write("Die Einstellungen aus " + this.configfile.toString() + " wurden geladen.");
+        if (supersettings != null)
+        {
+            if ( ++this.activeconfigfile >= this.maxConfigFiles )
+            {
+                log.write("Es wurde die maximalanzahl an übergeordneten Configfiles erreicht.", LogLevel.WARNUNG);
+            }
+            else if (FileUtil.isFile(supersettings))//TODO funkt auch über Netzwerk?
+            {
+                log.write("Der Pfad für die übergeordnete Configfile verweist nicht auf eine Datei.",LogLevel.WARNUNG);
+            }
+            else if (Utils.contains(this.configfiles,supersettings))
+            {
+                log.write("Der angegebene Pfad würde zu einer schon gelesenen Datei führen und somit zu einem Loop", LogLevel.WARNUNG);
+            }
+            else
+            {
+                this.configfiles[this.activeconfigfile]=new File(supersettings);
+                log.write("Die Einstellungen aus der übergeordneten Datei " + this.configfiles[this.activeconfigfile] + " werden geladen");
+                loadSettings();
+            }
+            
+        }
+        log.write("Die Einstellungen aus " + this.configfiles[this.activeconfigfile].toString() + " wurden geladen.");
         return true;
     }
 
@@ -110,7 +156,7 @@ public class Settings implements ISettings{
     {
         try
         {
-            FileWriter file = new FileWriter(configfile);
+            FileWriter file = new FileWriter(configfiles[this.activeconfigfile]);
             BufferedWriter writer = new BufferedWriter(file);
             this.einstellungen.store(writer, "Dies ist die Standardeinstellungsdatei für AutoBackup."); //TODO überprüfen ob in einstellungen alle Einstellungen vorhanden sind und ansonsten hinzufügen.
         }
@@ -128,7 +174,7 @@ public class Settings implements ISettings{
     {
         if (FileUtil.isFile(path))
         {
-            this.configfile = new File(path);
+            this.configfiles[this.activeconfigfile] = new File(path);
             return true;
         }
         return false;
