@@ -7,10 +7,11 @@ package autobackup.settings;
 public interface ISettings
 { 
     /**
-     * Hiermit werden die Einstellungen aus der Einstellungsdatei geladen.
+     * Hiermit wird zurückgegeben ob die Einstellungen aus der Einstellungsdatei geladen werden konnten.
+     * Falls es noch nicht versucht wurde werden die Einstellungen geladen
      * @return true, falls es geklappt hat, sonst false.
      */
-    public abstract boolean loadSettings();
+    public abstract boolean loadSettingsResult();
     
     /**
      * Hiermit wird die Einstellung key mit dem wert value gespeichert.

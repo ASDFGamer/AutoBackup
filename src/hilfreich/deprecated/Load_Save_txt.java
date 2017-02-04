@@ -1,4 +1,4 @@
-package hilfreich;
+package hilfreich.deprecated;
 
 /**
  * Dies soll als Überklasse für die Load und Save Klassen sein.

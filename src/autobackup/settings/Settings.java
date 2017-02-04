@@ -49,6 +49,10 @@ public class Settings implements ISettings{
      */
     private int activeconfigfile = 0;
     
+    /**
+     * Dies gibt an ob die EInstellungen schon geladen werden konnten.
+     */
+    private Boolean loadSettingsResult = null;
     
     /**
      * Hiermit können Einstellungen aus einer Datei geladen werden
@@ -70,11 +74,10 @@ public class Settings implements ISettings{
             throw new IllegalArgumentException("Der Pfad zeigt nicht auf eine Datei.");
         }
         
-        loadSettings();
+        loadSettingsResult = loadSettings();
     }
     
-    @Override
-    public boolean loadSettings()
+    private boolean loadSettings()
     {
         String supersettings = null;
         try
@@ -181,6 +184,14 @@ public class Settings implements ISettings{
         
     }
     
-
+    @Override
+    public boolean loadSettingsResult()
+    {
+        if (this.loadSettingsResult == null)
+        {
+            this.loadSettingsResult=loadSettings();
+        }
+        return this.loadSettingsResult;
+    }
 
 }

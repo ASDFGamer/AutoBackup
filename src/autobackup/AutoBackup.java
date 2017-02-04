@@ -39,30 +39,8 @@ public class AutoBackup
      */
     public static void main(String[] args)
     {
-        try 
-        {
-            Einstellungen.init();
-            AutoBackup autoBackup = new AutoBackup();
-            autoBackup.analyzeArgs(args);
-            autoBackup.load();
-            autoBackup.run();
-            autoBackup.save();
-            autoBackup.end();
-        }
-        catch (Exception e)
-        {
-            Log.Write("Es gab einen kritischen Fehler der nicht abgefangen wurde", LogLevel.FATAL_ERROR);
-            e.printStackTrace();
-            try
-            {
-                e.printStackTrace(new PrintStream(Einstellungen.logFolder.get()));
-            }
-            catch (Exception ex)
-            {
-                Log.Write("Die Logfile wurde auch nicht gefunden :(", LogLevel.FEHLER);
-            }
-        }
-        
+        AutoBackup backup = new AutoBackup();
+        backup.backup(args);
     }
     
     /**
@@ -71,7 +49,7 @@ public class AutoBackup
      */
     private void analyzeArgs(String[] args)
     {
-        if (args.length>0)
+        if (args != null && args.length>0)
         {
             for (String arg : args)
             {
@@ -100,7 +78,7 @@ public class AutoBackup
         if (this.configfilePath==null)
         {
             String configFile = FileUtil.getConfigFile(Const.PROGRAMM_NAME,"settings.txt");
-            log.write("Es wird die standarmäßige Configfile genommen: ",1);
+            log.write("Es wird die standarmäßige Configfile genommen: ",LogLevel.WARNUNG);
             log.write(configFile,1);
             this.configfilePath = configFile;
         }
@@ -123,7 +101,7 @@ public class AutoBackup
             return false;
         }
         
-        if (!config.loadSettings())
+        if (!config.loadSettingsResult())
         {
             log.write("Die Einstellungen konnten nicht geladen werden, es werden Standardeinstellungen benutzt.");
             stdEinstellungen();
@@ -191,7 +169,7 @@ public class AutoBackup
         }
         else
         {
-            log.write("Das Backup wurde nicht erfolgreich abgeschlossen.", 2);
+            log.write("Das Backup wurde nicht erfolgreich abgeschlossen.", LogLevel.FATAL_ERROR);
         }
     }
     
@@ -227,6 +205,38 @@ public class AutoBackup
         log.write("Es werden die Standardeinstellungen benutzt. Bitte überprüfen ob diese verwendet werden sollen.",1);
     }
 
-
+    public boolean backup(String[] args)
+    {
+        log.clearLog();
+        try 
+        {
+            Einstellungen.init();
+            this.analyzeArgs(args);
+            this.load();
+            this.run();
+            this.save();
+            this.end();
+        }
+        catch (Exception e)
+        {
+            log.write("Es gab einen kritischen Fehler der nicht abgefangen wurde", LogLevel.FATAL_ERROR);
+            e.printStackTrace();
+            try
+            {
+                e.printStackTrace(new PrintStream(Einstellungen.logFolder.get()));
+            }
+            catch (Exception ex)
+            {
+                log.write("Die Logfile wurde auch nicht gefunden :(", LogLevel.FEHLER);
+            }
+            return false;
+        }
+        return true;
+    }
     
+    public boolean backup()
+    {
+        String[] args = null;
+        return backup(args);
+    }
 }

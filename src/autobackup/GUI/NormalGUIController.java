@@ -5,6 +5,7 @@
  */
 package autobackup.GUI;
 
+import autobackup.AutoBackup;
 import hilfreich.Log;
 import hilfreich.LogLevel;
 import java.io.IOException;
@@ -25,7 +26,8 @@ public class NormalGUIController extends GUIController
     
     public void startBackup() 
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        AutoBackup backup = new AutoBackup();
+        backup.backup();
     }
     
     public void moreConfig()

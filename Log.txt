@@ -1,6 +1,16 @@
-[Info] [13:50:5] [ class autobackup.AutoBackup ] Iwas
-[Warnung] [13:50:5] [ class autobackup.AutoBackup ] Es wird die standarmäßige Configfile genommen: 
-[__FEHLER__] [13:50:6] [ Static aufruf ] Die Configfile konnte nicht erstellt werden.
-[Warnung] [13:50:6] [ class autobackup.AutoBackup ] C:\Users\Ursel\AppData\Roaming\AutoBackup\settings.txt
-[__FEHLER__] [13:50:6] [ Static aufruf ] Die Configfile konnte nicht erstellt werden.
-[Info] [13:50:6] [ class autobackup.AutoBackup ] Die Einstellungen werden geladen.
+[AutoBackup]         [0:21:45] [Warnung]    Es wird die standarmäßige Configfile genommen: 
+[AutoBackup]         [0:21:45] [Warnung]    C:\Users\wildh\AppData\Roaming\AutoBackup\settings.txt
+[AutoBackup]         [0:21:45] [Info]       Die Einstellungen werden geladen.
+[Settings]           [0:21:45] [Info]       Die Einstellungen aus C:\Users\wildh\AppData\Roaming\AutoBackup\settings.txt wurden geladen.
+[Settings]           [0:21:45] [Info]       Die Einstellung ausgangsOrdner existiert nicht.
+[Settings]           [0:21:45] [Info]       Die Einstellung backuptiefe existiert nicht.
+[Settings]           [0:21:45] [Info]       Die Einstellung logFolder existiert nicht.
+[Settings]           [0:21:45] [Info]       Die Einstellung maxLogs existiert nicht.
+[Settings]           [0:21:45] [Info]       Die Einstellung writeLog existiert nicht.
+[Settings]           [0:21:45] [Info]       Die Einstellung zielOrdner existiert nicht.
+[AutoBackup]         [0:21:45] [Info]       Die Einstellungen wurden geladen.
+[AutoBackup]         [0:21:45] [Info]       Das Backup wird gestartet
+[Backup]             [0:21:45] [Fehler]     Es wurde kein Zielordner angageben
+[Backup]             [0:21:45] [Fehler]     Es wurde kein Quellordner angageben
+[Backup]             [0:21:45] [Warnung]    Es wurden nicht alle notwendigen Einstellungen für das Backup festgelegt.
+[AutoBackup]         [0:21:45] [Fehler]     Das Backup wurde nicht erfolgreich abgeschlossen.

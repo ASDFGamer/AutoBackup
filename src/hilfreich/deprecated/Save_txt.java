@@ -1,5 +1,6 @@
-package hilfreich;
+package hilfreich.deprecated;
 
+import hilfreich.Log;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;

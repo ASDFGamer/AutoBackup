@@ -22,7 +22,7 @@ public class Log implements ILog{
     /**
      * Der Pfad zu dem Log oder dem Ordner
      */
-    private static String path;
+    private static String path = System.getProperty("user.dir");
     
     /**
      * Dies legt fest ob es standardmäßig eine ausgabe in der Konsole geben soll.
@@ -32,7 +32,7 @@ public class Log implements ILog{
     /**
      * Dies legt fest ob es standardmäßig eine ausgabe in eine Datei geben soll.
      */
-    private static boolean stdFileausgabe  = false;
+    private static boolean stdFileausgabe  = true;
     
     /**
      * Dies legt fest ob die Uhrzeit in den Logeinträgen angezeigt werden soll.
@@ -49,6 +49,16 @@ public class Log implements ILog{
      * //TODO in Interface einfügen und GEtter/Setter hinzufügen
      */
     private static boolean stdKlassenausgabe = true;
+    
+    /**
+     * Dies wird true gesetzt, falls der Pfad null ist und dieses schoon ausgegeben wurde.
+     */
+    private static boolean pathDoesNotExist = false;
+    
+    /**
+     * Dies gibt den Pfad zur Logdatei an.
+     */
+    private static String filePath = null;
     //--Objektvariablen--
     /**
      * Dies legt fest ob es für dieses Objekt eine Ausgebe in die Konsole geben soll.
@@ -186,7 +196,25 @@ public class Log implements ILog{
 
     @Override
     public boolean clearLog() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (path == null)
+        {
+            return false;
+        }
+        if (filePath == null )
+        {
+            setFilepath();
+        }
+        try {
+            FileWriter fw = new FileWriter(filePath);
+            fw.write("");
+            fw.close();
+            System.out.println("Die Ausgabedatei wurde geleert.");
+        } 
+        catch ( IOException e ) 
+        { 
+            return false;
+        }
+        return true;
     }
     
     
@@ -241,6 +269,7 @@ public class Log implements ILog{
     @Override
     public boolean setStdFilePath(String path) {
         Log.path = path;
+        setFilepath();
         return true;
     }
 
@@ -321,18 +350,34 @@ public class Log implements ILog{
      */
     private boolean fileWrite(String text, int level)
     {
-        String logtext = getLogtext(text,level);
-        try {
-            FileWriter datei_schreiben = new FileWriter(path,true);
-            datei_schreiben.write(logtext+System.getProperty("line.separator"));
-            datei_schreiben.flush();
-            datei_schreiben.close();
-        } 
-        catch (IOException e)
+        if (path != null)
         {
-            return false;
+            String logtext = getLogtext(text,level);
+            if (filePath==null)
+            {
+                this.setFilepath();
+            }
+            try {
+                FileWriter datei_schreiben = new FileWriter(filePath,true);
+                datei_schreiben.write(logtext+System.getProperty("line.separator"));
+                datei_schreiben.flush();
+                datei_schreiben.close();
+            } 
+            catch (IOException e)
+            {
+                return false;
+            }
+            return true;
         }
-        return true;
+        else
+        {
+            if (!pathDoesNotExist)
+            {
+                System.err.println("Der Pfad ist auf \"null\" gesetzt.");
+                this.pathDoesNotExist = true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -406,8 +451,18 @@ public class Log implements ILog{
         return this.klassenausgabe;
     }
 
-    
-
+    private boolean setFilepath()//TODO Versionierung hier ansetzen.
+    {
+        if(FileUtil.isFolder(path))
+        {
+            filePath = path+System.getProperty("file.separator")+"Log.txt";
+        }
+        else
+        {
+            filePath = path;
+        }
+        return true;
+    }
 
     
 }

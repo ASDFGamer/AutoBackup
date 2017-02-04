@@ -1,5 +1,6 @@
-package hilfreich;
+package hilfreich.deprecated;
 
+import hilfreich.Log;
 import java.util.Calendar;
 import java.io.*;
 
