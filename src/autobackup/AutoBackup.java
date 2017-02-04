@@ -41,6 +41,7 @@ public class AutoBackup
     {
         try 
         {
+            Einstellungen.init();
             AutoBackup autoBackup = new AutoBackup();
             autoBackup.analyzeArgs(args);
             autoBackup.load();
@@ -54,7 +55,7 @@ public class AutoBackup
             e.printStackTrace();
             try
             {
-                e.printStackTrace(new PrintStream(Einstellungen.logFolder));
+                e.printStackTrace(new PrintStream(Einstellungen.logFolder.get()));
             }
             catch (Exception ex)
             {
@@ -132,35 +133,35 @@ public class AutoBackup
         //Die einzelnen Einstellungen: TODO Eintellungen werden nicht richtig geladen, wird oft zu null
         if (config.settingexists("ausgangsOrdner") && config.getSetting("ausgangsOrdner") != null)
         {
-            Einstellungen.ausgangsOrdner =  config.getSetting("ausgangsOrdner");
+            Einstellungen.ausgangsOrdner.set(config.getSetting("ausgangsOrdner"));
         }
         if (config.settingexists("backuptiefe") && config.getSetting("backuptiefe") != null)
         {
             if (Convertable.toInt(config.getSetting("backuptiefe")))
             {
-                Einstellungen.backuptiefe =  Integer.parseInt(config.getSetting("backuptiefe"));
+                Einstellungen.backuptiefe.set(Integer.parseInt(config.getSetting("backuptiefe")));
             }
         }
         //TODO Einstellungen.erlaubteTypen;
         if (config.settingexists("logFolder") && config.getSetting("logFolder") != null)
         {
-            Einstellungen.logFolder =  config.getSetting("logFolder");
+            Einstellungen.logFolder.set(config.getSetting("logFolder"));
         }
         if (config.settingexists("maxLogs") && config.getSetting("maxLogs") != null)
         {
             if (Convertable.toInt(config.getSetting("maxLogs")))
             {
-                Einstellungen.maxLogs =  Integer.parseInt(config.getSetting("maxLogs"));
+                Einstellungen.maxLogs.set(Integer.parseInt(config.getSetting("maxLogs")));
             }
         }
         //TODO Einstellungen.verboteneTypen;
         if (config.settingexists("writeLog") && config.getSetting("writeLog") != null)
         {
-            Einstellungen.writeLog =  Boolean.parseBoolean(config.getSetting("writeLog"));//TODO sicherer vor Falscheingaben machen mit abfangen von x=/="true" x->false
+            Einstellungen.writeLog.set(Boolean.parseBoolean(config.getSetting("writeLog")));//TODO sicherer vor Falscheingaben machen mit abfangen von x=/="true" x->false
         }
         if (config.settingexists("zielOrdner") && config.getSetting("zielOrdner") != null)
         {
-            Einstellungen.zielOrdner =  config.getSetting("zielOrdner");
+            Einstellungen.zielOrdner.set(config.getSetting("zielOrdner"));
         }
         log.write("Die Einstellungen wurden geladen.");
         //TODO überprüfen ob die Einstellungen hinkommen.
@@ -175,9 +176,9 @@ public class AutoBackup
         log.write("Das Backup wird gestartet");
         IBackup backup = new Backup();
         
-        //Einstellungen für das Backup festlegen
-        backup.setSourceFolder(Einstellungen.ausgangsOrdner);
-        backup.setDestinationFolder(Einstellungen.zielOrdner);
+        //Einstellungen für das Backup festlegenEinstellungen.ausgangsOrdner
+        backup.setSourceFolder(Einstellungen.ausgangsOrdner.get());
+        backup.setDestinationFolder(Einstellungen.zielOrdner.get());
         //TODO als Einstellung hinzufügen
         backup.setOnlyChange(true);
         backup.setOverwrite(true);
@@ -224,16 +225,6 @@ public class AutoBackup
     private void stdEinstellungen()
     {
         log.write("Es werden die Standardeinstellungen benutzt. Bitte überprüfen ob diese verwendet werden sollen.",1);
-        //Die einzelnen Einstellungen:
-        Einstellungen.ausgangsOrdner =  stdEinstellungen.ausgangsOrdner;
-        Einstellungen.backuptiefe =     stdEinstellungen.backuptiefe;
-        Einstellungen.erlaubteTypen =   stdEinstellungen.erlaubteTypen;
-        Einstellungen.logFolder =       stdEinstellungen.logFolder;
-        Einstellungen.maxLogs =         stdEinstellungen.maxLogs;
-        Einstellungen.verboteneTypen =  stdEinstellungen.verboteneTypen;
-        Einstellungen.writeLog =        stdEinstellungen.writeLog;
-        Einstellungen.zielOrdner =      stdEinstellungen.zielOrdner;
-        log.write("Die Standardeinstellungen wurden geladen.");
     }
 
 
