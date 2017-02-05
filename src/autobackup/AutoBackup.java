@@ -100,54 +100,11 @@ public class AutoBackup
         }
         catch(IllegalArgumentException e)
         {
-            log.write("Es gab ein Problem beim öffnen der Einstellungsdatei, es werden Stdandardeinstellungen benutzt.");
-            stdEinstellungen();
+            log.write("Es gab ein Problem beim öffnen der Einstellungsdatei, es werden Stdandardeinstellungen benutzt.",LogLevel.WARNUNG);
             return false;
         }
         
-        if (!config.loadSettingsResult())
-        {
-            log.write("Die Einstellungen konnten nicht geladen werden, es werden Standardeinstellungen benutzt.");
-            stdEinstellungen();
-            return false;
-        }
-        
-        //Die einzelnen Einstellungen: TODO Eintellungen werden nicht richtig geladen, wird oft zu null
-        if (config.settingexists("ausgangsOrdner") && config.getSetting("ausgangsOrdner") != null)
-        {
-            Einstellungen.ausgangsOrdner.set(config.getSetting("ausgangsOrdner"));
-        }
-        if (config.settingexists("backuptiefe") && config.getSetting("backuptiefe") != null)
-        {
-            if (Convertable.toInt(config.getSetting("backuptiefe")))
-            {
-                Einstellungen.backuptiefe.set(Integer.parseInt(config.getSetting("backuptiefe")));
-            }
-        }
-        //TODO Einstellungen.erlaubteTypen;
-        if (config.settingexists("logFolder") && config.getSetting("logFolder") != null)
-        {
-            Einstellungen.logFolder.set(config.getSetting("logFolder"));
-        }
-        if (config.settingexists("maxLogs") && config.getSetting("maxLogs") != null)
-        {
-            if (Convertable.toInt(config.getSetting("maxLogs")))
-            {
-                Einstellungen.maxLogs.set(Integer.parseInt(config.getSetting("maxLogs")));
-            }
-        }
-        //TODO Einstellungen.verboteneTypen;
-        if (config.settingexists("writeLog") && config.getSetting("writeLog") != null)
-        {
-            Einstellungen.writeLog.set(Boolean.parseBoolean(config.getSetting("writeLog")));//TODO sicherer vor Falscheingaben machen mit abfangen von x=/="true" x->false
-        }
-        if (config.settingexists("zielOrdner") && config.getSetting("zielOrdner") != null)
-        {
-            Einstellungen.zielOrdner.set(config.getSetting("zielOrdner"));
-        }
-        log.write("Die Einstellungen wurden geladen.");
-        //TODO überprüfen ob die Einstellungen hinkommen.
-        return true;
+        return Einstellungen.load(config);
     }
     
     /**
@@ -159,7 +116,7 @@ public class AutoBackup
         IBackup backup = new Backup();
         
         //Einstellungen für das Backup festlegenEinstellungen.ausgangsOrdner
-        backup.setSourceFolder(Einstellungen.ausgangsOrdner.get());
+        backup.setSourceFolder(Einstellungen.quellOrdner.get());
         backup.setDestinationFolder(Einstellungen.zielOrdner.get());
         //TODO als Einstellung hinzufügen
         backup.setOnlyChange(true);
@@ -204,11 +161,6 @@ public class AutoBackup
     /**
      * Hiermit werden die Standardeinstellungen wie sie in {@link stdEinstellungen} festgelegt wurden geladen.
      */
-    private void stdEinstellungen()
-    {
-        log.write("Es werden die Standardeinstellungen benutzt. Bitte überprüfen ob diese verwendet werden sollen.",LogLevel.WARNUNG);
-    }
-
     public boolean backup(String[] args)
     {
         

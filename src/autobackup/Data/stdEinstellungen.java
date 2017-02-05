@@ -21,7 +21,7 @@ public class stdEinstellungen {
      * ausgangsordner gibt an welcher Ordner gesichert werden soll. 
      * Dies sollte ein lokaler Ordner sein, kann aber auch im Netzwerk liegen.
      */
-    public final static String ausgangsOrdner = System.getProperty("User.home");
+    public final static String quellOrdner = System.getProperty("User.home");
     
     /**
      * Die backuptiefe gibt an wie viele Unterordner mit gesichert werden sollen.

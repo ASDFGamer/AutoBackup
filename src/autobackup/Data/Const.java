@@ -9,7 +9,7 @@ public class Const {
     
     static final public String PROGRAMM_NAME = "AutoBackup";
     
-    static final public String VERSION = "0.001";
+    static final public String VERSION = "0.02";
     
     static final public String[] LOGEIGENSCHAFTEN = {"Console + Datei", "Nur Console", "Nur Datei", "Alles Aus"}; //TODO convert to enum
     

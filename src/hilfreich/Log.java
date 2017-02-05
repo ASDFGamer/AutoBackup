@@ -174,7 +174,7 @@ public class Log implements ILog{
     @Override
     public boolean write(String text, LogLevel level) {
         boolean result = true;
-        if (level.getLevel() >= LogLevel.ERROR_LEVEL.getLevel())
+        if (level.getLevel() >= this.minLoglevel)
         {
             if (this.consolenausgabe)
             {

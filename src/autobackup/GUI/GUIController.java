@@ -43,10 +43,10 @@ public class GUIController implements Initializable {
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        Log log = new Log();
         log.setStdFilePath(Einstellungen.logFolder.get());
         log.clearLog();
         log.write("GUI wird initialisiert.");
+        Einstellungen.init();
     }
     
     @FXML
@@ -61,32 +61,24 @@ public class GUIController implements Initializable {
     private void quellordnerAction()
     {
         ISettings settings = new Settings(Einstellungen.configFile.get());
-        DirectoryChooser chooser = new DirectoryChooser();
-        if (settings.loadSettingsResult() && settings.settingexists("quellordner"))
+        String ordner = selectFolder(Einstellungen.namen.quellOrdner.toString(),settings);
+        if (!ordner.equals(Einstellungen.quellOrdner.get()))
         {
-            chooser.setInitialDirectory(new File(settings.getSetting("quellordner")));
+            Einstellungen.quellOrdner.set(ordner);
+            settings.saveSettings(); 
         }
-        chooser.setTitle("Quellordner");
-        File quellordner = chooser.showDialog((Stage)this.quellordner.getScene().getWindow());
-        if(quellordner == null)
-        {
-            log.write("Es wurde keine Datei ausgewählt",LogLevel.WARNUNG);
-        }
-        else
-        {
-            Einstellungen.ausgangsOrdner.set(quellordner.getAbsolutePath());
-            settings.saveSettings();
-        }
-        
     }
     
     @FXML
     private void zielordnerAction()
     {
-        DirectoryChooser chooser = new DirectoryChooser();
-        chooser.setTitle("Zielordner");
-        File zielordner = chooser.showDialog((Stage)this.zielordner.getScene().getWindow());
-        Einstellungen.zielOrdner.set(zielordner.getAbsolutePath());
+        ISettings settings = new Settings(Einstellungen.configFile.get());
+        String ordner = selectFolder(Einstellungen.namen.zielOrdner.toString(),settings);
+        if (!ordner.equals(Einstellungen.zielOrdner.get()))
+        {
+            Einstellungen.zielOrdner.set(ordner);
+            settings.saveSettings(); 
+        }
     }
 
     public boolean setArgs(String[] args)
@@ -98,5 +90,23 @@ public class GUIController implements Initializable {
     public String[] getArgs()
     {
         return args;
+    }
+    
+    private String selectFolder(String name, ISettings settings)
+    {        
+        Einstellungen.load(settings);
+        DirectoryChooser chooser = new DirectoryChooser();
+        if (/*settings.loadSettingsResult() &&*/ settings.settingexists(name))
+        {
+            chooser.setInitialDirectory(new File(settings.getSetting(name)));
+        }
+        chooser.setTitle(name);
+        File ordner = chooser.showDialog((Stage)this.quellordner.getScene().getWindow());
+        if(ordner == null)
+        {
+            log.write("Es wurde keine Datei ausgewählt",LogLevel.WARNUNG);
+            return null;
+        }
+        return ordner.getAbsolutePath();
     }
 }

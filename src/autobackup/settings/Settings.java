@@ -140,15 +140,16 @@ public class Settings implements ISettings{
     @Override
     public boolean settingexists(String key)
     {
-        if (this.einstellungen.contains(key))
+        if (this.einstellungen.containsKey(key))
         {
             log.write("Die Einstellung " + key + " existiert.");
+            return true;
         }
         else
         {
             log.write("Die Einstellung " + key + " existiert nicht.");
+            return false;
         }
-        return this.einstellungen.contains(key);
     }
 
     @Override
@@ -162,6 +163,17 @@ public class Settings implements ISettings{
     {
         if (Einstellungen.einstellungenGeaendert)
         {
+            //TODO nur Wert einfügern falls er sich geändert hat.
+            //einstellungen.put(Einstellungen.namen.backuptiefe.toString(), Einstellungen.backuptiefe.get());
+            //einstellungen.put(Einstellungen.namen.configFile.toString(), Einstellungen.configFile.get());
+            //einstellungen.put(Einstellungen.namen.erlaubteTypen.toString(), Einstellungen.erlaubteTypen);TODO
+            //einstellungen.put(Einstellungen.namen.logFolder.toString(), Einstellungen.logFolder.get());
+            //einstellungen.put(Einstellungen.namen.maxLogs.toString(), Einstellungen.maxLogs.get());
+            einstellungen.put(Einstellungen.namen.quellOrdner.toString(), Einstellungen.quellOrdner.get());
+            //einstellungen.put(Einstellungen.namen.verboteneTypen.toString(), Einstellungen.verboteneTypen);//TODO
+            //einstellungen.put(Einstellungen.namen.writeLog.toString(), Einstellungen.writeLog.get());
+            einstellungen.put(Einstellungen.namen.zielOrdner.toString(), Einstellungen.zielOrdner.get());
+
             try
             {
                 FileWriter file = new FileWriter(configfiles[this.activeconfigfile]);
