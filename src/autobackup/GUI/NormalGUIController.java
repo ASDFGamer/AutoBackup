@@ -22,12 +22,13 @@ public class NormalGUIController extends GUIController
     Button erweiterteEinstellungen;
     
     
+    
     Log log = new Log(super.getClass().getSimpleName());
     
     public void startBackup() 
     {
         AutoBackup backup = new AutoBackup();
-        backup.backup();
+        backup.backup(getArgs());
     }
     
     public void moreConfig()
@@ -42,4 +43,6 @@ public class NormalGUIController extends GUIController
             stage.close();
         }
     }
+    
+    
 }

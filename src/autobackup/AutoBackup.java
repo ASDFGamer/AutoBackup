@@ -39,8 +39,12 @@ public class AutoBackup
      */
     public static void main(String[] args)
     {
+        Log log = new Log();
+        log.setStdFilePath(Einstellungen.logFolder.get());
+        log.clearLog();
         AutoBackup backup = new AutoBackup();
         backup.backup(args);
+        
     }
     
     /**
@@ -77,9 +81,9 @@ public class AutoBackup
         }
         if (this.configfilePath==null)
         {
-            String configFile = FileUtil.getConfigFile(Const.PROGRAMM_NAME,"settings.txt");
+            String configFile = Einstellungen.configFile.get();
             log.write("Es wird die standarmäßige Configfile genommen: ",LogLevel.WARNUNG);
-            log.write(configFile,1);
+            log.write(configFile,LogLevel.INFO);
             this.configfilePath = configFile;
         }
         
@@ -207,7 +211,7 @@ public class AutoBackup
 
     public boolean backup(String[] args)
     {
-        log.clearLog();
+        
         try 
         {
             Einstellungen.init();

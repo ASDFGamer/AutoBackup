@@ -48,10 +48,15 @@ public class stdEinstellungen {
     /**
      * Der Ordner in dem die Logs gespeichert werden sollen.
      */
-    public final static String logFolder = System.getProperty("User.dir");
+    public final static String logFolder = System.getProperty("user.dir");
     
     /**
      * Dies gibt an wie viele Log maximal abgespeichert werden können.
      */
     public final static int maxLogs = 3;
+    
+    /**
+     * Dies gibt die Einstellungsdatei an.
+     */
+    public final static String configFile = FileUtil.getConfigFile(Const.PROGRAMM_NAME, "config.txt");
 }

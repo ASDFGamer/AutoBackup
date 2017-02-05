@@ -1,6 +1,8 @@
 
 package autobackup.settings;
 
+import autobackup.Data.Const;
+import autobackup.Data.Einstellungen;
 import hilfreich.*;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -69,6 +71,7 @@ public class Settings implements ISettings{
         {
             throw new IllegalArgumentException("Der übergebene String ist leer.");
         }
+        log.write(this.configfiles[this.activeconfigfile].toString());
         if (!FileUtil.isFile(this.configfiles[this.activeconfigfile]))
         {
             throw new IllegalArgumentException("Der Pfad zeigt nicht auf eine Datei.");
@@ -98,7 +101,7 @@ public class Settings implements ISettings{
         } 
         catch (IOException e)
         {
-            log.write("Es gab ein Problem beim einlesen der Datei.", 3);
+            log.write("Es gab ein Problem beim einlesen der Datei.", LogLevel.FEHLER);
             return false;
         }
         if (supersettings != null)
@@ -157,20 +160,28 @@ public class Settings implements ISettings{
     @Override
     public boolean saveSettings()
     {
-        try
+        if (Einstellungen.einstellungenGeaendert)
         {
-            FileWriter file = new FileWriter(configfiles[this.activeconfigfile]);
-            BufferedWriter writer = new BufferedWriter(file);
-            this.einstellungen.store(writer, "Dies ist die Standardeinstellungsdatei für AutoBackup."); //TODO überprüfen ob in einstellungen alle Einstellungen vorhanden sind und ansonsten hinzufügen.
+            try
+            {
+                FileWriter file = new FileWriter(configfiles[this.activeconfigfile]);
+                BufferedWriter writer = new BufferedWriter(file);
+                this.einstellungen.store(writer, "Dies ist die Standardeinstellungsdatei für " + Const.PROGRAMM_NAME + " version " + Const.VERSION+ "."); //TODO überprüfen ob in einstellungen alle Einstellungen vorhanden sind und ansonsten hinzufügen.
+            }
+            catch (IOException e)
+            {
+                log.write("Es gab ein Problem beim Speichern der Einstellungen", LogLevel.FEHLER);
+                return false;
+            }
+            log.write("Die Einstellungen wurden gespeichert.");
         }
-        catch (IOException e)
+        else
         {
-            log.write("Es gab ein Problem beim Speichern der Einstellungen", 3);
-            return false;
+            log.write("Es wurden keine Einstellungen geändert.");
         }
-        log.write("Die Einstellungen wurden gespeichert.");
-        return true;
+        return true; 
     }
+   
 
     @Override
     public boolean setSettingsPath(String path)

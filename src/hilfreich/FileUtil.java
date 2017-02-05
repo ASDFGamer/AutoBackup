@@ -47,7 +47,7 @@ public class FileUtil {
      */
     public static boolean isFile(File path)
     {
-        return (path.exists());//&& !path.isDirectory());
+        return (path.exists() && !path.isDirectory());
     }
  
     /**

@@ -1,6 +1,8 @@
 
 package hilfreich;
 
+import java.util.List;
+
 /**
  *
  * @author Christoph Wildhagen 
@@ -17,6 +19,16 @@ public class Utils {
             }
         }
         return true;
+    }
+    
+    public static String[] toArray(List<String> list)
+    {
+        String[] array = new String[list.size()];
+        for (int i = 0; i< list.size(); i++)
+        {
+            array[i] = list.get(i);
+        }
+        return array;
     }
     
 }

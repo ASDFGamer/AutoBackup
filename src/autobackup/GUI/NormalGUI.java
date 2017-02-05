@@ -3,6 +3,7 @@ package autobackup.GUI;
 
 import hilfreich.Log;
 import hilfreich.LogLevel;
+import hilfreich.Utils;
 import java.io.File;
 import java.net.URL;
 import javafx.application.Application;
@@ -22,6 +23,9 @@ public class NormalGUI extends Application{
     
     @Override
     public void start(Stage primaryStage) throws Exception {
+        NormalGUIController controller = new NormalGUIController();
+        controller.setArgs(Utils.toArray(getParameters().getRaw()));
+        
         try
         {
             URL path = new File("src\\assets\\FXML\\NormalGUI.fxml").toURI().toURL();

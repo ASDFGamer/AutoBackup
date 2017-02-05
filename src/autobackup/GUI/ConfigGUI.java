@@ -7,6 +7,7 @@ package autobackup.GUI;
 
 import hilfreich.Log;
 import hilfreich.LogLevel;
+import hilfreich.Utils;
 import java.io.IOException;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -22,6 +23,8 @@ public class ConfigGUI extends Application{
     
     @Override
     public void start(Stage primaryStage) throws Exception {
+        NormalGUIController controller = new NormalGUIController();
+        controller.setArgs(Utils.toArray(getParameters().getRaw()));
         try
         {
             ConfigStage confStage = new ConfigStage(primaryStage);

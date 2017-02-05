@@ -6,7 +6,10 @@
 package autobackup.GUI;
 
 import autobackup.Data.Einstellungen;
+import autobackup.settings.ISettings;
+import autobackup.settings.Settings;
 import hilfreich.Log;
+import hilfreich.LogLevel;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -34,8 +37,15 @@ public class GUIController implements Initializable {
     @FXML
     private Log log = new Log(super.getClass().getSimpleName());
     
+    private static String[] args;
+    
+    //private ISettings settings = new Settings(Einstellungen.);
+    
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        Log log = new Log();
+        log.setStdFilePath(Einstellungen.logFolder.get());
+        log.clearLog();
         log.write("GUI wird initialisiert.");
     }
     
@@ -50,10 +60,24 @@ public class GUIController implements Initializable {
     @FXML
     private void quellordnerAction()
     {
+        ISettings settings = new Settings(Einstellungen.configFile.get());
         DirectoryChooser chooser = new DirectoryChooser();
+        if (settings.loadSettingsResult() && settings.settingexists("quellordner"))
+        {
+            chooser.setInitialDirectory(new File(settings.getSetting("quellordner")));
+        }
         chooser.setTitle("Quellordner");
         File quellordner = chooser.showDialog((Stage)this.quellordner.getScene().getWindow());
-        Einstellungen.ausgangsOrdner.set(quellordner.getAbsolutePath());
+        if(quellordner == null)
+        {
+            log.write("Es wurde keine Datei ausgewählt",LogLevel.WARNUNG);
+        }
+        else
+        {
+            Einstellungen.ausgangsOrdner.set(quellordner.getAbsolutePath());
+            settings.saveSettings();
+        }
+        
     }
     
     @FXML
@@ -65,5 +89,14 @@ public class GUIController implements Initializable {
         Einstellungen.zielOrdner.set(zielordner.getAbsolutePath());
     }
 
+    public boolean setArgs(String[] args)
+    {
+        this.args = args;
+        return true;
+    }
     
+    public String[] getArgs()
+    {
+        return args;
+    }
 }

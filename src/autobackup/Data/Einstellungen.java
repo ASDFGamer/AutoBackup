@@ -62,9 +62,14 @@ public class Einstellungen {
     public static SimpleStringProperty logFolder = new SimpleStringProperty(stdEinstellungen.logFolder);
     
     /**
-     * Dies gitb an wie viele Log maximal abgespeichert werden können.
+     * Dies gibt an wie viele Log maximal abgespeichert werden können.
      */
     public static SimpleIntegerProperty maxLogs = new SimpleIntegerProperty(stdEinstellungen.maxLogs);
+    
+    /**
+     * Dies gibt die Einstellungsdatei an.
+     */
+    public static SimpleStringProperty configFile = new SimpleStringProperty(stdEinstellungen.configFile);
     
     /**
      * Dies ist nur für den internen Gebrauch und zeigt ob Einstellungen geändert wurden 
@@ -75,6 +80,7 @@ public class Einstellungen {
     {
         Einstellungen.ausgangsOrdner.addListener(einstellungenaendern);
         Einstellungen.backuptiefe.addListener(einstellungenaendern);
+        Einstellungen.configFile.addListener(einstellungenaendern);
         Einstellungen.logFolder.addListener(einstellungenaendern);
         Einstellungen.maxLogs.addListener(einstellungenaendern);
         Einstellungen.writeLog.addListener(einstellungenaendern);
