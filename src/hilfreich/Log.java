@@ -158,7 +158,7 @@ public class Log implements ILog{
      * @param level Dies gibt das Logginglevel an ({@link LogLevel}).
      * @return true, falls alles gut ging, sonst false.
      */
-    public static boolean Write(String text, int level)
+    public static boolean Write(String text, LogLevel level)
     {
         return log.write(text, level);
     }
@@ -172,9 +172,9 @@ public class Log implements ILog{
     }
 
     @Override
-    public boolean write(String text, int level) {
+    public boolean write(String text, LogLevel level) {
         boolean result = true;
-        if (level >= this.minLoglevel)
+        if (level.getLevel() >= LogLevel.ERROR_LEVEL.getLevel())
         {
             if (this.consolenausgabe)
             {
@@ -327,11 +327,11 @@ public class Log implements ILog{
      * @param level Das Logginglevel
      * @return true, falls alles gut ging, sonst false.
      */
-    private boolean consoleWrite(String text, int level)
+    private boolean consoleWrite(String text, LogLevel level)
     {
         
         String logtext = getLogtext(text,level);
-        if (level < LogLevel.ERROR_LEVEL)
+        if (level.getLevel() < LogLevel.ERROR_LEVEL.getLevel())
         {
             System.out.println(logtext);
         }
@@ -348,7 +348,7 @@ public class Log implements ILog{
      * @param level Das Logginglevel
      * @return true, falls alles gut ging, sonst false.
      */
-    private boolean fileWrite(String text, int level)
+    private boolean fileWrite(String text, LogLevel level)
     {
         if (path != null)
         {
@@ -386,7 +386,7 @@ public class Log implements ILog{
      * @param level Das logginglevel
      * @return Den gesamten Text der gelogt werden soll (mit Zeit, logginlevel)
      */
-    private String getLogtext(String text, int level)
+    private String getLogtext(String text, LogLevel level)
     {
         String loglevel = getLevelText(level);
         String logtext = "";
@@ -418,21 +418,21 @@ public class Log implements ILog{
      * @param level Das Logginglevel als int.
      * @return Das Logginglevel als String.
      */
-    private String getLevelText(int level)
+    private String getLevelText(LogLevel level)
     {
         switch (level)
         {
-            case LogLevel.VERBOSE:      return "[Verbose]    ";
+            case VERBOSE:      return "[Verbose]    ";
             
-            case LogLevel.DEBUG:        return "[Debug]      ";
+            case DEBUG:        return "[Debug]      ";
             
-            case LogLevel.INFO:         return "[Info]       ";
+            case INFO:         return "[Info]       ";
             
-            case LogLevel.WARNUNG:      return "[Warnung]    ";
+            case WARNUNG:      return "[Warnung]    ";
             
-            case LogLevel.FEHLER:       return "[Fehler]     ";
+            case FEHLER:       return "[Fehler]     ";
             
-            case LogLevel.FATAL_ERROR:  return "[Fatal Error]";
+            case FATAL_ERROR:  return "[Fatal Error]";
             
             default:                    return "[Info]       ";
         }

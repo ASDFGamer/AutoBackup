@@ -1,6 +1,6 @@
 package hilfreich.deprecated;
 
-import hilfreich.Log;
+import hilfreich.deprecated.LogAlt;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -10,7 +10,7 @@ import java.util.Arrays;
 
 /**
  * Dies ist die Standardmethode, um Einstellungsdateien zu laden, die mit {@link Save_txt} erstellt wurden.
- * 
+ * @deprecated 
  * @author wildh
  * @version 0.2
  */
@@ -44,7 +44,7 @@ public class Load_txt{
 	 */
 	private int speicher_zeilen;
 	
-	private Log log=new Log(super.getClass().getName());
+	private LogAlt log=new LogAlt(super.getClass().getName());
 	
 	
 	// ---Konstruktoren---

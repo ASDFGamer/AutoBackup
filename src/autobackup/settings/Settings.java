@@ -96,7 +96,7 @@ public class Settings implements ISettings{
         } 
         catch (FileNotFoundException e)
         {
-            log.write("Die Datei existert nicht",3);
+            log.write("Die Datei existert nicht",LogLevel.FEHLER);
             return false;
         } 
         catch (IOException e)

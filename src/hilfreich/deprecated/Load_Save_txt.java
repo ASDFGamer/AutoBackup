@@ -4,6 +4,7 @@ package hilfreich.deprecated;
  * Dies soll als Überklasse für die Load und Save Klassen sein.
  * Dise Klasse wird benutzt, um auf Objekte von save_txt und load_txt zuzugreifen.
  * Hier sollen Sachen gespeichert werden, die für beide Klassen wichtig sind.
+ * @deprecated 
  * @author wildh
  * @version 0.5
  */

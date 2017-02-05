@@ -1,6 +1,6 @@
 package hilfreich.deprecated;
 
-import hilfreich.Log;
+import hilfreich.deprecated.LogAlt;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
@@ -56,7 +56,7 @@ public class Save_txt{
 	 * Dies ist der Log
 	 * @since 0.1
 	 */
-	Log log = new Log(super.getClass().getName());
+	LogAlt log = new LogAlt(super.getClass().getName());
 	
 	
 	//  --- Konstruktoren ---

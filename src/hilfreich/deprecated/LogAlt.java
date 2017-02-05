@@ -1,6 +1,5 @@
 package hilfreich.deprecated;
 
-import hilfreich.Log;
 import java.util.Calendar;
 import java.io.*;
 
@@ -500,7 +499,7 @@ public class LogAlt {
      * @return 
      */
     public static boolean consolewrite_static(String text){
-        Log log = new Log();
+        LogAlt log = new LogAlt();
         log.write(text);
         return true;
     }

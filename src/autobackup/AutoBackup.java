@@ -72,7 +72,7 @@ public class AutoBackup
                     }
                     else
                     {
-                        log.write("Die angegebene Configfile kann nicht gefunden werden",1);
+                        log.write("Die angegebene Configfile kann nicht gefunden werden",LogLevel.WARNUNG);
                     }
                 }
                 
@@ -206,7 +206,7 @@ public class AutoBackup
      */
     private void stdEinstellungen()
     {
-        log.write("Es werden die Standardeinstellungen benutzt. Bitte überprüfen ob diese verwendet werden sollen.",1);
+        log.write("Es werden die Standardeinstellungen benutzt. Bitte überprüfen ob diese verwendet werden sollen.",LogLevel.WARNUNG);
     }
 
     public boolean backup(String[] args)

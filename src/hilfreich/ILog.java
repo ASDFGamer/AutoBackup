@@ -27,7 +27,7 @@ public interface ILog {
      * @param Level Das Logginglevel ({@link LogLevel})
      * @return true, falls alles gut ging, sonst false.
      */
-    public boolean write(String text, int Level);
+    public boolean write(String text, LogLevel Level);
     
     /**
      * Hiermit wird die Datei geleert und in der Console wird es quasi geleert.
