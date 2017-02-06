@@ -29,13 +29,6 @@ public interface IBackup
     public abstract boolean setDestinationFolder(String path);
     
     /**
-     * Hiermit wird festgelegt ob die Dateien die gesichert werden die alten Versionen überschreiben oder als neue Version angelegt werden.
-     * @param overwrite true, falls es keine Versionen geben soll.
-     * @return true, falls alles geklappt hat, sonst false
-     */
-    public abstract boolean setOverwrite(boolean overwrite);
-    
-    /**
      * Hiermit wird die maximale Anzahl der Versionen festgelegt.
      * (Falls overwrite ausgeschaltet ist)
      * @param versions Die Anzahl der Versionen

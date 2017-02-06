@@ -2,7 +2,7 @@
 package autobackup.copyFile;
 
 import hilfreich.Convertable;
-import hilfreich.FileUtil;
+import static hilfreich.FileUtil.*;
 import hilfreich.Log;
 import static hilfreich.LogLevel.*;
 import java.io.BufferedWriter;
@@ -11,7 +11,6 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.CopyOption;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
@@ -47,7 +46,7 @@ public class Backup implements IBackup{
     /**
      * Dies gibt an ob alte Dateien überschrieben werden sollen, oder ob eine neue Version erzeugt werden soll.
      */
-    private boolean overwrite;
+    //private boolean overwrite;
     
     /**
      * Dies gibt an wie viele Versionen behalten werden sollen, wenn overwrite ausgeschaltet ist.
@@ -68,6 +67,8 @@ public class Backup implements IBackup{
      * Dies sind die Dateien die geändert wurden oder neu sind
      */
     private LinkedList<Path> neueDateien = new LinkedList<>();
+    
+    private ISichern sichern = new Lokal();
     
     //--Hilfsvariablen--
     
@@ -98,7 +99,7 @@ public class Backup implements IBackup{
             }
             
         }
-        boolean result = backupFiles();
+        boolean result = sichern.backupFiles(this.quellordner,this.zielordner,this.neueDateien,this.versions);
         if ( !createDateibaum() )
             {
                 log.write("Es konnte kein Dateibaum erstellt werden dies wird für weitere Backups weitere Probleme verursachen.", FEHLER);
@@ -110,7 +111,7 @@ public class Backup implements IBackup{
     @Override
     public boolean setSourceFolder(String path)
     {
-        if (!FileUtil.isFolder(path))
+        if (!isFolder(path))
         {
             return false;
         }
@@ -121,18 +122,11 @@ public class Backup implements IBackup{
     @Override
     public boolean setDestinationFolder(String path)
     {
-        if (!FileUtil.isFolder(path))
+        if (!isFolder(path))
         {
             return false;
         }
         this.zielordner = Paths.get(path);
-        return true;
-    }
-
-    @Override
-    public boolean setOverwrite(boolean overwrite)
-    {
-        this.overwrite = overwrite;
         return true;
     }
 
@@ -152,14 +146,14 @@ public class Backup implements IBackup{
 
     @Override
     public boolean setDateibaumPfad(String pfad) {
-        if (!FileUtil.isFile(pfad))
+        if (!isFile(pfad))
         {
-            if (FileUtil.isFolder(pfad))
+            if (isFolder(pfad))
             {
                 log.write(pfad + " verweist auf einen Ordner.");
                 return false;
             }
-            else if (FileUtil.createFile(pfad))
+            else if (createFile(pfad))
             {
                 log.write("Die Datei für den Dateibaum wurde erstellt.");
             }
@@ -331,6 +325,7 @@ public class Backup implements IBackup{
     /**
      * Diese Funktion sichert die ausgewählten Dateien in den Zielordner und legt falls nötig Versionen an.
      * @return true, falls das Backup geklappt hat, sonst false (für true muss die versionierung nicht geklappt haben).
+     * @deprecated 
      */
     private boolean backupFiles()
     {
@@ -342,18 +337,18 @@ public class Backup implements IBackup{
         {
             kurzpfad = datei.subpath(quellNameCount, datei.getNameCount());
             zielpfad = this.zielordner.resolve(kurzpfad);
-            if (FileUtil.isFolder(datei))
+            if (isFolder(datei))
             {
-                if (!FileUtil.isFolder(zielpfad))
+                if (!isFolder(zielpfad))
                 {
-                    FileUtil.createFolder(zielpfad);
+                    createFolder(zielpfad);
                 }
             }
-            else if (FileUtil.isFile(zielpfad)) //Die Datei hat sich geändert (oder es gab noch keinen Dateibaum)
+            else if (isFile(zielpfad)) //Die Datei hat sich geändert (oder es gab noch keinen Dateibaum)
             {
                 log.write("Die Datei " + zielpfad + " existiert schon.",DEBUG);
-                versionierung(zielpfad,1);
-                boolean result_temp = FileUtil.copyFile(datei, zielpfad, new CopyOption[]{REPLACE_EXISTING, COPY_ATTRIBUTES});
+                versionierung(zielpfad,1,this.versions);
+                boolean result_temp = copyFile(datei, zielpfad, new CopyOption[]{REPLACE_EXISTING, COPY_ATTRIBUTES});
                 if(!result_temp)
                 {
                     result = false;
@@ -361,7 +356,7 @@ public class Backup implements IBackup{
             }
             else //Es ist eine Datei die noch nicht kopiert wurde
             {
-                boolean result_temp = FileUtil.copyFile(datei, zielpfad, new CopyOption[]{COPY_ATTRIBUTES});
+                boolean result_temp = copyFile(datei, zielpfad, new CopyOption[]{COPY_ATTRIBUTES});
                 if(!result_temp)
                 {
                     result = false;
@@ -422,51 +417,7 @@ public class Backup implements IBackup{
         return geaendert;
     }
     
-    /**
-     * Dies erstellt alte versionen von einer Datei, falls möglich, wobei maximal {@link Backup#versions} Versionen erstellt werden.
-     * @param pfad Der Pfad zu der Datei von der eine weitere Version angelegt werden soll
-     * @param version Die Versionsnummer von der Version die jetzt angelegt werden soll.
-     * @return true, falls es geklappt hat, sonst false.
-     */
-    private boolean versionierung(Path pfad, int version)
-    {
-        boolean result = true;
-        if (this.overwrite && this.versions >= version)
-        {
-            if (version == 1)
-            {
-                log.write("Es werden die alten Version von "+pfad.toString() +" verschoben/gelöscht");
-            }
-            if (FileUtil.isFile(pfad))
-            {
-                Path newpfad;
-                if (version > 1)
-                {
-                    newpfad = Paths.get(pfad.toString().substring(0, pfad.toString().length()-1)+version);
-                }
-                else
-                {
-                    newpfad = Paths.get(pfad.toString()+".1");
-                }
-                result = versionierung(newpfad, version+1);
-                try
-                {
-                    Files.move(pfad, newpfad, REPLACE_EXISTING);
-                } 
-                catch (IOException ex)
-                {
-                    log.write("Es konnte " + pfad.toString() + " nicht umbenannt werden",WARNUNG);
-                    return false;
-                }
-            }
-            return result;
-        }
-        else
-        {
-            log.write("Es werden keine verschiedenen Versionen gespeichert oder es ist das versionslimit erreicht.",DEBUG); //Aussage ist sehr verweicht, aber eine bessere Aussage würde zu viel Leistung kosten.
-            return true;
-        }
-    }
+    
     
     /**
      * Dies überprüft ob alle notwendigen Einstellungen gesetzt wurden.

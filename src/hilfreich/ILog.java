@@ -138,4 +138,17 @@ public interface ILog {
      */
     public int getStdMinLoglevel();
     
+    /**
+     * Dies gibt an wie viele Versionen des Logs gespeichert werden sollen (0 stellt es aus).
+     * @param version Die Anzahl der Versionen
+     * @return true, falls alles geklappt hat, sonst false.
+     */
+    public boolean setstdVersionen(int version);
+    
+    /**
+     * Dies gibt zurück wie viele Versionen des Logs gespeichert werden.
+     * @return die Anzahl der Versionen.
+     */
+    public int getstdVersionen();
+    
 }

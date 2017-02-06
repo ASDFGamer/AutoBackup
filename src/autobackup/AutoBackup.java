@@ -120,8 +120,7 @@ public class AutoBackup
         backup.setDestinationFolder(Einstellungen.zielOrdner.get());
         //TODO als Einstellung hinzufügen
         backup.setOnlyChange(true);
-        backup.setOverwrite(true);
-        backup.setVersions(2); 
+        backup.setVersions(2); //TODO einstellung
         backup.setDateibaumPfad(Einstellungen.configFolder.get()+SEPERATOR+ "Dateibaum.txt"); //TODO eigene Einstellung?
         //Backup starten
         if (backup.backup())

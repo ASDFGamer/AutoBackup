@@ -7,6 +7,7 @@ package hilfreich;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Calendar;
 
 /**
@@ -49,6 +50,11 @@ public class Log implements ILog{
      * //TODO in Interface einfügen und GEtter/Setter hinzufügen
      */
     private static boolean stdKlassenausgabe = true;
+    
+    /**
+     * Dies gibt an wie alte viele Versionen gespeichert wreden sollen.
+     */
+    private static int versionen = 3;
     
     /**
      * Dies wird true gesetzt, falls der Pfad null ist und dieses schoon ausgegeben wurde.
@@ -204,6 +210,7 @@ public class Log implements ILog{
         {
             setFilepath();
         }
+        FileUtil.versionierung(Paths.get(filePath), 1, this.versionen);
         try {
             FileWriter fw = new FileWriter(filePath);
             fw.write("");
@@ -321,6 +328,20 @@ public class Log implements ILog{
     public int getStdMinLoglevel()
     {
         return Log.stdMinLoglevel;
+    }
+    
+    //-Versionierung-
+    @Override
+    public boolean setstdVersionen(int version)
+    {
+        versionen = version;
+        return true;
+    }
+
+    @Override
+    public int getstdVersionen()
+    {
+        return versionen;
     }
     
     //---private Methoden---
@@ -475,6 +496,8 @@ public class Log implements ILog{
         }
         return true;
     }
+
+    
 
     
 }

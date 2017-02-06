@@ -78,7 +78,7 @@ public class Einstellungen {
     public static SimpleStringProperty logFolder = new SimpleStringProperty(stdEinstellungen.logFolder);
     
     /**
-     * Dies gibt an wie viele Log maximal abgespeichert werden können.
+     * Dies gibt an wie viele Log maximal abgespeichert werden können. //TODO wie kann dies umgesetzt werden.
      */
     public static SimpleIntegerProperty maxLogs = new SimpleIntegerProperty(stdEinstellungen.maxLogs);
     
