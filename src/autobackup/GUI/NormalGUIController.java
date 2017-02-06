@@ -7,30 +7,40 @@ package autobackup.GUI;
 
 import autobackup.AutoBackup;
 import hilfreich.Log;
-import hilfreich.LogLevel;
+import static hilfreich.LogLevel.*;
 import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 /**
- *
+ * Der Controller für das Normale GUI
  * @author WILDHACH
  */
 public class NormalGUIController extends GUIController
 {
+    /**
+     * Der Button für erweiterte Einstellungen.
+     */
     @FXML
     Button erweiterteEinstellungen;
     
-    
-    
+    /**
+     * Mein Log
+     */
     Log log = new Log(super.getClass().getSimpleName());
     
+    /**
+     * Dies wird von dem Backup Button aufgerufen und startet das Backup.
+     */
     public void startBackup() 
     {
         AutoBackup backup = new AutoBackup();
         backup.backup(getArgs());
     }
     
+    /**
+     * Dies  wird von dem Button für erweiterte Einstellungen aufgerufen und öffnet ein Configfenster.
+     */
     public void moreConfig()
     {
         Stage stage = new Stage();
@@ -38,7 +48,7 @@ public class NormalGUIController extends GUIController
             Stage thisStage = (Stage)erweiterteEinstellungen.getScene().getWindow();
             ConfigStage confstage = new ConfigStage(stage,thisStage);
         } catch (IOException ex) {
-            log.write("Es gab ein Problem beim öffnen der Configseite",LogLevel.FEHLER);
+            log.write("Es gab ein Problem beim öffnen der Configseite",FEHLER);
             ex.printStackTrace();
             stage.close();
         }

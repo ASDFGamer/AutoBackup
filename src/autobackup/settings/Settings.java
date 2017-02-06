@@ -3,7 +3,10 @@ package autobackup.settings;
 
 import autobackup.Data.Const;
 import autobackup.Data.Einstellungen;
-import hilfreich.*;
+import static hilfreich.FileUtil.*;
+import hilfreich.Log;
+import static hilfreich.LogLevel.*;
+import static hilfreich.Utils.*;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -72,7 +75,7 @@ public class Settings implements ISettings{
             throw new IllegalArgumentException("Der übergebene String ist leer.");
         }
         log.write(this.configfiles[this.activeconfigfile].toString());
-        if (!FileUtil.isFile(this.configfiles[this.activeconfigfile]))
+        if (!isFile(this.configfiles[this.activeconfigfile]))
         {
             throw new IllegalArgumentException("Der Pfad zeigt nicht auf eine Datei.");
         }
@@ -80,6 +83,10 @@ public class Settings implements ISettings{
         loadSettingsResult = loadSettings();
     }
     
+    /**
+     * Dies lädt die Einstellungen.
+     * @return true, falls es geklappt hat, sonst false.
+     */
     private boolean loadSettings()
     {
         String supersettings = null;
@@ -96,27 +103,27 @@ public class Settings implements ISettings{
         } 
         catch (FileNotFoundException e)
         {
-            log.write("Die Datei existert nicht",LogLevel.FEHLER);
+            log.write("Die Datei existert nicht",FEHLER);
             return false;
         } 
         catch (IOException e)
         {
-            log.write("Es gab ein Problem beim einlesen der Datei.", LogLevel.FEHLER);
+            log.write("Es gab ein Problem beim einlesen der Datei.", FEHLER);
             return false;
         }
         if (supersettings != null)
         {
             if ( ++this.activeconfigfile >= this.maxConfigFiles )
             {
-                log.write("Es wurde die maximalanzahl an übergeordneten Configfiles erreicht.", LogLevel.WARNUNG);
+                log.write("Es wurde die maximalanzahl an übergeordneten Configfiles erreicht.", WARNUNG);
             }
-            else if (FileUtil.isFile(supersettings))//TODO funkt auch über Netzwerk?
+            else if (isFile(supersettings))//TODO funkt auch über Netzwerk?
             {
-                log.write("Der Pfad für die übergeordnete Configfile verweist nicht auf eine Datei.",LogLevel.WARNUNG);
+                log.write("Der Pfad für die übergeordnete Configfile verweist nicht auf eine Datei.",WARNUNG);
             }
-            else if (Utils.contains(this.configfiles,supersettings))
+            else if (contains(this.configfiles,supersettings))
             {
-                log.write("Der angegebene Pfad würde zu einer schon gelesenen Datei führen und somit zu einem Loop", LogLevel.WARNUNG);
+                log.write("Der angegebene Pfad würde zu einer schon gelesenen Datei führen und somit zu einem Loop", WARNUNG);
             }
             else
             {
@@ -181,7 +188,7 @@ public class Settings implements ISettings{
             }
             catch (IOException e)
             {
-                log.write("Es gab ein Problem beim Speichern der Einstellungen", LogLevel.FEHLER);
+                log.write("Es gab ein Problem beim Speichern der Einstellungen", FEHLER);
                 return false;
             }
             log.write("Die Einstellungen wurden gespeichert.");
@@ -197,7 +204,7 @@ public class Settings implements ISettings{
     @Override
     public boolean setSettingsPath(String path)
     {
-        if (FileUtil.isFile(path))
+        if (isFile(path))
         {
             this.configfiles[this.activeconfigfile] = new File(path);
             return true;

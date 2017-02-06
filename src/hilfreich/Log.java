@@ -442,6 +442,10 @@ public class Log implements ILog{
         }
     }
     
+    /**
+     * Dies gibt den Text für die Klasse zurück
+     * @return der Text für die Klasse.
+     */
     private String getKlassentext()
     {
         if (this.klassenausgabe == null)
@@ -454,12 +458,16 @@ public class Log implements ILog{
         }
         return this.klassenausgabe;
     }
-
+    
+    /**
+     * Dies wandelt den Pfad zu einem Pfad der auf eine Datei zeigt um, falls er es noch nicht tut.
+     * @return true, falls es geklappt hat, sonst false.
+     */
     private boolean setFilepath()//TODO Versionierung hier ansetzen.
     {
         if(FileUtil.isFolder(path))
         {
-            filePath = path+System.getProperty("file.separator")+"Log.txt";
+            filePath = path+FileUtil.SEPERATOR+"Log.txt";
         }
         else
         {

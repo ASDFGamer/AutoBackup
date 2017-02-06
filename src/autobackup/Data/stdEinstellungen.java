@@ -61,7 +61,7 @@ public class stdEinstellungen {
     public final static String configFolder = FileUtil.getConfigFolder(Const.PROGRAMM_NAME);
     
     /**
-     * Dies gibt die Einstellungsdatei an.
+     * Dies gibt den Ordner für die Einstellungsdateien an.
      */
     public final static String configFile = FileUtil.getConfigFile(Const.PROGRAMM_NAME, "config.txt");
     

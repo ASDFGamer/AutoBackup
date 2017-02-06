@@ -6,17 +6,12 @@
 package autobackup.GUI;
 
 import hilfreich.Log;
-import hilfreich.LogLevel;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import javafx.application.Platform;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ComboBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -26,16 +21,21 @@ import javafx.stage.Stage;
  */
 public class ConfigStage {
     
-    @FXML
-    private ChoiceBox backuptiefe;
-    
-    @FXML
-    private ComboBox loganzahl;
-    
+    /**
+     * Dies ist die ConfigStage
+     */
     private Stage stage;
     
+    /**
+     * Mein Log
+     */
     private Log log = new Log(super.getClass().getSimpleName());
     
+    /**
+     * Erstellt eine ConfigStage in der der gegebenen Stage.
+     * @param stage Die Stage die zu einer ConfigStage werden soll.
+     * @throws IOException falls auf die fxml nicht zugegriffen werden kann.
+     */
     public ConfigStage (Stage stage) throws IOException
     {
         URL path = new File("src\\assets\\FXML\\ConfigGUI.fxml").toURI().toURL();
@@ -48,6 +48,12 @@ public class ConfigStage {
         this.stage = stage;
     }
     
+    /**
+     * Erstellt eine ConfigStage in der der gegebenen Stage.
+     * @param stage Die Stage die zu einer ConfigStage werden soll.
+     * @param uebergeordnet Die Stage die dieser übergeordnet ist und somit zum Owner wird und nicht zu benutzten ist solange dieses Fenster offen ist.
+     * @throws IOException falls auf die fxml nicht zugegriffen werden kann.
+     */
     public ConfigStage (Stage stage, Stage uebergeordnet) throws IOException
     {
         URL path = new File("src\\assets\\FXML\\ConfigGUI.fxml").toURI().toURL();//TODO ändern für .Jar
@@ -61,6 +67,10 @@ public class ConfigStage {
         this.stage = stage;
     }
     
+    /**
+     * Dies gitb die Stage zurück
+     * @return Die Stage
+     */
     public Stage getStage()
     {
         return this.stage;

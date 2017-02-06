@@ -1,8 +1,9 @@
 
 package autobackup.GUI;
 
+import autobackup.AutoBackup;
 import hilfreich.Log;
-import hilfreich.LogLevel;
+import static hilfreich.LogLevel.*;
 import hilfreich.Utils;
 import java.io.File;
 import java.net.URL;
@@ -14,11 +15,14 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 /**
- *
+ * Dies startet das Normale Gui der Anwendung
  * @author Christoph Wildhagen 
  */
 public class NormalGUI extends Application{
-
+    
+    /**
+     * Mein Log
+     */
     Log log = new Log(super.getClass().getSimpleName());
     
     @Override
@@ -37,12 +41,16 @@ public class NormalGUI extends Application{
         }
         catch (Exception e)
         {
-            log.write("Die GUI konnte nicht geöffnet werden.",LogLevel.FATAL_ERROR);
+            log.write("Die GUI konnte nicht geöffnet werden.",FATAL_ERROR);
             e.printStackTrace();
             Platform.exit();
         } 
     }
     
+    /**
+     * Der Start ins Programm
+     * @param args Dieselben wie bei {@link AutoBackup#main(java.lang.String[]) 
+     */
     public static void main(String[] args) {
         launch(args);
     }

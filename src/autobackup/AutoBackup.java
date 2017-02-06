@@ -3,7 +3,7 @@ package autobackup;
 import autobackup.Data.*;
 import autobackup.copyFile.*;
 import autobackup.settings.*;
-import hilfreich.FileUtil;
+import static hilfreich.FileUtil.*;
 import hilfreich.Log;
 import static hilfreich.LogLevel.*;
 import java.io.FileOutputStream;
@@ -66,7 +66,7 @@ public class AutoBackup
                 if (arg.contains("-conf:") && arg.length()>5)
                 {
                     String pfad = arg.substring(6);
-                    if(FileUtil.isFile(pfad))
+                    if(isFile(pfad))
                     {
                         this.configfilePath = pfad;
                     }
@@ -122,7 +122,7 @@ public class AutoBackup
         backup.setOnlyChange(true);
         backup.setOverwrite(true);
         backup.setVersions(2); 
-        backup.setDateibaumPfad(Einstellungen.configFolder.get()+FileUtil.SEPERATOR+ "Dateibaum.txt"); //TODO eigene Einstellung?
+        backup.setDateibaumPfad(Einstellungen.configFolder.get()+SEPERATOR+ "Dateibaum.txt"); //TODO eigene Einstellung?
         //Backup starten
         if (backup.backup())
         {
@@ -152,14 +152,11 @@ public class AutoBackup
             }
         }
     }
-
-    private void end()
-    {
-        //TODO was sollte hier hin?
-    }
     
     /**
-     * Hiermit werden die Standardeinstellungen wie sie in {@link stdEinstellungen} festgelegt wurden geladen.
+     * Hiermit wird der Backupablauf in Gang gebracht.
+     * @param args Die Args von Main.
+     * @return true falls alles hingehauen hat.
      */
     public boolean backup(String[] args)
     {
@@ -170,7 +167,6 @@ public class AutoBackup
             this.load();
             this.run();
             this.save();
-            this.end();
         }
         catch (Exception e)
         {
@@ -189,6 +185,10 @@ public class AutoBackup
         return true;
     }
     
+    /**
+     * Hiermit wird der Backupablauf in Gang gebracht.
+     * @return true falls alles hingehauen hat.
+     */
     public boolean backup()
     {
         String[] args = null;

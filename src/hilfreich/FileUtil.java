@@ -6,13 +6,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.CopyOption;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 /**
@@ -171,6 +168,11 @@ public class FileUtil {
         return sfile;
     }
     
+    /**
+     * Dies erstellt die datei und wenn nötig auch jeden übergeordneten Ordner.
+     * @param datei Die Datei die erstellt werden soll als Pfad.
+     * @return true, falls es geklappt hat, sonst false.
+     */
     public static boolean createFile(String datei)
     {
         return createFile(Paths.get(datei));
@@ -244,6 +246,13 @@ public class FileUtil {
         return true;
     }
     
+    /**
+     * Dies kopiert eine Datei
+     * @param quelldatei Die Quelldatei
+     * @param zieldatei Die Zieldatei
+     * @param flag Die Einstellungen von {@link CopyOption}
+     * @return true, falls das kopieren geklappt hat, sonst false
+     */
     public static boolean copyFile(Path quelldatei, Path zieldatei, CopyOption[] flag)
     {
         try
@@ -261,6 +270,13 @@ public class FileUtil {
         return true;
     }
     
+    /**
+     * Dies schreibt eine Liste in eine Datei.
+     * @param <T> jedes Objekt das zu einem String umgewandelt werden kann mit .toString().
+     * @param liste Die Liste die gespeichtert werden soll.
+     * @param datei Die Datei in die geschrieben werden soll.
+     * @return true, falls es hingehauen hat, sonst false.
+     */
     public static <T> boolean print(List<T> liste, Path datei)
     {
         if (!createFile(datei))

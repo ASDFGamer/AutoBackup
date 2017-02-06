@@ -10,7 +10,7 @@ import autobackup.settings.ISettings;
 import autobackup.settings.Settings;
 import hilfreich.FileUtil;
 import hilfreich.Log;
-import hilfreich.LogLevel;
+import static hilfreich.LogLevel.*;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -145,7 +145,7 @@ public class GUIController implements Initializable {
         File ordner = chooser.showDialog((Stage)aufrufer.getScene().getWindow()); 
         if(ordner == null)
         {
-            log.write("Es wurde keine Datei ausgewählt",LogLevel.WARNUNG);
+            log.write("Es wurde keine Datei ausgewählt",WARNUNG);
             return null;
         }
         return ordner.getAbsolutePath();

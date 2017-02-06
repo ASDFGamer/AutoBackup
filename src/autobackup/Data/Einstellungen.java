@@ -25,6 +25,9 @@ public class Einstellungen {
         backuptiefe,configFile,erlaubteTypen,logFolder,maxLogs,quellOrdner,verboteneTypen,writeLog,zielOrdner;
     }
     
+    /**
+     * Dies ist der Listender der {@link Einstellungen#einstellungenGeaendert} auf true setzt, falls sich Einstellungen geändert haben.
+     */
     private static ChangeListener<Object> einstellungenaendern = new ChangeListener<Object>() {
         @Override
         public void changed(ObservableValue<? extends Object> observable, Object oldValue, Object newValue) {
@@ -96,8 +99,9 @@ public class Einstellungen {
     
     /**
      * Hiermit werden alle EventListender initialisert, damit abgefragt werden kann ob sich eine Einstellung geändert hat.
+     * Hiervor oder vor {@link Einstellungen#load(autobackup.settings.ISettings)  } sollte nicht auf die einzelnen Einstellungen zugegriffen wereden.
      */
-    private static void init()
+    public static void init()
     {
         Einstellungen.backuptiefe.addListener(einstellungenaendern);
         Einstellungen.configFile.addListener(einstellungenaendern);
@@ -111,21 +115,12 @@ public class Einstellungen {
     
     /**
      * Dies wird benutzt um die Einstellungen zu laden und zu initialisieren.
-     * Hiervor sollte nicht auf die einzelnen Einstellungen zugegriffen wereden.
+     * Hiervor oder vor {@link Einstellungen#init() } sollte nicht auf die einzelnen Einstellungen zugegriffen wereden.
      * @param config Die Settings aus der die Einstellungen geladen werden sollen.
      * @return true, falls alles gut ginsg, sonst false.
      */
     public static boolean load(ISettings config)
     {
-        //Listener entfernen, damit die initialiserung nicht als änderung aufgefasst wird.
-        Einstellungen.backuptiefe.removeListener(einstellungenaendern);
-        Einstellungen.configFile.removeListener(einstellungenaendern);
-        Einstellungen.configFolder.removeListener(einstellungenaendern);
-        Einstellungen.logFolder.removeListener(einstellungenaendern);
-        Einstellungen.maxLogs.removeListener(einstellungenaendern);
-        Einstellungen.quellOrdner.removeListener(einstellungenaendern);
-        Einstellungen.writeLog.removeListener(einstellungenaendern);
-        Einstellungen.zielOrdner.removeListener(einstellungenaendern);
         
         Log log = new Log(Class.class.getSimpleName());
         if (!config.loadSettingsResult())
@@ -174,6 +169,8 @@ public class Einstellungen {
         {
             Einstellungen.zielOrdner.set(config.getSetting(Einstellungen.namen.zielOrdner.toString()));
         }
+        
+        Einstellungen.einstellungenGeaendert=false;
         
         log.write("Die Einstellungen wurden geladen.");
         //TODO überprüfen ob die Einstellungen hinkommen.

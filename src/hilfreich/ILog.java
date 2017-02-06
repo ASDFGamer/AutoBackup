@@ -5,8 +5,6 @@
  */
 package hilfreich;
 
-import java.io.File;
-
 /**
  * Dies ist ein Interface für einen Log
  * Sinnvoll wäre es, wenn noch static Methoden z.B. für write hinzugefügt werden.

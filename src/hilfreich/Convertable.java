@@ -2,7 +2,6 @@
 package hilfreich;
 
 /**
- *
  * @author Christoph Wildhagen 
  */
 public class Convertable {

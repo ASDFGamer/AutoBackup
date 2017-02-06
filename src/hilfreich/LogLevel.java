@@ -15,11 +15,18 @@ public enum LogLevel
      */
     int level;
     
+    /**
+     * Dies speichert die richtige Zahl zu dem richtigen Logginglevel.
+     * @param level Das Level als int
+     */
     private LogLevel(int level)
     {
         this.level = level;
     }
     
+    /**
+     * Dies gibt das Logginglevel in Int umgewandelt zurück
+     */
     public int getLevel()
     {
         return level;
