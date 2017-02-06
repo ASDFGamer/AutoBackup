@@ -3,10 +3,10 @@ package autobackup;
 import autobackup.Data.*;
 import autobackup.copyFile.*;
 import autobackup.settings.*;
-import hilfreich.Convertable;
 import hilfreich.FileUtil;
 import hilfreich.Log;
-import hilfreich.LogLevel;
+import static hilfreich.LogLevel.*;
+import java.io.FileOutputStream;
 import java.io.PrintStream;
 
 /**
@@ -72,18 +72,18 @@ public class AutoBackup
                     }
                     else
                     {
-                        log.write("Die angegebene Configfile kann nicht gefunden werden",LogLevel.WARNUNG);
+                        log.write("Die angegebene Configfile kann nicht gefunden werden",WARNUNG);
                     }
                 }
                 
-                //More Arguments
+                //Mehr Argumente
             }
         }
         if (this.configfilePath==null)
         {
             String configFile = Einstellungen.configFile.get();
-            log.write("Es wird die standarmäßige Configfile genommen: ",LogLevel.WARNUNG);
-            log.write(configFile,LogLevel.INFO);
+            log.write("Es wird die standarmäßige Configfile genommen: ",WARNUNG);
+            log.write(configFile,INFO);
             this.configfilePath = configFile;
         }
         
@@ -100,7 +100,7 @@ public class AutoBackup
         }
         catch(IllegalArgumentException e)
         {
-            log.write("Es gab ein Problem beim öffnen der Einstellungsdatei, es werden Stdandardeinstellungen benutzt.",LogLevel.WARNUNG);
+            log.write("Es gab ein Problem beim öffnen der Einstellungsdatei, es werden Stdandardeinstellungen benutzt.",WARNUNG);
             return false;
         }
         
@@ -113,7 +113,7 @@ public class AutoBackup
     private void run()
     {
         log.write("Das Backup wird gestartet");
-        IBackup backup = new Backup();
+        Backup backup = new Backup();
         
         //Einstellungen für das Backup festlegenEinstellungen.ausgangsOrdner
         backup.setSourceFolder(Einstellungen.quellOrdner.get());
@@ -121,8 +121,8 @@ public class AutoBackup
         //TODO als Einstellung hinzufügen
         backup.setOnlyChange(true);
         backup.setOverwrite(true);
-        backup.setVersions(0);
-        
+        backup.setVersions(2); 
+        backup.setDateibaumPfad(Einstellungen.configFolder.get()+FileUtil.SEPERATOR+ "Dateibaum.txt"); //TODO eigene Einstellung?
         //Backup starten
         if (backup.backup())
         {
@@ -130,7 +130,7 @@ public class AutoBackup
         }
         else
         {
-            log.write("Das Backup wurde nicht erfolgreich abgeschlossen.", LogLevel.FATAL_ERROR);
+            log.write("Das Backup wurde nicht erfolgreich abgeschlossen.", FATAL_ERROR);
         }
     }
     
@@ -166,7 +166,6 @@ public class AutoBackup
         
         try 
         {
-            Einstellungen.init();
             this.analyzeArgs(args);
             this.load();
             this.run();
@@ -175,15 +174,15 @@ public class AutoBackup
         }
         catch (Exception e)
         {
-            log.write("Es gab einen kritischen Fehler der nicht abgefangen wurde", LogLevel.FATAL_ERROR);
+            log.write("Es gab einen kritischen Fehler der nicht abgefangen wurde", FATAL_ERROR);
             e.printStackTrace();
             try
             {
-                e.printStackTrace(new PrintStream(Einstellungen.logFolder.get()));
+                e.printStackTrace(new PrintStream(new FileOutputStream(new Log().getStdFilePath(),true)));
             }
             catch (Exception ex)
             {
-                log.write("Die Logfile wurde auch nicht gefunden :(", LogLevel.FEHLER);
+                log.write("Die Logfile wurde auch nicht gefunden :(", FEHLER);
             }
             return false;
         }

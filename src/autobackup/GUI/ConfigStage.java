@@ -50,7 +50,7 @@ public class ConfigStage {
     
     public ConfigStage (Stage stage, Stage uebergeordnet) throws IOException
     {
-        URL path = new File("src\\assets\\FXML\\ConfigGUI.fxml").toURI().toURL();
+        URL path = new File("src\\assets\\FXML\\ConfigGUI.fxml").toURI().toURL();//TODO ändern für .Jar
         Parent root = FXMLLoader.load(path);
         Scene scene = new Scene(root, 600, 400); //Pixel anpassen
         stage.setTitle("AutoBackup Config");

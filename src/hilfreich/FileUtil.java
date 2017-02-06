@@ -1,12 +1,16 @@
 
 package hilfreich;
 
+import static hilfreich.LogLevel.*;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.CopyOption;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -167,6 +171,11 @@ public class FileUtil {
         return sfile;
     }
     
+    public static boolean createFile(String datei)
+    {
+        return createFile(Paths.get(datei));
+    }
+    
     /**
      * Dies erstellt die datei und wenn nötig auch jeden übergeordneten Ordner.
      * @param datei Die Datei die erstellt werden soll.
@@ -210,12 +219,12 @@ public class FileUtil {
     {
         if (isFolder(ordner))
         {
-            Log.Write("Der Ordner " + ordner.toString() + " exitert schon und muss nicht erstellt werden.");
+            Log.Write("Der Ordner " + ordner.toString() + " existiert schon und muss nicht erstellt werden.");
             return true;
         }
         if( ordner.getRoot() == null)
         {
-            Log.Write("Die angegebene Datei hat keine Root komponente und kann deshalb nicht erstellt werden.",LogLevel.WARNUNG);
+            Log.Write("Die angegebene Datei hat keine Root komponente und kann deshalb nicht erstellt werden: " + ordner.toString(),LogLevel.WARNUNG);
             return false;
         }
         if( !isFolder(ordner.getParent()))
@@ -234,5 +243,44 @@ public class FileUtil {
         }
         return true;
     }
+    
+    public static boolean copyFile(Path quelldatei, Path zieldatei, CopyOption[] flag)
+    {
+        try
+        {
+            if (FileUtil.isFolder(Paths.get(zieldatei.getRoot().toString()+zieldatei.subpath(0, zieldatei.getNameCount()-1).toString())))
+            {
+                FileUtil.createFolder(Paths.get(zieldatei.getRoot().toString()+zieldatei.subpath(0, zieldatei.getNameCount()-1).toString()));
+            }
+            Files.copy(quelldatei, zieldatei, flag );
+        } catch (IOException ex)
+        {
+            Log.Write("Die Datei: " + quelldatei.toString() + " konnte nicht kopiert werden", FEHLER);
+            return false;
+        }
+        return true;
+    }
+    
+    public static <T> boolean print(List<T> liste, Path datei)
+    {
+        if (!createFile(datei))
+        {
+            Log.Write("Die Datei " + datei.toString() + " konnte nicht erstellt werden.", WARNUNG);
+            return false;
+        }
 
+        try (FileWriter writer = new FileWriter(datei.toFile())) 
+        {
+            while (!liste.isEmpty())
+            {
+                writer.write(liste.remove(0).toString() + System.getProperty("line.separator"));
+            }
+        }
+        catch (IOException ex) 
+        {
+            Log.Write("Die Datei " + datei.toString() + " konnte nicht geöffnet werden.", WARNUNG);
+        }
+        return true;
+    }
+    
 }

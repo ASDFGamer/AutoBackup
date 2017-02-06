@@ -4,10 +4,13 @@ package autobackup.copyFile;
 import hilfreich.Convertable;
 import hilfreich.FileUtil;
 import hilfreich.Log;
-import hilfreich.LogLevel;
+import static hilfreich.LogLevel.*;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -59,12 +62,12 @@ public class Backup implements IBackup{
     /**
      * Der Dateibaum wird geladen als Properties, TODO schauen ob es performanter geht.
      */
-    private Properties dateibaum;
+    private Properties dateibaum = new Properties();
     
     /**
      * Dies sind die Dateien die geändert wurden oder neu sind
      */
-    private LinkedList<Path> neueDateien;
+    private LinkedList<Path> neueDateien = new LinkedList<>();
     
     //--Hilfsvariablen--
     
@@ -81,15 +84,16 @@ public class Backup implements IBackup{
     {
         if ( !einstellungenGesetzt())
         {
-            log.write("Es wurden nicht alle notwendigen Einstellungen für das Backup festgelegt.", LogLevel.WARNUNG);
+            log.write("Es wurden nicht alle notwendigen Einstellungen für das Backup festgelegt.", WARNUNG);
             return false;
         }
+        log.write("Es wird von " + this.quellordner.toString() + " nach " + this.zielordner.toString() + " kopiert.");
         if ( !checkDateibaum())
         {
-            log.write("Es konnte kein Dateibaum gelesen werden, es werden alle Dateien gesichert.", LogLevel.FEHLER);
+            log.write("Es konnte kein Dateibaum gelesen werden, es werden alle Dateien gesichert.", FEHLER);
             if ( !checkBackupFiles(this.quellordner.toFile()))
             {
-                log.write("Der Backupordner enthält kein Backup, entweder dies ist der erste Durchlauf, oder es gab ein großes Problem.", LogLevel.FEHLER);
+                log.write("Der Backupordner enthält kein Backup, entweder dies ist der erste Durchlauf, oder es gab ein großes Problem.", FEHLER);
                 checkAllFiles(this.quellordner.toFile());
             }
             
@@ -97,7 +101,7 @@ public class Backup implements IBackup{
         boolean result = backupFiles();
         if ( !createDateibaum() )
             {
-                log.write("Es konnte kein Dateibaum erstellt werden dies wird für weitere Backups weitere Probleme verursachen.", LogLevel.FEHLER);
+                log.write("Es konnte kein Dateibaum erstellt werden dies wird für weitere Backups weitere Probleme verursachen.", FEHLER);
             }
         return result;
         
@@ -150,7 +154,20 @@ public class Backup implements IBackup{
     public boolean setDateibaumPfad(String pfad) {
         if (!FileUtil.isFile(pfad))
         {
-            return false;
+            if (FileUtil.isFolder(pfad))
+            {
+                log.write(pfad + " verweist auf einen Ordner.");
+                return false;
+            }
+            else if (FileUtil.createFile(pfad))
+            {
+                log.write("Die Datei für den Dateibaum wurde erstellt.");
+            }
+            else
+            {
+                log.write(pfad + " ist keine Datei.");
+                return false;
+            }
         }
         this.dateibaumpfad = new File(pfad);
         return true;
@@ -186,7 +203,6 @@ public class Backup implements IBackup{
         {
             return false;
         }
-        
         //Vergleichen der Dateien
         neueDateien = vergleicheDateien(this.quellordner.toFile());
         
@@ -228,6 +244,10 @@ public class Backup implements IBackup{
      */
     private boolean vergleicheDatei(Path datei)
     {
+        if (datei == null)
+        {
+            log.write("",FEHLER);
+        }
         Path zielpfad = this.zielordner.resolve(datei.subpath(this.quellordner.getNameCount(), datei.getNameCount())); //Hergeleitet von backupFiles()
         if (zielpfad.toFile().lastModified()<datei.toFile().lastModified())
         {
@@ -272,9 +292,17 @@ public class Backup implements IBackup{
      */
     private boolean createDateibaum()
     {
+        log.write("Der Pfad zum Dateibaum: " + this.dateibaumpfad);
         if (this.dateibaum.isEmpty())
         {
-            log.write("Es exitiert noch kein Dateibaum, ein neuer wird angelegt.");
+            log.write("Es existiert noch kein Dateibaum, ein neuer wird angelegt.");
+            LinkedList<Path> dateien = (LinkedList<Path>)this.neueDateien.clone();
+            Path element;
+            while (!dateien.isEmpty())
+            {
+                element = dateien.remove();
+                dateibaum.put(element.toString(), String.valueOf(element.toFile().lastModified()));
+            }
         }
         else
         {
@@ -287,9 +315,15 @@ public class Backup implements IBackup{
                 }
                 else
                 {
-                    this.dateibaum.put(neueDatei.toString(), neueDatei.toFile().lastModified());
+                    this.dateibaum.put(neueDatei.toString(), String.valueOf(neueDatei.toFile().lastModified()));
                 }
             }
+        }
+        try 
+        {
+            dateibaum.store(new BufferedWriter(new FileWriter(this.dateibaumpfad)),"");
+        } catch (IOException ex) {
+            log.write("Der Dateibaum konnte nicht gesichert werden.",WARNUNG);
         }
         return true;
     }
@@ -308,15 +342,32 @@ public class Backup implements IBackup{
         {
             kurzpfad = datei.subpath(quellNameCount, datei.getNameCount());
             zielpfad = this.zielordner.resolve(kurzpfad);
-            versionierung(zielpfad,1);
-            try
+            if (FileUtil.isFolder(datei))
             {
-                Files.copy(datei, zielpfad, COPY_ATTRIBUTES);
-            } catch (IOException ex)
-            {
-                log.write("Die Datei: " + datei.toString() + " konnte nicht kopiert werden", LogLevel.FEHLER);
-                result = false;
+                if (!FileUtil.isFolder(zielpfad))
+                {
+                    FileUtil.createFolder(zielpfad);
+                }
             }
+            else if (FileUtil.isFile(zielpfad)) //Die Datei hat sich geändert (oder es gab noch keinen Dateibaum)
+            {
+                log.write("Die Datei " + zielpfad + " existiert schon.",DEBUG);
+                versionierung(zielpfad,1);
+                boolean result_temp = FileUtil.copyFile(datei, zielpfad, new CopyOption[]{REPLACE_EXISTING, COPY_ATTRIBUTES});
+                if(!result_temp)
+                {
+                    result = false;
+                }
+            }
+            else //Es ist eine Datei die noch nicht kopiert wurde
+            {
+                boolean result_temp = FileUtil.copyFile(datei, zielpfad, new CopyOption[]{COPY_ATTRIBUTES});
+                if(!result_temp)
+                {
+                    result = false;
+                }
+            }
+            
         }
         return result;
     }
@@ -354,19 +405,19 @@ public class Backup implements IBackup{
         for (File datei : dateien)
         {
             path = datei.getAbsolutePath();//Könnte Probleme wegen File/Path umwandlung geben.
-            if ((!this.dateibaum.contains(path)) || !Convertable.toLong(this.dateibaum.getProperty(path)))
+            if ((!this.dateibaum.containsKey(path)) || !Convertable.toLong(this.dateibaum.getProperty(path)))
             {
                 geaendert.add(Paths.get(datei.getAbsolutePath()));
             }
-            else if (datei.lastModified()>(long)this.dateibaum.get(path))
+            else if (datei.lastModified()>Long.valueOf((String)this.dateibaum.get(path)))
             {
                 geaendert.add(Paths.get(datei.getAbsolutePath()));
             }
             //TODO über Hash gehen, da es Probleme mit der änderungszeit gben könnte.
-            if (datei.isDirectory())
+            /*if (datei.isDirectory())
             {
                 geaendert.addAll(vergleicheDateien(datei));
-            }
+            }*/
         }
         return geaendert;
     }
@@ -391,7 +442,7 @@ public class Backup implements IBackup{
                 Path newpfad;
                 if (version > 1)
                 {
-                    newpfad = Paths.get(pfad.toString().substring(0, pfad.toString().length()-2)+version);
+                    newpfad = Paths.get(pfad.toString().substring(0, pfad.toString().length()-1)+version);
                 }
                 else
                 {
@@ -404,7 +455,7 @@ public class Backup implements IBackup{
                 } 
                 catch (IOException ex)
                 {
-                    log.write("Es konnte " + pfad.toString() + " nicht umbenannt werden",LogLevel.WARNUNG);
+                    log.write("Es konnte " + pfad.toString() + " nicht umbenannt werden",WARNUNG);
                     return false;
                 }
             }
@@ -412,22 +463,26 @@ public class Backup implements IBackup{
         }
         else
         {
-            log.write("Es werden keine verschiedenen Versionen gespeichert oder es ist das versionslimit erreicht.",LogLevel.DEBUG); //Aussage ist sehr verweicht, aber eine bessere Aussage würde zu viel Leistung kosten.
+            log.write("Es werden keine verschiedenen Versionen gespeichert oder es ist das versionslimit erreicht.",DEBUG); //Aussage ist sehr verweicht, aber eine bessere Aussage würde zu viel Leistung kosten.
             return true;
         }
     }
-
+    
+    /**
+     * Dies überprüft ob alle notwendigen Einstellungen gesetzt wurden.
+     * @return true, falls alle Einstellungen gesetzt wurden, sonst false.
+     */
     private boolean einstellungenGesetzt()
     {
         boolean result = true;
         if(this.zielordner==null)
         {
-            log.write("Es wurde kein Zielordner angageben", LogLevel.FEHLER);
+            log.write("Es wurde kein Zielordner angageben", FEHLER);
             result = false;
         }
         if(this.quellordner==null)
         {
-            log.write("Es wurde kein Quellordner angageben", LogLevel.FEHLER);
+            log.write("Es wurde kein Quellordner angageben", FEHLER);
             result = false;
         }
         return result;

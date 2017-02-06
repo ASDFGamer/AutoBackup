@@ -275,7 +275,11 @@ public class Log implements ILog{
 
     @Override
     public String getStdFilePath() {
-        return Log.path;
+        if (filePath == null)
+        {
+            setFilepath();
+        }
+        return Log.filePath;
     }
     
     //-Zeitanzeige-

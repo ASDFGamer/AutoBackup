@@ -18,6 +18,9 @@ import javafx.beans.value.ObservableValue;
  */
 public class Einstellungen {
     
+    /**
+     * Die Namen für die Einstelllungen falls ein String gebraucht wird.
+     */
     public static enum namen {
         backuptiefe,configFile,erlaubteTypen,logFolder,maxLogs,quellOrdner,verboteneTypen,writeLog,zielOrdner;
     }
@@ -25,7 +28,10 @@ public class Einstellungen {
     private static ChangeListener<Object> einstellungenaendern = new ChangeListener<Object>() {
         @Override
         public void changed(ObservableValue<? extends Object> observable, Object oldValue, Object newValue) {
-            Einstellungen.einstellungenGeaendert=true;
+            if (oldValue != null && newValue != null && !oldValue.equals(newValue))
+            {
+                Einstellungen.einstellungenGeaendert=true;
+            }
         }
     };
     
@@ -79,14 +85,23 @@ public class Einstellungen {
     public static SimpleStringProperty configFile = new SimpleStringProperty(stdEinstellungen.configFile);
     
     /**
+     * Dies gibt den Ordner in dem die EInstellungsdateien sind an.
+     */
+    public static SimpleStringProperty configFolder = new SimpleStringProperty(stdEinstellungen.configFolder);
+    
+    /**
      * Dies ist nur für den internen Gebrauch und zeigt ob Einstellungen geändert wurden 
      */
     public static boolean einstellungenGeaendert = false;
     
-    public static void init()
+    /**
+     * Hiermit werden alle EventListender initialisert, damit abgefragt werden kann ob sich eine Einstellung geändert hat.
+     */
+    private static void init()
     {
         Einstellungen.backuptiefe.addListener(einstellungenaendern);
         Einstellungen.configFile.addListener(einstellungenaendern);
+        Einstellungen.configFolder.addListener(einstellungenaendern);
         Einstellungen.logFolder.addListener(einstellungenaendern);
         Einstellungen.maxLogs.addListener(einstellungenaendern);
         Einstellungen.quellOrdner.addListener(einstellungenaendern);
@@ -94,8 +109,24 @@ public class Einstellungen {
         Einstellungen.zielOrdner.addListener(einstellungenaendern);
     }
     
+    /**
+     * Dies wird benutzt um die Einstellungen zu laden und zu initialisieren.
+     * Hiervor sollte nicht auf die einzelnen Einstellungen zugegriffen wereden.
+     * @param config Die Settings aus der die Einstellungen geladen werden sollen.
+     * @return true, falls alles gut ginsg, sonst false.
+     */
     public static boolean load(ISettings config)
     {
+        //Listener entfernen, damit die initialiserung nicht als änderung aufgefasst wird.
+        Einstellungen.backuptiefe.removeListener(einstellungenaendern);
+        Einstellungen.configFile.removeListener(einstellungenaendern);
+        Einstellungen.configFolder.removeListener(einstellungenaendern);
+        Einstellungen.logFolder.removeListener(einstellungenaendern);
+        Einstellungen.maxLogs.removeListener(einstellungenaendern);
+        Einstellungen.quellOrdner.removeListener(einstellungenaendern);
+        Einstellungen.writeLog.removeListener(einstellungenaendern);
+        Einstellungen.zielOrdner.removeListener(einstellungenaendern);
+        
         Log log = new Log(Class.class.getSimpleName());
         if (!config.loadSettingsResult())
         {
@@ -146,6 +177,7 @@ public class Einstellungen {
         
         log.write("Die Einstellungen wurden geladen.");
         //TODO überprüfen ob die Einstellungen hinkommen.
+        
         return true;
     }
 
