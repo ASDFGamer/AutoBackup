@@ -23,12 +23,12 @@ public class NormalGUI extends Application{
     /**
      * Mein Log
      */
-    Log log = new Log(super.getClass().getSimpleName());
+    private Log log = new Log(super.getClass().getSimpleName());
     
     @Override
     public void start(Stage primaryStage) throws Exception {
         NormalGUIController controller = new NormalGUIController();
-        controller.setArgs(Utils.toArray(getParameters().getRaw()));
+        controller.setArgs(new String[0]);//Utils.toArray(getParameters().getRaw()));//TODO kann zu fehlern führen
         
         try
         {

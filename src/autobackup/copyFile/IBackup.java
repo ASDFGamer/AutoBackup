@@ -1,6 +1,7 @@
 package autobackup.copyFile;
 
 import java.io.File;
+import java.net.URL;
 
 /**
  * Dieses Interface soll benutzt werden um das Backup zu steuern
@@ -19,14 +20,14 @@ public interface IBackup
      * @param path Der Pfad zum Quellordner.
      * @return true, falls alles geklappt hat, sonst false.
      */
-    public abstract boolean setSourceFolder(String path);
+    public abstract boolean setSourceFolder(URL path);
     
     /**
      * Hiermit wird der Zielordner festgelegt/geändert.
      * @param path Der Pfad zum Zielordner.
      * @return true, falls alles geklappt hat, sonst false.
      */
-    public abstract boolean setDestinationFolder(String path);
+    public abstract boolean setDestinationFolder(URL path);
     
     /**
      * Hiermit wird die maximale Anzahl der Versionen festgelegt.

@@ -28,6 +28,13 @@ public interface ILog {
     public boolean write(String text, LogLevel Level);
     
     /**
+     * Hiermit wird der Stacktrace einer Exception in die Logfile geschrieben
+     * @param e Die Exception
+     * @return true, falls alles gut ging, sonst false.
+     */
+    public boolean write(Exception e);
+    
+    /**
      * Hiermit wird die Datei geleert und in der Console wird es quasi geleert.
      * @return true, falls alles gut ging, sonst false.
      */

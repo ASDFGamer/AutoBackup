@@ -1,5 +1,6 @@
 package autobackup.copyFile;
 
+import java.util.Properties;
 import java.nio.file.Path;
 import java.util.LinkedList;
 
@@ -9,5 +10,15 @@ import java.util.LinkedList;
  */
 public interface ISichern
 {
-    public boolean backupFiles(Path quellordner, Path zielordner, LinkedList<Path> neueDateien, int versionen);
+    public boolean backupFiles();
+    
+    public boolean setDateibaum(Properties dateibaum);
+    
+    public LinkedList<Path> getNeueDateien();
+    
+    public boolean vergleicheDatei(Path datei);
+    
+    public boolean checkBackupFiles();
+    
+    public boolean checkAllFiles();
 }

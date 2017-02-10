@@ -12,8 +12,11 @@ import hilfreich.FileUtil;
 import hilfreich.Log;
 import static hilfreich.LogLevel.*;
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -60,6 +63,7 @@ public class GUIController implements Initializable {
         log.setStdFilePath(Einstellungen.logFolder.get());
         log.clearLog();
         log.write("GUI wird initialisiert.");
+        Einstellungen.init();
     }
     
     /**
@@ -148,6 +152,11 @@ public class GUIController implements Initializable {
             log.write("Es wurde keine Datei ausgewählt",WARNUNG);
             return null;
         }
-        return ordner.getAbsolutePath();
+        try {
+            return ordner.toURI().toURL().toExternalForm();
+        } catch (MalformedURLException ex) {
+            log.write("Es gab ein Problem beim phrasen des ausgewählten Ordners: " + ordner.getAbsolutePath(),FEHLER);
+            return null;
+        }
     }
 }

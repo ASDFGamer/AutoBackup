@@ -8,6 +8,8 @@ import hilfreich.Log;
 import static hilfreich.LogLevel.*;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Dieses Programm soll als automatisches Backup Programm benutzt werden können.
@@ -116,8 +118,16 @@ public class AutoBackup
         Backup backup = new Backup();
         
         //Einstellungen für das Backup festlegenEinstellungen.ausgangsOrdner
-        backup.setSourceFolder(Einstellungen.quellOrdner.get());
-        backup.setDestinationFolder(Einstellungen.zielOrdner.get());
+        try
+        {
+            backup.setSourceFolder(new URL(Einstellungen.quellOrdner.get()));
+            backup.setDestinationFolder(new URL(Einstellungen.zielOrdner.get()));
+        }
+        catch (MalformedURLException e)
+        {
+            log.write("Die Quell- und Zielordner wurden im falschen Format angegeben.",FATAL_ERROR);
+            return;
+        }
         //TODO als Einstellung hinzufügen
         backup.setOnlyChange(true);
         backup.setVersions(2); //TODO einstellung
@@ -169,16 +179,8 @@ public class AutoBackup
         }
         catch (Exception e)
         {
-            log.write("Es gab einen kritischen Fehler der nicht abgefangen wurde", FATAL_ERROR);
+            log.write(e);
             e.printStackTrace();
-            try
-            {
-                e.printStackTrace(new PrintStream(new FileOutputStream(new Log().getStdFilePath(),true)));
-            }
-            catch (Exception ex)
-            {
-                log.write("Die Logfile wurde auch nicht gefunden :(", FEHLER);
-            }
             return false;
         }
         return true;

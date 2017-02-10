@@ -5,8 +5,12 @@
  */
 package hilfreich;
 
+import static hilfreich.LogLevel.FEHLER;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Paths;
 import java.util.Calendar;
 
@@ -169,6 +173,11 @@ public class Log implements ILog{
         return log.write(text, level);
     }
     
+    public static boolean Write(Exception e)
+    {
+        return log.write(e);
+    }
+    
     //---ILog Methoden---
     //--normale Benutzung--
     @Override
@@ -199,7 +208,23 @@ public class Log implements ILog{
         }
         return result;
     }
-
+    
+    @Override
+    public boolean write(Exception e)
+    {
+        write("Es gab einen Fehler:");
+        try
+        {
+            e.printStackTrace(new PrintStream(new FileOutputStream(new Log().getStdFilePath(),true)));
+        }
+        catch (FileNotFoundException ex)
+        {
+            log.write("Die Logfile wurde auch nicht gefunden :(", FEHLER);
+            return false;
+        }
+        return true;
+    }
+    
     @Override
     public boolean clearLog() {
         if (path == null)

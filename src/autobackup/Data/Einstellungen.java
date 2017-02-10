@@ -22,7 +22,7 @@ public class Einstellungen {
      * Die Namen für die Einstelllungen falls ein String gebraucht wird.
      */
     public static enum namen {
-        backuptiefe,configFile,erlaubteTypen,logFolder,maxLogs,quellOrdner,verboteneTypen,writeLog,zielOrdner;
+        backuptiefe,configFile,erlaubteTypen,ftpUser,ftpPasswort,logFolder,maxLogs,quellOrdner,verboteneTypen,writeLog,zielOrdner;
     }
     
     /**
@@ -92,6 +92,10 @@ public class Einstellungen {
      */
     public static SimpleStringProperty configFolder = new SimpleStringProperty(stdEinstellungen.configFolder);
     
+    public static transient SimpleStringProperty ftpUser = new SimpleStringProperty();
+    
+    public static transient SimpleStringProperty ftpPasswort = new SimpleStringProperty();
+    
     /**
      * Dies ist nur für den internen Gebrauch und zeigt ob Einstellungen geändert wurden 
      */
@@ -106,6 +110,8 @@ public class Einstellungen {
         Einstellungen.backuptiefe.addListener(einstellungenaendern);
         Einstellungen.configFile.addListener(einstellungenaendern);
         Einstellungen.configFolder.addListener(einstellungenaendern);
+        Einstellungen.ftpPasswort.addListener(einstellungenaendern);
+        Einstellungen.ftpUser.addListener(einstellungenaendern);
         Einstellungen.logFolder.addListener(einstellungenaendern);
         Einstellungen.maxLogs.addListener(einstellungenaendern);
         Einstellungen.quellOrdner.addListener(einstellungenaendern);
@@ -144,6 +150,16 @@ public class Einstellungen {
         }
         
         //TODO Einstellungen.erlaubteTypen;
+        
+        if (config.settingexists(Einstellungen.namen.ftpPasswort.toString()) && config.getSetting(Einstellungen.namen.ftpPasswort.toString()) != null)
+        {
+            Einstellungen.ftpPasswort.set(config.getSetting(Einstellungen.namen.ftpPasswort.toString()));//TODO verschlüsselung hinzufügen
+        }
+        
+        if (config.settingexists(Einstellungen.namen.ftpUser.toString()) && config.getSetting(Einstellungen.namen.ftpUser.toString()) != null)
+        {
+            Einstellungen.ftpUser.set(config.getSetting(Einstellungen.namen.ftpUser.toString()));
+        }
         
         if (config.settingexists(Einstellungen.namen.logFolder.toString()) && config.getSetting(Einstellungen.namen.logFolder.toString()) != null)
         {

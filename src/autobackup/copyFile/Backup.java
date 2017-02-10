@@ -5,17 +5,13 @@ import hilfreich.Convertable;
 import static hilfreich.FileUtil.*;
 import hilfreich.Log;
 import static hilfreich.LogLevel.*;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.CopyOption;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.Properties;
-import static java.nio.file.StandardCopyOption.*;
 
 /**
  *TODO File wenn notwendig durch Path austauschen
@@ -26,27 +22,17 @@ public class Backup implements IBackup{
     /**
      * Dies ist der Ordner der gesichert werden soll.
      */
-    private Path quellordner;
+    private URL quellordner;
     
     /**
      * Dies ist der Ordner in den gespeichert werden soll.
      */
-    private Path zielordner;
-    
-    /**
-     * Dies gibt an, ob der Ordner im Netzwerk liegt (für weniger lesezugriffe)
-     */
-    private boolean remote;
+    private URL zielordner;
     
     /**
      * Dies ist der Pfad zu der Datei in der der Dateibaum mit letzter änderung staht (für remote)
      */
     private File dateibaumpfad;
-    
-    /**
-     * Dies gibt an ob alte Dateien überschrieben werden sollen, oder ob eine neue Version erzeugt werden soll.
-     */
-    //private boolean overwrite;
     
     /**
      * Dies gibt an wie viele Versionen behalten werden sollen, wenn overwrite ausgeschaltet ist.
@@ -58,17 +44,9 @@ public class Backup implements IBackup{
      */
     private boolean onlyChange = true;
     
-    /**
-     * Der Dateibaum wird geladen als Properties, TODO schauen ob es performanter geht.
-     */
-    private Properties dateibaum = new Properties();
+    private ISichern sichern;
     
-    /**
-     * Dies sind die Dateien die geändert wurden oder neu sind
-     */
-    private LinkedList<Path> neueDateien = new LinkedList<>();
-    
-    private ISichern sichern = new Lokal();
+    private Dateibaum dateibaum;
     
     //--Hilfsvariablen--
     
@@ -87,20 +65,30 @@ public class Backup implements IBackup{
         {
             log.write("Es wurden nicht alle notwendigen Einstellungen für das Backup festgelegt.", WARNUNG);
             return false;
-        }
+        }     
         log.write("Es wird von " + this.quellordner.toString() + " nach " + this.zielordner.toString() + " kopiert.");
-        if ( !checkDateibaum())
+        setSichern();
+        sichern.backupFiles();
+        dateibaum = new Dateibaum(sichern,this.dateibaumpfad);
+        if (onlyChange)
         {
-            log.write("Es konnte kein Dateibaum gelesen werden, es werden alle Dateien gesichert.", FEHLER);
-            if ( !checkBackupFiles(this.quellordner.toFile()))
+            if ( !dateibaum.checkDateibaum())
             {
-                log.write("Der Backupordner enthält kein Backup, entweder dies ist der erste Durchlauf, oder es gab ein großes Problem.", FEHLER);
-                checkAllFiles(this.quellordner.toFile());
+                log.write("Es konnte kein Dateibaum gelesen werden, es werden alle Dateien manuell überprüft.", FEHLER);
+                if ( !sichern.checkBackupFiles())
+                {
+                    log.write("Der Backupordner enthält kein Backup, entweder dies ist der erste Durchlauf, oder es gab ein großes Problem.", FEHLER);
+                    sichern.checkAllFiles();
+                }  
             }
-            
         }
-        boolean result = sichern.backupFiles(this.quellordner,this.zielordner,this.neueDateien,this.versions);
-        if ( !createDateibaum() )
+        else
+        {
+            log.write("Es werden auf Wunsch alle Dateien gesichert.");
+            sichern.checkAllFiles();
+        }
+        boolean result = sichern.backupFiles();
+        if ( !dateibaum.createDateibaum() )
             {
                 log.write("Es konnte kein Dateibaum erstellt werden dies wird für weitere Backups weitere Probleme verursachen.", FEHLER);
             }
@@ -109,24 +97,16 @@ public class Backup implements IBackup{
     }
 
     @Override
-    public boolean setSourceFolder(String path)
+    public boolean setSourceFolder(URL path)
     {
-        if (!isFolder(path))
-        {
-            return false;
-        }
-        this.quellordner = Paths.get(path);
+        this.quellordner = path;
         return true;
     }
 
     @Override
-    public boolean setDestinationFolder(String path)
+    public boolean setDestinationFolder(URL path)
     {
-        if (!isFolder(path))
-        {
-            return false;
-        }
-        this.zielordner = Paths.get(path);
+        this.zielordner=path;
         return true;
     }
 
@@ -174,250 +154,6 @@ public class Backup implements IBackup{
     }
     
     //---Private Methoden---
-    /**
-     * Überprüft den Dateibaum aus der Datei auf änderungen in der jetzigen Dateistruktur. 
-     * Die Änderungen werden in {@link Backup#neueDateien gespeichert.
-     * @return true, wenn die überprüfung geklappt hat, sonst false.
-     */
-    private boolean checkDateibaum()
-    {
-        //Laden des Dateibaums
-        try 
-        {
-            FileInputStream in = new FileInputStream(this.dateibaumpfad);
-            this.dateibaum.load(in);
-            in.close();
-        }
-        catch (IOException e)
-        {
-            log.write("Die Datei mit dem Dateibaum konnte nicht geöffnet werden.");
-            return false;
-        }
-        catch (Exception e)
-        {
-            return false;
-        }
-        //Vergleichen der Dateien
-        neueDateien = vergleicheDateien(this.quellordner.toFile());
-        
-        return true;
-    }
-    
-    /**
-     * Dies überprüft die Dateien im Zielordner, ob sie neuer sind und trägt neue Dateien zum sichern ein
-     * @return true, falls alles geklappt hat, sonst false.
-     */
-    private boolean checkBackupFiles(File ordner)
-    {
-        if (ordner.isDirectory())
-        {
-            File[] dateien = ordner.listFiles();
-            for (File datei : dateien)
-            {
-                if (datei.isDirectory())
-                {
-                    checkBackupFiles(datei);
-                }
-                else
-                {
-                    vergleicheDatei(datei.toPath());
-                }
-            }
-        }
-        else
-        {
-            vergleicheDatei(ordner.toPath());
-        }
-        return true;
-    }
-    
-    /**
-     * Dies vergleicht eine Datei aus dem Quellordner mit ihrem Equivalent im Zielordner und fügt sie zu den zu sichernden Dateien hinzugefügt.
-     * @param datei Die Datei die überprüft werden soll.
-     * @return true, falls alles geklappt hat, sonst false.
-     */
-    private boolean vergleicheDatei(Path datei)
-    {
-        if (datei == null)
-        {
-            log.write("",FEHLER);
-        }
-        Path zielpfad = this.zielordner.resolve(datei.subpath(this.quellordner.getNameCount(), datei.getNameCount())); //Hergeleitet von backupFiles()
-        if (zielpfad.toFile().lastModified()<datei.toFile().lastModified())
-        {
-            this.neueDateien.add(datei);
-        }
-        return true;
-    }
-    
-    /**
-     * Dies markiert alle Dateien aus dem Quellordner zum sichern.
-     * @return true, falls es geklappt hat, sonst false.
-     */
-    private boolean checkAllFiles(File ordner)
-    {
-        
-        if (ordner.isDirectory())
-        {
-            File[] dateien = ordner.listFiles();
-            for (File datei : dateien)
-            {
-                if (datei.isDirectory())
-                {
-                    checkAllFiles(datei);
-                }
-                else
-                {
-                    this.neueDateien.add(datei.toPath());
-                }
-            }
-        }
-        else
-        {
-            this.neueDateien.add(ordner.toPath());
-        }
-        
-        return true;
-    }
-    
-    /**
-     * Dies erstellt den Dateibaum für den Ordner
-     * @return true, falls alles geklappt hat, sonst false.
-     */
-    private boolean createDateibaum()
-    {
-        log.write("Der Pfad zum Dateibaum: " + this.dateibaumpfad);
-        if (this.dateibaum.isEmpty())
-        {
-            log.write("Es existiert noch kein Dateibaum, ein neuer wird angelegt.");
-            LinkedList<Path> dateien = (LinkedList<Path>)this.neueDateien.clone();
-            Path element;
-            while (!dateien.isEmpty())
-            {
-                element = dateien.remove();
-                dateibaum.put(element.toString(), String.valueOf(element.toFile().lastModified()));
-            }
-        }
-        else
-        {
-            log.write("Es werden die Element die sich geneuert haben im Dateibaum geändert.");
-            for (Path neueDatei : this.neueDateien)
-            {
-                if (this.dateibaum.contains(neueDatei))
-                {
-                    this.dateibaum.replace(neueDatei.toString(), neueDatei.toFile().lastModified());
-                }
-                else
-                {
-                    this.dateibaum.put(neueDatei.toString(), String.valueOf(neueDatei.toFile().lastModified()));
-                }
-            }
-        }
-        try 
-        {
-            dateibaum.store(new BufferedWriter(new FileWriter(this.dateibaumpfad)),"");
-        } catch (IOException ex) {
-            log.write("Der Dateibaum konnte nicht gesichert werden.",WARNUNG);
-        }
-        return true;
-    }
-    
-    /**
-     * Diese Funktion sichert die ausgewählten Dateien in den Zielordner und legt falls nötig Versionen an.
-     * @return true, falls das Backup geklappt hat, sonst false (für true muss die versionierung nicht geklappt haben).
-     * @deprecated 
-     */
-    private boolean backupFiles()
-    {
-        boolean result = true;
-        Path kurzpfad;
-        Path zielpfad;
-        int quellNameCount = this.quellordner.getNameCount();
-        for (Path datei : this.neueDateien)
-        {
-            kurzpfad = datei.subpath(quellNameCount, datei.getNameCount());
-            zielpfad = this.zielordner.resolve(kurzpfad);
-            if (isFolder(datei))
-            {
-                if (!isFolder(zielpfad))
-                {
-                    createFolder(zielpfad);
-                }
-            }
-            else if (isFile(zielpfad)) //Die Datei hat sich geändert (oder es gab noch keinen Dateibaum)
-            {
-                log.write("Die Datei " + zielpfad + " existiert schon.",DEBUG);
-                versionierung(zielpfad,1,this.versions);
-                boolean result_temp = copyFile(datei, zielpfad, new CopyOption[]{REPLACE_EXISTING, COPY_ATTRIBUTES});
-                if(!result_temp)
-                {
-                    result = false;
-                }
-            }
-            else //Es ist eine Datei die noch nicht kopiert wurde
-            {
-                boolean result_temp = copyFile(datei, zielpfad, new CopyOption[]{COPY_ATTRIBUTES});
-                if(!result_temp)
-                {
-                    result = false;
-                }
-            }
-            
-        }
-        return result;
-    }
-    
-    /**
-     * Dies listet alle Ordner/Dateien in einem Ordner auf
-     * @param ordner der übergeordnete Ordner
-     * @return Die Dateistruktur als List
-     */
-    private LinkedList<String> dateistrukturEinlesen(File ordner)
-    {
-        LinkedList<String> dateistruktur = new LinkedList<>();
-        File[] dateien = ordner.listFiles();
-        for (File datei : dateien)
-        {
-            dateistruktur.add(datei.getAbsolutePath());
-            if (datei.isDirectory())
-            {
-                dateistruktur.addAll(dateistrukturEinlesen(datei));
-            }
-        }
-        return dateistruktur;
-    }
-    
-    /**
-     * Dies vergleicht die Dateien die in der Einstellungsdatei waren mit
-     * @param ordner Der übergeordnete Ordner
-     * @return Eine liste mit allen geänderten Dateien.
-     */
-    private LinkedList<Path> vergleicheDateien(File ordner)
-    {
-        File[] dateien = ordner.listFiles();
-        LinkedList<Path> geaendert = new LinkedList<>();
-        String path;
-        for (File datei : dateien)
-        {
-            path = datei.getAbsolutePath();//Könnte Probleme wegen File/Path umwandlung geben.
-            if ((!this.dateibaum.containsKey(path)) || !Convertable.toLong(this.dateibaum.getProperty(path)))
-            {
-                geaendert.add(Paths.get(datei.getAbsolutePath()));
-            }
-            else if (datei.lastModified()>Long.valueOf((String)this.dateibaum.get(path)))
-            {
-                geaendert.add(Paths.get(datei.getAbsolutePath()));
-            }
-            //TODO über Hash gehen, da es Probleme mit der änderungszeit gben könnte.
-            /*if (datei.isDirectory())
-            {
-                geaendert.addAll(vergleicheDateien(datei));
-            }*/
-        }
-        return geaendert;
-    }
-    
-    
     
     /**
      * Dies überprüft ob alle notwendigen Einstellungen gesetzt wurden.
@@ -438,5 +174,60 @@ public class Backup implements IBackup{
         }
         return result;
     }
+    
+    private boolean setSichern()
+    {
+        try
+        {
+            switch(this.zielordner.getProtocol())
+            {
+                case "file":    this.sichern=new Lokal(this.quellordner,this.zielordner,this.versions);
+                                break;
+                case "ftp":     this.sichern = new FTP(this.quellordner,this.zielordner,this.versions);
+                                break;
+                default:        log.write("Das Protokoll zum sichern ist unbekannt", FEHLER);
+                                return false;
+            }
+        }
+        catch(IllegalArgumentException e)
+        {
+            log.write(e);
+            log.write("Es gab Probleme beim zuordnen des Protokolls");
+            return false;
+        }
+        return true;
+    }
+    
+    /**
+     * Dies vergleicht die Dateien die in der Einstellungsdatei waren mit den Dateien in ordner
+     * @param ordnerpath Der übergeordnete Ordner
+     * @return Eine liste mit allen geänderten Dateien.
+     */
+    static public LinkedList<Path> vergleicheDateien(Properties dateibaum, Path ordnerpath)
+    {
+        File ordner = ordnerpath.toFile();
+        File[] dateien = ordner.listFiles();
+        LinkedList<Path> geaendert = new LinkedList<>();
+        String path;
+        for (File datei : dateien)
+        {
+            path = datei.getAbsolutePath();//Könnte Probleme wegen File/Path umwandlung geben.
+            if ((!dateibaum.containsKey(path)) || !Convertable.toLong(dateibaum.getProperty(path)))
+            {
+                geaendert.add(Paths.get(datei.getAbsolutePath()));
+            }
+            else if (datei.lastModified()>Long.valueOf((String)dateibaum.get(path)))
+            {
+                geaendert.add(Paths.get(datei.getAbsolutePath()));
+            }
+            //TODO über Hash gehen, da es Probleme mit der änderungszeit gben könnte.
+            /*if (datei.isDirectory())
+            {
+                geaendert.addAll(vergleicheDateien(datei));
+            }*/
+        }
+        return geaendert;
+    }
+    
 
 }
