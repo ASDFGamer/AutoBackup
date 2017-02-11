@@ -2,13 +2,16 @@
 package hilfreich;
 
 import static hilfreich.LogLevel.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.CopyOption;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import org.apache.commons.net.ftp.FTPClient;
 
 /**
@@ -18,56 +21,168 @@ import org.apache.commons.net.ftp.FTPClient;
 public class FTPUtil {
     
     /**
-     * Dies überprüft ob im aktuellen Verzeichnis eine Datei existiert.
-     * @param path
-     * @param client
-     * @return 
+     * Dies überprüft ob eine Datei existiert.
+     * @param path Der Pfad zu der Datei von dem aktuellen Ordner des Clients aus.
+     * @param client Der Client bei dem der Pfad überprüft werden soll
+     * @param stay legt fest ob der client in dem zuletzt verwendeten Verzeichnis bleiben soll oder ob er zurück zum Anfang soll.
+     * @return true, falls die Datei existiert, sonst false.
      */
-    public static boolean isFile(Path path,FTPClient client)
+    public static boolean isFileFTP(Path path,FTPClient client,boolean stay)
     {
+        int i = -1;
+        boolean result = true;
+        if (path.getNameCount()>1)
+        {
+            for (i = 0; i<path.getNameCount()-1;i++)
+            {
+                if (!isFolderFTP(path.getName(i),client,true))
+                {
+                    return false;
+                }
+            }
+        }
         try
         {
-            InputStream inputStream = client.retrieveFileStream(path.toString());
+            InputStream inputStream = client.retrieveFileStream(path.getName(path.getNameCount()-1).toString());
             int returnCode = client.getReplyCode();
-            return !(inputStream == null || returnCode == 550);
+            result = !(inputStream == null || returnCode == 550);
+  
+            if (!stay)
+            {
+                while (i<-1)
+                {
+                    client.changeToParentDirectory();
+                    i--;
+                }
+            }
         }
         catch (IOException e)
         {
-            return false;
+            result = false;
         }
+        return result;
     }
     
-    public static boolean isFolder(Path path, FTPClient client) 
+    /**
+     * Dies überprüft ob ein bestimmtes Verzeichnis existiert.
+     * @param path Der Pfad zum Verzeichnis vom aktuellen Pfad des Clients aus.
+     * @param client Der FTP-Client der überprüft werden soll.
+     * @param stay legt fest ob der client in dem zuletzt verwendeten Verzeichnis bleiben soll oder ob er zurück zum Anfang soll.
+     * @return true, falls der Ordner existiert, sonst false.
+     */
+    public static boolean isFolderFTP(Path path, FTPClient client,boolean stay) 
     {
+        int i = -1;
+        boolean result = true;
+        if (path.getNameCount()>1)
+        {
+            for (i = 0; i<path.getNameCount()-1;i++)
+            {
+                if (!isFolderFTP(path.getName(i),client,true))
+                {
+                    return false;
+                }
+            }
+        }
         try
         {
             client.changeWorkingDirectory(path.toString());
             int returnCode = client.getReplyCode();
-            return returnCode != 550;
+            result = returnCode != 550;
+            
+            if (!stay)
+            {
+                while (i<-1)
+                {
+                    client.changeToParentDirectory();
+                    i--;
+                }
+            }
         }
         catch (IOException e)
         {
-            return false;
+            result = false;
         }
+        return result;
     }
     
-    public static boolean copyFileFTP(Path quelldatei, Path zieldatei, CopyOption[] flag,FTPClient client)
+    public static boolean createFolderFTP(Path path,FTPClient client)
     {
-        
-        /*try
+        if(isFolderFTP(path,client,false))
         {
-            if (!FileUtil.isFolder(Paths.get(zieldatei.getRoot().toString()+zieldatei.subpath(0, zieldatei.getNameCount()-1).toString())))
+            Log.Write("Der Ordner " + path + " existiert schon auf dem Client " + client.getRemoteAddress().getHostAddress(),DEBUG);
+        }
+        if(path.getNameCount()>1)
+        {
+            if (!createFolderFTP(path.subpath(0, path.getNameCount()-2),client))
             {
-                FileUtil.createFolder(Paths.get(zieldatei.getRoot().toString()+zieldatei.subpath(0, zieldatei.getNameCount()-1).toString()));
+                return false;
             }
-            Files.copy(quelldatei, zieldatei, flag );
+        }
+        try
+        {
+            client.makeDirectory(path.toString());
         } catch (IOException ex)
         {
-            Log.Write("Die Datei: " + quelldatei.toString() + " konnte nicht kopiert werden", FEHLER);
+            Log.Write("Das Verzeichnis " + path + " konnte nicht auf " + client.getRemoteAddress().getHostAddress() + " erstellt werden.",WARNUNG);
             return false;
         }
-        return true;*/
+        return false;
+    }
+    
+    public static boolean copyFileFTP(Path quelldatei, Path zieldatei, FTPClient client)
+    {
+        try
+        {
+            if(!isFolderFTP(Paths.get(zieldatei.getRoot().toString()+zieldatei.subpath(0, zieldatei.getNameCount()-1).toString()),client,false))
+            {
+                createFolderFTP(Paths.get(zieldatei.getRoot().toString()+zieldatei.subpath(0, zieldatei.getNameCount()-1).toString()),client);
+            }
+            client.storeFile(zieldatei.toString(), new FileInputStream(quelldatei.toFile()));
+        } 
+        catch (FileNotFoundException e)
+        {
+            Log.Write("Die Datei die kopiert werden soll konte nicht gefunden werden.",FEHLER);
+            return false;
+        }
+        catch (IOException e)
+        {
+            Log.Write("Es gab ein Problem beim kopieren der Datei",FEHLER);
+            return false;
+        }
         return true;
+    }
+    
+    /**
+     * 
+     * @param datei
+     * @param client
+     * @return Das Datum wann die Datei dasletzte mal verändert wurde oder null falls es ein problem gab.
+     */
+    public static Date getModificationDate(Path datei,FTPClient client)
+    {
+        String servertime;
+        try
+        {
+           servertime =client.getModificationTime(datei.toString()); 
+        }
+        catch (IOException e)
+        {
+            Log.Write("Das letzte änderungsdatum konnte nicht ausgelesen werden.");
+            return null;
+        }
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        try {
+            String timePart = servertime.split(" ")[1];
+            Date modificationTime = dateFormat.parse(timePart);
+            System.out.println("File modification time: " + modificationTime);
+            return modificationTime;
+        } 
+        catch (ParseException ex) 
+        {
+            Log.Write("Das Datum konnte nicht gephrast werden.");
+            return null;
+        }  
     }
     
     /**
@@ -85,7 +200,7 @@ public class FTPUtil {
             {
                 Log.Write("Es werden die alten Version von "+pfad.toString() +" verschoben/gelöscht",DEBUG);
             }
-            if (FileUtil.isFile(pfad))
+            if (isFileFTP(pfad,client,false))
             {
                 Path newpfad;
                 if (version > 1)
@@ -99,7 +214,7 @@ public class FTPUtil {
                 result = versionierungFTP(newpfad, version+1,max_version,client);
                 try
                 {
-                    Files.move(pfad, newpfad, REPLACE_EXISTING);
+                    client.rename(pfad.toString(), newpfad.toString());//Problem falls Pfad und nicht nur Dateiname?
                 } 
                 catch (IOException ex)
                 {

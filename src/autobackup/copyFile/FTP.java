@@ -2,9 +2,8 @@
 package autobackup.copyFile;
 
 import autobackup.Data.Einstellungen;
-import static hilfreich.FileUtil.createFolder;
-import static hilfreich.FileUtil.isFile;
-import static hilfreich.FileUtil.isFolder;
+import static hilfreich.FTPUtil.*;
+import static hilfreich.FileUtil.*;
 import hilfreich.Log;
 import static hilfreich.LogLevel.*;
 import java.io.IOException;
@@ -12,6 +11,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.Properties;
 import org.apache.commons.net.ftp.FTPClient;
@@ -38,6 +38,8 @@ public class FTP implements ISichern {
     
     private Log log = new Log(this.getClass().getSimpleName());
     
+    private FTPClient client;
+    
     public FTP(URL quellordner,URL zielordner,int versions) throws IllegalArgumentException
     {
         if (!quellordner.getProtocol().equals("file")||!zielordner.getProtocol().equals("ftp"))//der quellordner sollte weiterhin lokal bleiben
@@ -55,6 +57,9 @@ public class FTP implements ISichern {
         {
             throw new IllegalArgumentException("Es kann kein Backup auf ftp gemacht werden da der Pfad nicht auf eine FTP-datei verweist sondern auf " + quellordner.getProtocol());
         }
+        client = new FTPClient();
+        FTPClientConfig config = new FTPClientConfig();//TODO ADD config
+        client.configure(config);
     }
     
     @Override
@@ -64,9 +69,7 @@ public class FTP implements ISichern {
         int quellNameCount = quellordnerPath.getNameCount();
         Path kurzpfad;
         Path zielpfad;
-        FTPClient client = new FTPClient();
-        FTPClientConfig config = new FTPClientConfig();//TODO ADD config
-        client.configure(config);
+        
         try
         {
             client.connect(this.zielordner.getHost());
@@ -95,9 +98,9 @@ public class FTP implements ISichern {
                 else if (isFile(zielpfad)) //Die Datei hat sich geändert (oder es gab noch keinen Dateibaum)
                 {
                     log.write("Die Datei " + zielpfad + " existiert schon, hat sich aber geändert.");
-                    //versionierungFTP(zielpfad,1,this.versions);
-                    //boolean result_temp = copyFileFTP(datei, zielpfad, new CopyOption[]{REPLACE_EXISTING, COPY_ATTRIBUTES},client);
-                    //if(!result_temp)
+                    versionierungFTP(zielpfad,1,this.versions,client);
+                    boolean result_temp = copyFileFTP(datei, zielpfad,client);
+                    if(!result_temp)
                     {
                         result = false;
                     }
@@ -105,8 +108,8 @@ public class FTP implements ISichern {
                 else //Es ist eine Datei die noch nicht kopiert wurde
                 {
                     log.write("Die Datei " + datei.toString() + " wird gesichert");
-                    //boolean result_temp = copyFileFTP(datei, zielpfad, new CopyOption[]{COPY_ATTRIBUTES},client);
-                    //if(!result_temp)
+                    boolean result_temp = copyFileFTP(datei, zielpfad,client);
+                    if(!result_temp)
                     {
                         result = false;
                     }
@@ -153,7 +156,26 @@ public class FTP implements ISichern {
     @Override
     public boolean vergleicheDatei(Path datei)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (datei == null)
+        {
+            log.write("Es wird mit einer leeren Datei verglichen",FEHLER);
+            return false;
+        }
+        Path kurzpfad = datei.subpath(this.quellordnerPath.getNameCount(), datei.getNameCount());
+        if (isFileFTP(kurzpfad,client,false) || isFolderFTP(kurzpfad,client,false))
+        {
+            Date ftptime = getModificationDate(kurzpfad, client);
+            if (ftptime == null)
+            {
+                ftptime = new Date(0L);
+            }
+            Date lokaltime = new Date(datei.toFile().lastModified());
+            if (ftptime.compareTo(lokaltime)<0)
+            {
+                this.neueDateien.add(datei);
+            }
+        }
+        return true;
     }
 
     @Override

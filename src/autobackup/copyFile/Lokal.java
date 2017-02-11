@@ -1,7 +1,6 @@
 
 package autobackup.copyFile;
 
-import hilfreich.Convertable;
 import static hilfreich.FileUtil.*;
 import hilfreich.Log;
 import static hilfreich.LogLevel.*;

@@ -4,7 +4,6 @@ package autobackup.GUI;
 import autobackup.AutoBackup;
 import hilfreich.Log;
 import static hilfreich.LogLevel.*;
-import hilfreich.Utils;
 import java.io.File;
 import java.net.URL;
 import javafx.application.Application;
