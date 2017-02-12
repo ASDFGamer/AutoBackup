@@ -15,7 +15,7 @@ public class Const {
     /**
      * Die Version des Programms
      */
-    static final public String VERSION = "0.1";
+    static final public String VERSION = "0.2";
     
     /**
      * Die Verschiedenen Eigenschaften die der Log haben kann. TODO Enum

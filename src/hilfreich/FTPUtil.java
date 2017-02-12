@@ -6,13 +6,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.CopyOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPReply;
 
 /**
  *
@@ -29,6 +29,15 @@ public class FTPUtil {
      */
     public static boolean isFileFTP(Path path,FTPClient client,boolean stay)
     {
+        String dirnow = "";
+        try
+        {
+            dirnow = client.printWorkingDirectory();
+        }
+        catch (IOException e)
+        {
+            Log.Write("Das aktuelle Verzeichnis konnte nicht ausgelesen werden.");
+        }
         int i = -1;
         boolean result = true;
         if (path.getNameCount()>1)
@@ -49,11 +58,7 @@ public class FTPUtil {
   
             if (!stay)
             {
-                while (i<-1)
-                {
-                    client.changeToParentDirectory();
-                    i--;
-                }
+                changeToDirROOT(dirnow, client);
             }
         }
         catch (IOException e)
@@ -61,6 +66,11 @@ public class FTPUtil {
             result = false;
         }
         return result;
+    }
+    
+    public static boolean isFolderFTP(String path, FTPClient client,boolean stay)
+    {
+        return isFolderFTP(Paths.get(path),client,stay);
     }
     
     /**
@@ -72,6 +82,15 @@ public class FTPUtil {
      */
     public static boolean isFolderFTP(Path path, FTPClient client,boolean stay) 
     {
+        String dirnow = "";
+        try
+        {
+            dirnow = client.printWorkingDirectory();
+        }
+        catch (IOException e)
+        {
+            Log.Write("Das aktuelle Verzeichnis konnte nicht ausgelesen werden.");
+        }
         int i = -1;
         boolean result = true;
         if (path.getNameCount()>1)
@@ -92,11 +111,7 @@ public class FTPUtil {
             
             if (!stay)
             {
-                while (i<-1)
-                {
-                    client.changeToParentDirectory();
-                    i--;
-                }
+                changeToDirROOT(dirnow, client);
             }
         }
         catch (IOException e)
@@ -106,15 +121,26 @@ public class FTPUtil {
         return result;
     }
     
-    public static boolean createFolderFTP(Path path,FTPClient client)
+    public static boolean createFolderFTP(Path path,FTPClient client,boolean ersteraufruf)
     {
+        String dirnow = "";
+        try
+        {
+            dirnow = client.printWorkingDirectory();
+        }
+        catch (IOException e)
+        {
+            Log.Write("Das aktuelle Verzeichnis konnte nicht ausgelesen werden.");
+        }
+        
         if(isFolderFTP(path,client,false))
         {
-            Log.Write("Der Ordner " + path + " existiert schon auf dem Client " + client.getRemoteAddress().getHostAddress(),DEBUG);
+            Log.Write("Der Ordner " + path + " existiert schon auf dem Client " + client.getRemoteAddress().getHostAddress());
         }
         if(path.getNameCount()>1)
         {
-            if (!createFolderFTP(path.subpath(0, path.getNameCount()-2),client))
+            Log.Write(path.toString() + " zu " + path.subpath(0, path.getNameCount()-1).toString());
+            if (!createFolderFTP(path.subpath(0, path.getNameCount()-1),client,false))
             {
                 return false;
             }
@@ -122,23 +148,52 @@ public class FTPUtil {
         try
         {
             client.makeDirectory(path.toString());
+            if (ersteraufruf)
+            {
+                changeToDirROOT(dirnow, client);
+                Log.Write("Working Directory: " + client.printWorkingDirectory() + "create Dir");
+            }
+            
         } catch (IOException ex)
         {
             Log.Write("Das Verzeichnis " + path + " konnte nicht auf " + client.getRemoteAddress().getHostAddress() + " erstellt werden.",WARNUNG);
             return false;
         }
-        return false;
+        
+        return true;
     }
     
     public static boolean copyFileFTP(Path quelldatei, Path zieldatei, FTPClient client)
     {
+        boolean result = true;
+        String dirnow = "";
         try
         {
-            if(!isFolderFTP(Paths.get(zieldatei.getRoot().toString()+zieldatei.subpath(0, zieldatei.getNameCount()-1).toString()),client,false))
+            dirnow = client.printWorkingDirectory();
+        }
+        catch (IOException e)
+        {
+            Log.Write("Das aktuelle Verzeichnis konnte nicht ausgelesen werden.");
+        }
+        try
+        {
+            if(zieldatei.getNameCount()>1&&!isFolderFTP(zieldatei.subpath(0, zieldatei.getNameCount()),client,false))
             {
-                createFolderFTP(Paths.get(zieldatei.getRoot().toString()+zieldatei.subpath(0, zieldatei.getNameCount()-1).toString()),client);
+                Log.Write("Create Folder: " + zieldatei.subpath(0, zieldatei.getNameCount()-1));
+                createFolderFTP(zieldatei.subpath(0, zieldatei.getNameCount()-1),client,true);
+                client.changeWorkingDirectory(zieldatei.subpath(0, zieldatei.getNameCount()).toString());
             }
-            client.storeFile(zieldatei.toString(), new FileInputStream(quelldatei.toFile()));
+            FileInputStream fis = new FileInputStream(quelldatei.toFile());
+            client.storeFile(zieldatei.toString(), fis );
+            fis.close();
+            int reply = client.getReplyCode(); //geht nicht in eine Zeile da es sich dann aufhängt
+            if (!FTPReply.isPositiveCompletion(reply))
+            {
+                Log.Write(client.getReplyString());
+                result =  false;
+            }
+            changeToDirROOT(dirnow, client);
+            Log.Write("Working Directory: " + client.printWorkingDirectory() + "copyFile");
         } 
         catch (FileNotFoundException e)
         {
@@ -150,7 +205,7 @@ public class FTPUtil {
             Log.Write("Es gab ein Problem beim kopieren der Datei",FEHLER);
             return false;
         }
-        return true;
+        return result;
     }
     
     /**
@@ -229,6 +284,84 @@ public class FTPUtil {
             Log.Write("Es werden keine verschiedenen Versionen gespeichert oder es ist das versionslimit erreicht.",DEBUG); 
             return true;
         }
+    }
+    
+    public static boolean changeToDir(String directory,FTPClient client) //noch nicht getestet
+    {
+        
+        boolean noError = true;
+        boolean result = false;
+        int reply;
+        String tempdir = "";
+        try
+        {
+            String dirnow = client.printWorkingDirectory();
+            while (noError)
+            {
+                client.changeToParentDirectory();
+                reply = client.getReplyCode();
+                noError = FTPReply.isPositiveCompletion(reply) && !tempdir.equals(client.printWorkingDirectory());
+                if (isFolderFTP(directory,client,false))
+                {
+                    client.changeWorkingDirectory(directory.toString());
+                    result = true;
+                }
+                tempdir = client.printWorkingDirectory();
+                
+            }
+            if(!result)
+            {
+                client.changeWorkingDirectory(dirnow);
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        catch (IOException e)
+        {
+            return false;
+        }  
+    }
+    
+    private static boolean changeToDirROOT(String directory,FTPClient client) //public machen wegen performance? (keine lange rekursion über isFolderFTP
+    {
+        
+        boolean noError = true;
+        boolean result = false;
+        int reply;
+        String tempdir = "";
+        try
+        {
+            String dirnow = client.printWorkingDirectory();
+            while (noError)
+            {
+                client.changeToParentDirectory();
+                
+                reply = client.getReplyCode();
+                noError = FTPReply.isPositiveCompletion(reply) && !tempdir.equals(client.printWorkingDirectory());
+                tempdir = client.printWorkingDirectory();
+            }
+            client.changeWorkingDirectory(directory.toString());
+            if (directory.equals(client.printWorkingDirectory()))
+            {
+                result = true;
+            }
+            if(!result)
+            {
+                client.changeWorkingDirectory(dirnow);
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        catch (IOException e)
+        {
+            return false;
+        }  
     }
     
     

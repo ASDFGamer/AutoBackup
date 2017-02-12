@@ -68,7 +68,6 @@ public class Backup implements IBackup{
         }     
         log.write("Es wird von " + this.quellordner.toString() + " nach " + this.zielordner.toString() + " kopiert.");
         setSichern();
-        sichern.backupFiles();
         dateibaum = new Dateibaum(sichern,this.dateibaumpfad);
         if (onlyChange)
         {
@@ -212,13 +211,21 @@ public class Backup implements IBackup{
         for (File datei : dateien)
         {
             path = datei.getAbsolutePath();//Könnte Probleme wegen File/Path umwandlung geben.
-            if ((!dateibaum.containsKey(path)) || !Convertable.toLong(dateibaum.getProperty(path)))
+            Log.Write(datei.getAbsolutePath() + " wird überprüft.");
+            if (isFolder(path))
+            {
+                Log.Write(datei.getAbsolutePath() + "ist ein Ordner.");
+                geaendert.addAll(vergleicheDateien(dateibaum, datei.toPath()));
+            }
+            else if ((!dateibaum.containsKey(path)) || !Convertable.toLong(dateibaum.getProperty(path)))
             {
                 geaendert.add(Paths.get(datei.getAbsolutePath()));
+                Log.Write(datei.getAbsolutePath() + "ist eine neue Datei.");
             }
             else if (datei.lastModified()>Long.valueOf((String)dateibaum.get(path)))
             {
                 geaendert.add(Paths.get(datei.getAbsolutePath()));
+                Log.Write(datei.getAbsolutePath() + "ist eine geänderte Datei.");
             }
             //TODO über Hash gehen, da es Probleme mit der änderungszeit gben könnte.
             /*if (datei.isDirectory())

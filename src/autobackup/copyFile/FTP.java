@@ -7,6 +7,7 @@ import static hilfreich.FileUtil.*;
 import hilfreich.Log;
 import static hilfreich.LogLevel.*;
 import java.io.IOException;
+import java.net.SocketException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -14,7 +15,10 @@ import java.nio.file.Paths;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.net.ftp.FTPClient;
+import static org.apache.commons.net.ftp.FTP.*;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPReply;
 
@@ -34,7 +38,7 @@ public class FTP implements ISichern {
     
     private Properties dateibaum;
     
-    private LinkedList<Path> neueDateien;
+    private LinkedList<Path> neueDateien = new LinkedList<>();
     
     private Log log = new Log(this.getClass().getSimpleName());
     
@@ -60,6 +64,7 @@ public class FTP implements ISichern {
         client = new FTPClient();
         FTPClientConfig config = new FTPClientConfig();//TODO ADD config
         client.configure(config);
+        
     }
     
     @Override
@@ -67,37 +72,30 @@ public class FTP implements ISichern {
     {
         boolean result = true;
         int quellNameCount = quellordnerPath.getNameCount();
-        Path kurzpfad;
         Path zielpfad;
-        
         try
         {
-            client.connect(this.zielordner.getHost());
-            int reply = client.getReplyCode();
-            if(!FTPReply.isPositiveCompletion(reply)) 
+            if (!connect())
             {
-                client.disconnect();
-                log.write("Der FTP Server hat die verbindung abgelehnt.",FEHLER);
+                log.write("Es konnte keine Verbindung zum FTP-Server hergestellt werden",FEHLER);
                 return false;
             }
-            client.login(Einstellungen.ftpUser.get(), Einstellungen.ftpPasswort.get());
-            //log.write(client.listDirectories().length + "");
             client.changeWorkingDirectory(this.zielordner.getPath());
-            //log.write(client.listDirectories().length + "");
             for (Path datei : neueDateien)
             {
-                kurzpfad = datei.subpath(quellNameCount, datei.getNameCount());
-                zielpfad = Paths.get(zielordner.getPath()).resolve(kurzpfad);
+                log.write(datei.toString());
+                zielpfad = datei.subpath(quellNameCount, datei.getNameCount());
                 if (isFolder(datei))
                 {
-                    if (!isFolder(zielpfad))
+                    log.write(datei.toString() + " ist ein Ordner");
+                    if (!isFolderFTP(zielpfad,client,false))
                     {
-                        createFolder(zielpfad);
+                        createFolderFTP(zielpfad,client,false);
                     }
                 }
                 else if (isFile(zielpfad)) //Die Datei hat sich geändert (oder es gab noch keinen Dateibaum)
                 {
-                    log.write("Die Datei " + zielpfad + " existiert schon, hat sich aber geändert.");
+                    log.write("Die Datei " + datei.toString() + " existiert schon, hat sich aber geändert.");
                     versionierungFTP(zielpfad,1,this.versions,client);
                     boolean result_temp = copyFileFTP(datei, zielpfad,client);
                     if(!result_temp)
@@ -107,7 +105,7 @@ public class FTP implements ISichern {
                 }
                 else //Es ist eine Datei die noch nicht kopiert wurde
                 {
-                    log.write("Die Datei " + datei.toString() + " wird gesichert");
+                    log.write("Die Datei " + datei.toString() + " wird gesichert.");
                     boolean result_temp = copyFileFTP(datei, zielpfad,client);
                     if(!result_temp)
                     {
@@ -189,6 +187,32 @@ public class FTP implements ISichern {
     public boolean checkAllFiles()
     {
         neueDateien = CheckDateien.checkAllFiles(quellordnerPath);
+        return true;
+    }
+    
+    private boolean connect()
+    {
+        try
+        {
+            client.connect(this.zielordner.getHost());
+            int reply = client.getReplyCode();
+            if(!FTPReply.isPositiveCompletion(reply)) 
+            {
+                client.disconnect();
+                log.write("Der FTP Server hat die verbindung abgelehnt.",FEHLER);
+                return false;
+            }
+            client.login(Einstellungen.ftpUser.get(), Einstellungen.ftpPasswort.get());      
+            client.setFileTransferMode(BINARY_FILE_TYPE);
+            client.setFileType(BINARY_FILE_TYPE);
+        } catch (SocketException ex)
+        {
+            return false;
+        }
+        catch (IOException ex)
+        {
+            return false;
+        }
         return true;
     }
 }

@@ -69,7 +69,7 @@ public class Dateibaum {
      * Dies erstellt den Dateibaum für den Ordner
      * @return true, falls alles geklappt hat, sonst false.
      */
-    public boolean createDateibaum()
+    public boolean createDateibaum() //TODO Dateibaum leeren,TODO UTF-8
     {
         log.write("Der Pfad zum Dateibaum: " + this.dateibaumpfad);
         LinkedList<Path> neueDateien = this.sichern.getNeueDateien();

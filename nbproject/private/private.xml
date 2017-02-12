@@ -4,13 +4,10 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/E:/Dokumente/Ordner%20von%20mir/Programieren/Java/AutoBackup/src/autobackup/copyFile/Backup.java</file>
-            <file>file:/E:/Dokumente/Ordner%20von%20mir/Programieren/Java/AutoBackup/src/autobackup/copyFile/Lokal.java</file>
-            <file>file:/E:/Dokumente/Ordner%20von%20mir/Programieren/Java/AutoBackup/src/autobackup/AutoBackup.java</file>
-            <file>file:/E:/Dokumente/Ordner%20von%20mir/Programieren/Java/AutoBackup/src/autobackup/Data/Einstellungen.java</file>
+            <file>file:/E:/Dokumente/Ordner%20von%20mir/Programieren/Java/AutoBackup/src/autobackup/copyFile/Dateibaum.java</file>
             <file>file:/E:/Dokumente/Ordner%20von%20mir/Programieren/Java/AutoBackup/src/autobackup/copyFile/FTP.java</file>
-            <file>file:/E:/Dokumente/Ordner%20von%20mir/Programieren/Java/AutoBackup/src/autobackup/GUI/NormalGUI.java</file>
-            <file>file:/E:/Dokumente/Ordner%20von%20mir/Programieren/Java/AutoBackup/src/hilfreich/FileUtil.java</file>
             <file>file:/E:/Dokumente/Ordner%20von%20mir/Programieren/Java/AutoBackup/src/hilfreich/FTPUtil.java</file>
+            <file>file:/E:/Dokumente/Ordner%20von%20mir/Programieren/Java/AutoBackup/src/autobackup/copyFile/CheckDateien.java</file>
         </group>
     </open-files>
 </project-private>
