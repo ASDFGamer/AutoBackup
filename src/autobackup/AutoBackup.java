@@ -126,10 +126,10 @@ public class AutoBackup
             log.write("Die Quell- und Zielordner wurden im falschen Format angegeben.",FATAL_ERROR);
             return;
         }
-        //TODO als Einstellung hinzufügen
-        backup.setOnlyChange(true);
-        backup.setVersions(2); //TODO einstellung
-        backup.setDateibaumPfad(Einstellungen.configFolder.get()+SEPERATOR+ "Dateibaum.txt"); //TODO eigene Einstellung?
+
+        backup.setOnlyChange(Einstellungen.onlyChange.get());
+        backup.setVersions(Einstellungen.versionen.get());
+        backup.setDateibaumPfad(Einstellungen.dateibaumPfad.get());
         //Backup starten
         if (backup.backup())
         {

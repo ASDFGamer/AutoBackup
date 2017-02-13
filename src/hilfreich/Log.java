@@ -163,7 +163,7 @@ public class Log implements ILog{
     }
     
     /**
-     * Dies ist dasselbe wie ein normales {@link Log#write(java.lang.String, int) }, nur ist es nöglich dies von einem statischen Standpunkt auszuführen.
+     * Dies ist dasselbe wie ein normales {@link Log#write(java.lang.String, hilfreich.LogLevel) }, nur ist es nöglich dies von einem statischen Standpunkt auszuführen.
      * @param text Der text der im Log erscheinen soll.
      * @param level Dies gibt das Logginglevel an ({@link LogLevel}).
      * @return true, falls alles gut ging, sonst false.

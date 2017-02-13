@@ -25,6 +25,7 @@ public enum LogLevel
     
     /**
      * Dies gibt das Logginglevel in Int umgewandelt zurück
+     * @return Das Logginglevel als int.
      */
     public int getLevel()
     {

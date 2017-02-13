@@ -3,6 +3,7 @@ package autobackup.Data;
 
 import autobackup.filesystem.Endung;
 import hilfreich.FileUtil;
+import static hilfreich.FileUtil.SEPERATOR;
 
 /**
  * Hier werden die Standardwerte für die Einstellungen gespeichert.
@@ -64,6 +65,22 @@ public class stdEinstellungen {
      * Dies gibt den Ordner für die Einstellungsdateien an.
      */
     public final static String configFile = FileUtil.getConfigFile(Const.PROGRAMM_NAME, "config.txt");
+    
+    /**
+     * Dies legt die maximale Anzahl von Versionen für die Sicherungen des Backups an.
+     */
+    public final static int versionen = 2;
+    
+    /**
+     * Dies legt fest ob alle Dateien gesichert werden sollen oder nur die geänderten.
+     */
+    public static boolean onlyChange = true;
+    
+    /**
+     * Dies legt fest was der Pfad zum Dateibaum ist.
+     */
+    public static String dateibaumPfad = stdEinstellungen.configFolder+SEPERATOR+ "Dateibaum.txt";
+    
     
     
 }

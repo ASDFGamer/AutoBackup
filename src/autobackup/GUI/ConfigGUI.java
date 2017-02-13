@@ -47,7 +47,7 @@ public class ConfigGUI extends Application{
     
     /**
      * Start ins Programm.
-     * @param args 
+     * @param args Hier können keine Argumente übergeben werden.
      */
     public static void main(String[] args) {
         launch(args);

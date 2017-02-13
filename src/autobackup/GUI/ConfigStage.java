@@ -6,7 +6,6 @@
 package autobackup.GUI;
 
 import hilfreich.Log;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import javafx.fxml.FXMLLoader;
@@ -38,7 +37,7 @@ public class ConfigStage {
      */
     public ConfigStage (Stage stage) throws IOException
     {
-        URL path = new File("src\\assets\\FXML\\ConfigGUI.fxml").toURI().toURL();
+        URL path = ConfigStage.class.getClassLoader().getResource("assets/FXML/NormalGUI.fxml");
         Parent root = FXMLLoader.load(path);
         Scene scene = new Scene(root, 600, 400); //Pixel anpassen
         stage.setTitle("AutoBackup Config");
@@ -56,7 +55,7 @@ public class ConfigStage {
      */
     public ConfigStage (Stage stage, Stage uebergeordnet) throws IOException
     {
-        URL path = new File("src\\assets\\FXML\\ConfigGUI.fxml").toURI().toURL();//TODO ändern für .Jar
+        URL path = ConfigStage.class.getClassLoader().getResource("assets/FXML/NormalGUI.fxml");
         Parent root = FXMLLoader.load(path);
         Scene scene = new Scene(root, 600, 400); //Pixel anpassen
         stage.setTitle("AutoBackup Config");
@@ -68,7 +67,7 @@ public class ConfigStage {
     }
     
     /**
-     * Dies gitb die Stage zurück
+     * Dies gibt die Stage zurück
      * @return Die Stage
      */
     public Stage getStage()

@@ -23,7 +23,7 @@ public class Einstellungen {
      * Die Namen für die Einstelllungen falls ein String gebraucht wird.
      */
     public static enum namen {
-        backuptiefe,configFile,erlaubteTypen,ftpUser,ftpPasswort,logFolder,maxLogs,quellOrdner,verboteneTypen,writeLog,zielOrdner;
+        backuptiefe,configFile,configFolder,dateibaumPfad,erlaubteTypen,ftpUser,ftpPasswort,logFolder,maxLogs,onlyChange,quellOrdner,verboteneTypen,versionen,writeLog,zielOrdner;
     }
     
     /**
@@ -89,7 +89,7 @@ public class Einstellungen {
     public static SimpleStringProperty configFile = new SimpleStringProperty(stdEinstellungen.configFile);
     
     /**
-     * Dies gibt den Ordner in dem die EInstellungsdateien sind an.
+     * Dies gibt den Ordner in dem die Einstellungsdateien sind an.
      */
     public static SimpleStringProperty configFolder = new SimpleStringProperty(stdEinstellungen.configFolder);
     
@@ -109,6 +109,21 @@ public class Einstellungen {
     public static boolean einstellungenGeaendert = false;
     
     /**
+     * Dies legt die maximale Anzahl von Versionen für die Sicherungen des Backups an.
+     */
+    public static SimpleIntegerProperty versionen = new SimpleIntegerProperty(stdEinstellungen.versionen);
+    
+    /**
+     * Dies legt fest ob alle Dateien gesichert werden sollen oder nur die geänderten.
+     */
+    public static SimpleBooleanProperty onlyChange = new SimpleBooleanProperty(stdEinstellungen.onlyChange);
+    
+    /**
+     * Dies legt fest was der Pfad zum Dateibaum ist.
+     */
+    public static SimpleStringProperty dateibaumPfad = new SimpleStringProperty(stdEinstellungen.dateibaumPfad);
+    
+    /**
      * Hiermit werden alle EventListender initialisert, damit abgefragt werden kann ob sich eine Einstellung geändert hat.
      * Hiervor oder vor {@link Einstellungen#load(autobackup.settings.ISettings)  } sollte nicht auf die einzelnen Einstellungen zugegriffen wereden.
      */
@@ -117,11 +132,14 @@ public class Einstellungen {
         Einstellungen.backuptiefe.addListener(einstellungenaendern);
         Einstellungen.configFile.addListener(einstellungenaendern);
         Einstellungen.configFolder.addListener(einstellungenaendern);
+        Einstellungen.dateibaumPfad.addListener(einstellungenaendern);
         Einstellungen.ftpPasswort.addListener(einstellungenaendern);
         Einstellungen.ftpUser.addListener(einstellungenaendern);
         Einstellungen.logFolder.addListener(einstellungenaendern);
         Einstellungen.maxLogs.addListener(einstellungenaendern);
+        Einstellungen.onlyChange.addListener(einstellungenaendern);
         Einstellungen.quellOrdner.addListener(einstellungenaendern);
+        Einstellungen.versionen.addListener(einstellungenaendern);
         Einstellungen.writeLog.addListener(einstellungenaendern);
         Einstellungen.zielOrdner.addListener(einstellungenaendern);
     }
@@ -142,11 +160,6 @@ public class Einstellungen {
             return false;
         }
         
-        //Die einzelnen Einstellungen: TODO Eintellungen werden nicht richtig geladen, wird oft zu null
-        if (config.settingexists(Einstellungen.namen.quellOrdner.toString()) && config.getSetting(Einstellungen.namen.quellOrdner.toString()) != null)
-        {
-            Einstellungen.quellOrdner.set(config.getSetting(Einstellungen.namen.quellOrdner.toString()));
-        }
         
         if (config.settingexists(Einstellungen.namen.backuptiefe.toString()) && config.getSetting(Einstellungen.namen.backuptiefe.toString()) != null)
         {
@@ -155,6 +168,11 @@ public class Einstellungen {
                 Einstellungen.backuptiefe.set(Integer.parseInt(config.getSetting(Einstellungen.namen.backuptiefe.toString())));
             }
         }
+        
+        if (config.settingexists(Einstellungen.namen.dateibaumPfad.toString()) && config.getSetting(Einstellungen.namen.dateibaumPfad.toString()) != null)
+        {
+            Einstellungen.dateibaumPfad.set(config.getSetting(Einstellungen.namen.dateibaumPfad.toString()));
+        } 
         
         //TODO Einstellungen.erlaubteTypen;
         
@@ -181,7 +199,28 @@ public class Einstellungen {
             }
         }
         
+        if (config.settingexists(Einstellungen.namen.onlyChange.toString()) && config.getSetting(Einstellungen.namen.onlyChange.toString()) != null)
+        {
+            if (Convertable.toBoolean(config.getSetting(Einstellungen.namen.onlyChange.toString()), Const.TRUE_VALUES, Const.FALSE_VALUES))
+            {
+                Einstellungen.onlyChange.set(Utils.isTrue(config.getSetting(Einstellungen.namen.onlyChange.toString()),Const.TRUE_VALUES));
+            }
+        }
+        
+        if (config.settingexists(Einstellungen.namen.quellOrdner.toString()) && config.getSetting(Einstellungen.namen.quellOrdner.toString()) != null)
+        {
+            Einstellungen.quellOrdner.set(config.getSetting(Einstellungen.namen.quellOrdner.toString()));
+        }
+        
         //TODO Einstellungen.verboteneTypen;
+        
+        if (config.settingexists(Einstellungen.namen.versionen.toString()) && config.getSetting(Einstellungen.namen.versionen.toString()) != null)
+        {
+            if (Convertable.toInt(config.getSetting(Einstellungen.namen.versionen.toString())))
+            {
+                Einstellungen.versionen.set(Integer.parseInt(config.getSetting(Einstellungen.namen.versionen.toString())));
+            }
+        }
         
         if (config.settingexists(Einstellungen.namen.writeLog.toString()) && config.getSetting(Einstellungen.namen.writeLog.toString()) != null)
         {

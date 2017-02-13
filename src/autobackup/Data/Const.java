@@ -18,9 +18,9 @@ public class Const {
     static final public String VERSION = "0.2";
     
     /**
-     * Die Verschiedenen Eigenschaften die der Log haben kann. TODO Enum
+     * Die Verschiedenen Eigenschaften die der Log haben kann.
      */
-    static final public String[] LOGEIGENSCHAFTEN = {"Console + Datei", "Nur Console", "Nur Datei", "Alles Aus"}; //TODO convert to enum
+    static final public String[] LOGEIGENSCHAFTEN = {"Console + Datei", "Nur Console", "Nur Datei", "Alles Aus"};
     
     /**
      * Die verschiedenen Anzahlen die es für viele Sachen gibt.

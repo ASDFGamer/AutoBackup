@@ -301,9 +301,10 @@ public class FileUtil {
     }
     
     /**
-     * Dies erstellt alte versionen von einer Datei, falls möglich, wobei maximal {@link Backup#versions} Versionen erstellt werden.
+     * Dies erstellt alte versionen von einer Datei, falls möglich, wobei maximal  max_versionen Versionen erstellt werden.
      * @param pfad Der Pfad zu der Datei von der eine weitere Version angelegt werden soll
      * @param version Die Versionsnummer von der Version die jetzt angelegt werden soll.
+     * @param max_version Die maximale Anzahl an Versionen die erstellt werden können.
      * @return true, falls es geklappt hat, sonst false.
      */
     public static boolean versionierung(Path pfad, int version, int max_version)

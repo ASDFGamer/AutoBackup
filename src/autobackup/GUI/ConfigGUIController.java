@@ -33,7 +33,7 @@ public class ConfigGUIController extends GUIController{
      * Die Box bei der die Logeigenschaften ausgewählt werden können.
      */
     @FXML
-    private ComboBox logeigenschaften;
+    private ComboBox<String> logeigenschaften;
     
     /**
      * Mein Log

@@ -55,7 +55,7 @@ public class Dateibaum {
     
     /**
      * Überprüft den Dateibaum aus der Datei auf änderungen in der jetzigen Dateistruktur. 
-     * Die Änderungen werden in {@link Backup#neueDateien gespeichert.
+     * Die Änderungen werden in ISichern.neueDateien gespeichert.
      * @return true, wenn die überprüfung geklappt hat, sonst false.
      */
     public boolean checkDateibaum()
@@ -93,6 +93,7 @@ public class Dateibaum {
         if (this.dateibaum.isEmpty())
         {
             log.write("Es existiert noch kein Dateibaum, ein neuer wird angelegt.");
+            @SuppressWarnings("unchecked") //Dies geht, da neueDateien vom Typ LinkedList<Path> ist.
             LinkedList<Path> dateien = (LinkedList<Path>)neueDateien.clone();
             Path element;
             while (!dateien.isEmpty())

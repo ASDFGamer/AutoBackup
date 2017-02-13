@@ -29,20 +29,25 @@ public class Utils {
     }
     
     /**
-     * Dies wandelt eine Liste zu einme Array um.
-     * @param <T> Jedes Object
-     * @param list Eine Liste aus < T >
-     * @return Gibt Array aus < T > zurück.
+     * Dies wandelt eine Liste zu einem Array um.
+     * @param list Eine Liste
+     * @return Gibt Array aus String zurück.
      */
     @SuppressWarnings("unchecked")
-    public  static <T> T[] toArray(List<T> list)
+    public  static  String[] toArray(List<String> list)
     {
-        T[] array;
-        array = (T[]) new Object[list.size()];
-        for (int i = 0; i< list.size(); i++)
+        String[] array;
+        System.out.println(list.size());
+        if (list.size()>0)
         {
-            array[i] = list.get(i);
+            array = new String[list.size()];
+            array = list.toArray(array);
         }
+        else
+        {
+           array = new String[0];
+        }
+        
         return array;
     }
     

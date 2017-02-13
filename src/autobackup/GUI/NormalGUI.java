@@ -2,8 +2,10 @@
 package autobackup.GUI;
 
 import autobackup.AutoBackup;
+import hilfreich.FileUtil;
 import hilfreich.Log;
 import static hilfreich.LogLevel.*;
+import hilfreich.Utils;
 import java.io.File;
 import java.net.URL;
 import javafx.application.Application;
@@ -32,11 +34,13 @@ public class NormalGUI extends Application{
     @Override
     public void start(Stage primaryStage) throws Exception {
         NormalGUIController controller = new NormalGUIController();
-        controller.setArgs(new String[0]);//Utils.toArray(getParameters().getRaw()));//TODO kann zu fehlern führen
+        Utils.toArray(getParameters().getRaw());
+        log.write("sdf");
+        controller.setArgs(Utils.toArray(getParameters().getRaw()));
         
         try
         {
-            URL path = new File("src\\assets\\FXML\\NormalGUI.fxml").toURI().toURL();
+            URL path = ConfigStage.class.getClassLoader().getResource("assets/FXML/NormalGUI.fxml");
             Parent root = FXMLLoader.load(path);
             Scene scene = new Scene(root, 600, 400); //Pixel anpassen
             primaryStage.setTitle("AutoBackup");
@@ -53,7 +57,7 @@ public class NormalGUI extends Application{
     
     /**
      * Der Start ins Programm
-     * @param args Dieselben wie bei {@link AutoBackup#main(java.lang.String[]) 
+     * @param args Dieselben wie bei {@link AutoBackup#main(java.lang.String[])} 
      */
     public static void main(String[] args) {
         launch(args);

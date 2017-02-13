@@ -65,7 +65,7 @@ public class FTP implements ISichern {
      * @param quellordner Der Quellordner
      * @param zielordner Der Zielordner
      * @param versions Die Anzahl der Versionen
-     * @throws IllegalArgumentException 
+     * @throws IllegalArgumentException falls der Quellordner nicht lokal ist oder der Zielordner nicht per FTP zu erreichen ist.
      */
     public FTP(URL quellordner,URL zielordner,int versions) throws IllegalArgumentException
     {
