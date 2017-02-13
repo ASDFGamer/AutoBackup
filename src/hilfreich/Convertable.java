@@ -7,6 +7,42 @@ package hilfreich;
 public class Convertable {
     
     /**
+     * Dies zeigt, ob ein String zu boolean konvertiert werden kann.
+     * @param wert Der String
+     * @return true, wenn möglich, sonst false.
+     */
+    static public boolean toBoolean(String wert)
+    {
+        return toBoolean(wert,new String[]{"true"},new String[]{"false"});
+    }
+    
+    /**
+     * Dies zeigt, ob ein String zu Boolean konvertiert werden kann.
+     * @param wert Der String
+     * @param wahr Alle Werte die zu true konvertiert werden können.
+     * @param falsch Alle Werte die zu false konvertiert werden können.
+     * @return true, wenn möglich, sonst false.
+     */
+    static public boolean toBoolean(String wert,String[] wahr, String[] falsch)
+    {
+        for (String wahrheitswert : wahr)
+        {
+            if (wahrheitswert.equalsIgnoreCase(wert))
+            {
+                return true;
+            }
+        }
+        for (String wahrheitswert : falsch)
+        {
+            if (wahrheitswert.equalsIgnoreCase(wert))
+            {
+                return true;
+            }
+        }
+        return false;    
+    }
+    
+    /**
      * Dies zeigt, ob ein String zu Byte konvertiert werden kann.
      * @param zahl Der String
      * @return true, wenn möglich, sonst false.

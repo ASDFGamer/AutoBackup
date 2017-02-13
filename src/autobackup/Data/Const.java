@@ -26,4 +26,14 @@ public class Const {
      * Die verschiedenen Anzahlen die es für viele Sachen gibt.
      */
     static final public String[] ANZAHLEN = {"UNBEGRENZT", "1", "2","3","4","5","6","7","8","9","10"};
+    
+    /**
+     * Dies sind alle Werte die zu true konvertiert werden sollen.
+     */
+    static final public String[] TRUE_VALUES = {"true","wahr"};
+    
+    /**
+     * Dies sind alle Werte die zu false konvertiert werden sollen.
+     */
+    static final public String[] FALSE_VALUES = {"false","falsch"};
 }

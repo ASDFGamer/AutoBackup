@@ -22,14 +22,31 @@ import java.util.Properties;
  */
 public class Dateibaum {
     
+    /**
+     * Das Objekt welches zum sichern verwendet wird.
+     */
     private final ISichern sichern;
     
+    /**
+     * Der Dateibaum
+     */
     private Properties dateibaum = new Properties();
     
+    /**
+     * Der Pfad zum Dateibaum
+     */
     private final File dateibaumpfad;
     
+    /**
+     * Mein Log
+     */
     private final Log log = new Log(this.getClass().getSimpleName());
     
+    /**
+     * Hiermit wird ein neuer Dateibaum angelegt.
+     * @param sichern Das Objekt das zum sichern benutzt wird.
+     * @param dateibaumpfad Der Pfad zum Dateibaum.
+     */
     public Dateibaum(ISichern sichern, File dateibaumpfad)
     {
         this.sichern=sichern;

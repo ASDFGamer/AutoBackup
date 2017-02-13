@@ -13,6 +13,8 @@ public class CheckDateien {
     
     /**
      * Dies überprüft die Dateien im Zielordner, ob sie neuer sind und trägt neue Dateien zum sichern ein
+     * @param quellordner Der Pfad zu dem Ordner der überprüft werden soll.
+     * @param sichern Das Objekt das zum sichern verwendet wird.
      * @return true, falls alles geklappt hat, sonst false.
      */
     public static boolean checkBackupFiles(Path quellordner, ISichern sichern)
@@ -70,6 +72,7 @@ public class CheckDateien {
     
     /**
      * Dies markiert alle Dateien aus dem Quellordner zum sichern.
+     * @param quellordner Der Quellordner.
      * @return Eine Liste von allen Dateien
      */
     public static LinkedList<Path> checkAllFiles(Path quellordner)

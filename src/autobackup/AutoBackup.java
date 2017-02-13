@@ -6,8 +6,6 @@ import autobackup.settings.*;
 import static hilfreich.FileUtil.*;
 import hilfreich.Log;
 import static hilfreich.LogLevel.*;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -32,7 +30,7 @@ public class AutoBackup
     /**
      * Dieses Objekt ist für das Laden und Speichern der EInstellungen zuständig.
      */
-    ISettings config;
+    private ISettings config;
     
     /**
      * @param args the command line arguments

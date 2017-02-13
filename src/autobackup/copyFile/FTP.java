@@ -15,11 +15,8 @@ import java.nio.file.Paths;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.net.ftp.FTPClient;
 import static org.apache.commons.net.ftp.FTP.*;
-import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPReply;
 
 /**
@@ -28,29 +25,54 @@ import org.apache.commons.net.ftp.FTPReply;
  */
 public class FTP implements ISichern {
     
-    private URL quellordner;
-    
+    /**
+     * Der Pfad zum Quellordner
+     */
     private Path quellordnerPath;
     
+    /**
+     * Die URL des Zielordners
+     */
     private URL zielordner;
     
+    /**
+     * Die Anzahl der Versionen die gespeichert werden sollen.
+     */
     private int versions;
     
+    /**
+     * Die Dateien mit Datum die aus dem Dateibaum geldaen wurden.
+     */
     private Properties dateibaum;
     
+    /**
+     * Dies ist eine Liste mit allen Dateien die gesichert werden sollen.
+     */
     private LinkedList<Path> neueDateien = new LinkedList<>();
     
+    /**
+     * Mein Log
+     */
     private Log log = new Log(this.getClass().getSimpleName());
     
+    /**
+     * Der benutzte FTP-Client
+     */
     private FTPClient client;
     
+    /**
+     * Dies erstellt ein Objekt welches über FTP sichern kann.
+     * @param quellordner Der Quellordner
+     * @param zielordner Der Zielordner
+     * @param versions Die Anzahl der Versionen
+     * @throws IllegalArgumentException 
+     */
     public FTP(URL quellordner,URL zielordner,int versions) throws IllegalArgumentException
     {
         if (!quellordner.getProtocol().equals("file")||!zielordner.getProtocol().equals("ftp"))//der quellordner sollte weiterhin lokal bleiben
         {
             throw new IllegalArgumentException("Es kann kein Backup auf ftp gemacht werden da der Pfad nicht auf eine FTP-datei verweist sondern auf " + quellordner.getProtocol()); 
         }
-        this.quellordner = quellordner;
         this.zielordner = zielordner;
         this.versions = versions;
         try
@@ -62,8 +84,8 @@ public class FTP implements ISichern {
             throw new IllegalArgumentException("Es kann kein Backup auf ftp gemacht werden da der Pfad nicht auf eine FTP-datei verweist sondern auf " + quellordner.getProtocol());
         }
         client = new FTPClient();
-        FTPClientConfig config = new FTPClientConfig();//TODO ADD config
-        client.configure(config);
+        //FTPClientConfig config = new FTPClientConfig();
+        //client.configure(config);
         
     }
     
@@ -142,10 +164,11 @@ public class FTP implements ISichern {
     @Override
     public boolean setDateibaum(Properties dateibaum) {
         this.dateibaum = dateibaum;
-        this.neueDateien = Backup.vergleicheDateien(dateibaum,this.quellordnerPath); //TODO überprüfen ob sinnvoll
+        this.neueDateien = Backup.vergleicheDateien(this.dateibaum,this.quellordnerPath); //TODO überprüfen ob sinnvoll
         return true;
     }
     
+    @Override
     public LinkedList<Path> getNeueDateien()
     {
         return this.neueDateien;
@@ -190,6 +213,10 @@ public class FTP implements ISichern {
         return true;
     }
     
+    /**
+     * Dies Verbindet den Client mit dem FTP-Server und nimmt alle anfangseinstellungen vor.
+     * @return true, falls alles gut ging, sonst false.
+     */
     private boolean connect()
     {
         try

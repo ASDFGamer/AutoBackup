@@ -6,7 +6,6 @@ import static hilfreich.FileUtil.*;
 import hilfreich.Log;
 import static hilfreich.LogLevel.*;
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,7 +13,6 @@ import java.util.LinkedList;
 import java.util.Properties;
 
 /**
- *TODO File wenn notwendig durch Path austauschen
  * @author Christoph Wildhagen 
  */
 public class Backup implements IBackup{
@@ -44,8 +42,14 @@ public class Backup implements IBackup{
      */
     private boolean onlyChange = true;
     
+    /**
+     * Dies ist das Objekt mit dem notwendigen Sicherungsverfahren
+     */
     private ISichern sichern;
     
+    /**
+     * Dies ist zum einlesen/schreiben des Dateibaums.
+     */
     private Dateibaum dateibaum;
     
     //--Hilfsvariablen--
@@ -174,6 +178,10 @@ public class Backup implements IBackup{
         return result;
     }
     
+    /**
+     * Dies wählt das notwendige Sicherungsverfaahren anhand des Protokols aus.
+     * @return true, falls alles hingehauen hat, sonst false.
+     */
     private boolean setSichern()
     {
         try
@@ -191,15 +199,16 @@ public class Backup implements IBackup{
         catch(IllegalArgumentException e)
         {
             log.write(e);
-            log.write("Es gab Probleme beim zuordnen des Protokolls");
+            log.write("Es gab Probleme beim zuordnen des Protokolls", FEHLER);
             return false;
         }
         return true;
     }
     
     /**
-     * Dies vergleicht die Dateien die in der Einstellungsdatei waren mit den Dateien in ordner
-     * @param ordnerpath Der übergeordnete Ordner
+     * Dies vergleicht die Dateien die in der Einstellungsdatei waren mit den Dateien in Ordner.
+     * @param dateibaum Dies sind alle Dateien die im Datiebaum stehen.
+     * @param ordnerpath Der übergeordnete Ordner.
      * @return Eine liste mit allen geänderten Dateien.
      */
     static public LinkedList<Path> vergleicheDateien(Properties dateibaum, Path ordnerpath)
@@ -210,7 +219,7 @@ public class Backup implements IBackup{
         String path;
         for (File datei : dateien)
         {
-            path = datei.getAbsolutePath();//Könnte Probleme wegen File/Path umwandlung geben.
+            path = datei.getAbsolutePath();
             Log.Write(datei.getAbsolutePath() + " wird überprüft.");
             if (isFolder(path))
             {
@@ -228,10 +237,6 @@ public class Backup implements IBackup{
                 Log.Write(datei.getAbsolutePath() + "ist eine geänderte Datei.");
             }
             //TODO über Hash gehen, da es Probleme mit der änderungszeit gben könnte.
-            /*if (datei.isDirectory())
-            {
-                geaendert.addAll(vergleicheDateien(datei));
-            }*/
         }
         return geaendert;
     }

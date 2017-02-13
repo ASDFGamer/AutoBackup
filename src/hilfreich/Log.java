@@ -173,6 +173,11 @@ public class Log implements ILog{
         return log.write(text, level);
     }
     
+    /**
+     * Dies ist dasselbe wie ein normales {@link Log#write(java.lang.Exception)}, nur ist es nöglich dies von einem statischen Standpunkt auszuführen.
+     * @param e Die Exception die ausgegeben werden soll.
+     * @return true, falls alles gut ging, sonst false.
+     */
     public static boolean Write(Exception e)
     {
         return log.write(e);
@@ -458,7 +463,7 @@ public class Log implements ILog{
      */
     private String getTimestamp()
     {
-        rightNow = Calendar.getInstance(); //Geht vllt. effizienter
+        rightNow = Calendar.getInstance();
         return  "[" +rightNow.get(Calendar.HOUR_OF_DAY)+ ":" +rightNow.get(Calendar.MINUTE)+":"+rightNow.get(Calendar.SECOND) +"] "; //TODO alles immer zeistellig
 
     }

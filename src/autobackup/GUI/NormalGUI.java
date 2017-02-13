@@ -24,6 +24,11 @@ public class NormalGUI extends Application{
      */
     private Log log = new Log(super.getClass().getSimpleName());
     
+    /**
+     * Dies wird aufgerufen um die Anwendung zu starten.
+     * @param primaryStage Die Stage.
+     * @throws Exception falls ein Fehler auftritt der nicht abgefangen wird.
+     */
     @Override
     public void start(Stage primaryStage) throws Exception {
         NormalGUIController controller = new NormalGUIController();

@@ -6,6 +6,7 @@ import autobackup.settings.ISettings;
 import hilfreich.Convertable;
 import hilfreich.Log;
 import hilfreich.LogLevel;
+import hilfreich.Utils;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -92,8 +93,14 @@ public class Einstellungen {
      */
     public static SimpleStringProperty configFolder = new SimpleStringProperty(stdEinstellungen.configFolder);
     
+    /**
+     * Dies gibt den Benutzer für FTP an.
+     */
     public static transient SimpleStringProperty ftpUser = new SimpleStringProperty();
     
+    /**
+     * Dies gibt das Passwort für den Benutzer von FTP an. TODO Verschlüsselung
+     */
     public static transient SimpleStringProperty ftpPasswort = new SimpleStringProperty();
     
     /**
@@ -178,7 +185,10 @@ public class Einstellungen {
         
         if (config.settingexists(Einstellungen.namen.writeLog.toString()) && config.getSetting(Einstellungen.namen.writeLog.toString()) != null)
         {
-            Einstellungen.writeLog.set(Boolean.parseBoolean(config.getSetting(Einstellungen.namen.writeLog.toString())));//TODO sicherer vor Falscheingaben machen mit abfangen von x=/="true" x->false
+            if (Convertable.toBoolean(config.getSetting(Einstellungen.namen.writeLog.toString()), Const.TRUE_VALUES, Const.FALSE_VALUES))
+            {
+                Einstellungen.writeLog.set(Utils.isTrue(config.getSetting(Einstellungen.namen.writeLog.toString()),Const.TRUE_VALUES));
+            }
         }
         
         if (config.settingexists(Einstellungen.namen.zielOrdner.toString()) && config.getSetting(Einstellungen.namen.zielOrdner.toString()) != null)
@@ -189,7 +199,6 @@ public class Einstellungen {
         Einstellungen.einstellungenGeaendert=false;
         
         log.write("Die Einstellungen wurden geladen.");
-        //TODO überprüfen ob die Einstellungen hinkommen.
         
         return true;
     }

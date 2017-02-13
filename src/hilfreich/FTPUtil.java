@@ -68,6 +68,13 @@ public class FTPUtil {
         return result;
     }
     
+    /**
+     * Dies überprüft ob ein bestimmtes Verzeichnis existiert.
+     * @param path Der Pfad zum Verzeichnis vom aktuellen Pfad des Clients aus.
+     * @param client Der FTP-Client der überprüft werden soll.
+     * @param stay legt fest ob der client in dem zuletzt verwendeten Verzeichnis bleiben soll oder ob er zurück zum Anfang soll.
+     * @return true, falls der Ordner existiert, sonst false.
+     */
     public static boolean isFolderFTP(String path, FTPClient client,boolean stay)
     {
         return isFolderFTP(Paths.get(path),client,stay);
@@ -121,6 +128,13 @@ public class FTPUtil {
         return result;
     }
     
+    /**
+     * Dies Erstellt einen Ordner an dem angegbenen Pfad
+     * @param path Der Ordnerpfad relativ zum aktuellen workingDirectory
+     * @param client Der FTP-Client auf dem der Ordner erstellt werden soll
+     * @param ersteraufruf muss immer auf true sein. TODO entfernen und zweite Funtkion anlegen
+     * @return true, falls der Ordner erstellt werden konnte, sonst false.
+     */
     public static boolean createFolderFTP(Path path,FTPClient client,boolean ersteraufruf)
     {
         String dirnow = "";
@@ -163,6 +177,14 @@ public class FTPUtil {
         return true;
     }
     
+    /**
+     * Dies kopiert eine Datei von dem lokalen quellpfad zu dem ftp pfad der relativ zum Arbeitsverzeichnis des clients ist.
+     * @param quelldatei Die Datei die kopiert werden soll.
+     * @param zieldatei Der Name der Datei die erstellt werden soll durch kopieren.
+     * @param client Der Client der mit dem FTP-SERver verbunden ist.
+     * TODO Metainfos übernehmen besonders erstell und mod datum
+     * @return true, falls alles hingehauen hat, sonst false.
+     */
     public static boolean copyFileFTP(Path quelldatei, Path zieldatei, FTPClient client)
     {
         boolean result = true;
@@ -186,7 +208,7 @@ public class FTPUtil {
             FileInputStream fis = new FileInputStream(quelldatei.toFile());
             client.storeFile(zieldatei.toString(), fis );
             fis.close();
-            int reply = client.getReplyCode(); //geht nicht in eine Zeile da es sich dann aufhängt
+            int reply = client.getReplyCode();
             if (!FTPReply.isPositiveCompletion(reply))
             {
                 Log.Write(client.getReplyString());
@@ -209,10 +231,10 @@ public class FTPUtil {
     }
     
     /**
-     * 
-     * @param datei
-     * @param client
-     * @return Das Datum wann die Datei dasletzte mal verändert wurde oder null falls es ein problem gab.
+     * Dies gibt das änderungsdatum einer Datei an
+     * @param datei Der relative Pfad zu der Datei
+     * @param client Der Client der benutzt werden soll.
+     * @return Das Datum wann die Datei das letzte mal verändert wurde oder null falls es ein problem gab.
      */
     public static Date getModificationDate(Path datei,FTPClient client)
     {
@@ -286,6 +308,12 @@ public class FTPUtil {
         }
     }
     
+    /**
+     * Dies wechselt zu einem bestimmten Verzeichnis
+     * @param directory Das Verzeichnis zu dem gewechselt werden soll.
+     * @param client Der Client bei dem dies passieren soll.
+     * @return true, falls es erfolgreich war, sonst false.
+     */
     public static boolean changeToDir(String directory,FTPClient client) //noch nicht getestet
     {
         
@@ -303,7 +331,7 @@ public class FTPUtil {
                 noError = FTPReply.isPositiveCompletion(reply) && !tempdir.equals(client.printWorkingDirectory());
                 if (isFolderFTP(directory,client,false))
                 {
-                    client.changeWorkingDirectory(directory.toString());
+                    client.changeWorkingDirectory(directory);
                     result = true;
                 }
                 tempdir = client.printWorkingDirectory();
@@ -325,7 +353,13 @@ public class FTPUtil {
         }  
     }
     
-    private static boolean changeToDirROOT(String directory,FTPClient client) //public machen wegen performance? (keine lange rekursion über isFolderFTP
+    /**
+     * Dies wechselt zu einem bestimmten absoluten (Root)Verzeichnis
+     * @param directory Das (Root)Verzeichnis zu dem gewechselt werden soll.
+     * @param client Der Client bei dem dies passieren soll.
+     * @return true, falls es erfolgreich war, sonst false.
+     */
+    public static boolean changeToDirROOT(String directory,FTPClient client)
     {
         
         boolean noError = true;
@@ -343,7 +377,7 @@ public class FTPUtil {
                 noError = FTPReply.isPositiveCompletion(reply) && !tempdir.equals(client.printWorkingDirectory());
                 tempdir = client.printWorkingDirectory();
             }
-            client.changeWorkingDirectory(directory.toString());
+            client.changeWorkingDirectory(directory);
             if (directory.equals(client.printWorkingDirectory()))
             {
                 result = true;

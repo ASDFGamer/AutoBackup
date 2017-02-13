@@ -3,7 +3,6 @@ package hilfreich;
 
 /**
  * Dies sind die verschiedenen Logginglevel.
- * TODO zu Enum umbauen
  * @author Christoph Wildhagen 
  */
 public enum LogLevel 
@@ -13,7 +12,7 @@ public enum LogLevel
     /**
      * Dies gibt das logginglevel als Zahl an.
      */
-    int level;
+    private int level;
     
     /**
      * Dies speichert die richtige Zahl zu dem richtigen Logginglevel.

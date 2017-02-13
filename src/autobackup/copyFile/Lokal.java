@@ -59,10 +59,20 @@ public class Lokal implements ISichern{
     /**
      * Mein Log
      */
-    Log log = new Log(super.getClass().getSimpleName());
+    private Log log = new Log(super.getClass().getSimpleName());
     
-    CheckDateien checkdateien = new CheckDateien();
+    /**
+     * Hiermit werden die Dateien abgecheckt
+     */
+    private CheckDateien checkdateien = new CheckDateien();
     
+    /**
+     * Hiermit wird ein neues Objekt zum lokalen sichern von Dateien erstellt.
+     * @param quellordner Der Quellordner
+     * @param zielordner Der Zielordner
+     * @param versions Die maximale Anzahl an gesicherten Versionen.
+     * @throws IllegalArgumentException falls ein Die Ordner nicht lokal sind.
+     */
     public Lokal(URL quellordner,URL zielordner,int versions) throws IllegalArgumentException
     {
         if (!quellordner.getProtocol().equals("file")||!zielordner.getProtocol().equals("file"))//theorethisch nicht nötig, aber für die sicherheit sinnvoll.
