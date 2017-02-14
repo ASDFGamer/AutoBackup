@@ -6,7 +6,6 @@ import autobackup.Data.Einstellungen;
 import static hilfreich.FileUtil.*;
 import hilfreich.Log;
 import static hilfreich.LogLevel.*;
-import static hilfreich.Utils.*;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,6 +17,7 @@ import java.util.Properties;
 
 /**
  * Dies erzeugt einfache Configdateien mit Hilfe von Properties.load / Properties.getProperty
+ * TODO Netzwerkfähigkeiten hinzufügen, Verschachtelte Einstellungsdateien -> am besten alles neu schreiben und weiter Modularisieren.
  * @author Christoph Wildhagen 
  */
 public class Settings implements ISettings{
@@ -55,7 +55,7 @@ public class Settings implements ISettings{
     private int activeconfigfile = 0;
     
     /**
-     * Dies gibt an ob die EInstellungen schon geladen werden konnten.
+     * Dies gibt an ob die Einstellungen schon geladen werden konnten.
      */
     private Boolean loadSettingsResult = null;
     
@@ -92,13 +92,12 @@ public class Settings implements ISettings{
         String supersettings = null;
         try
         {
-            //TODO verhindern das alte Einstellungen überschrieben werden (außer einstellungen_super)
             FileInputStream in = new FileInputStream(configfiles[this.activeconfigfile]);
             this.einstellungen.load(in);
-            if (this.einstellungen.containsKey(einstellungen_super) && this.einstellungen.getProperty(einstellungen_super) != null)
+            /*if (this.einstellungen.containsKey(einstellungen_super) && this.einstellungen.getProperty(einstellungen_super) != null)
             {
                 supersettings = this.einstellungen.getProperty(einstellungen_super);
-            }
+            }*/
             in.close();
         } 
         catch (FileNotFoundException e)
@@ -111,13 +110,13 @@ public class Settings implements ISettings{
             log.write("Es gab ein Problem beim einlesen der Datei.", FEHLER);
             return false;
         }
-        if (supersettings != null)
+        /*if (supersettings != null)
         {
             if ( ++this.activeconfigfile >= this.maxConfigFiles )
             {
                 log.write("Es wurde die maximalanzahl an übergeordneten Configfiles erreicht.", WARNUNG);
             }
-            else if (isFile(supersettings))//TODO funkt auch über Netzwerk?
+            else if (isFile(supersettings))
             {
                 log.write("Der Pfad für die übergeordnete Configfile verweist nicht auf eine Datei.",WARNUNG);
             }
@@ -132,7 +131,7 @@ public class Settings implements ISettings{
                 loadSettings();
             }
             
-        }
+        }*/
         log.write("Die Einstellungen aus " + this.configfiles[this.activeconfigfile].toString() + " wurden geladen.");
         return true;
     }
@@ -172,19 +171,27 @@ public class Settings implements ISettings{
         {
             einstellungen.put(Einstellungen.namen.backuptiefe.toString(), String.valueOf(Einstellungen.backuptiefe.get()));
             einstellungen.put(Einstellungen.namen.configFile.toString(), Einstellungen.configFile.get());
-            //einstellungen.put(Einstellungen.namen.erlaubteTypen.toString(), Einstellungen.erlaubteTypen);TODO
+            einstellungen.put(Einstellungen.namen.configFolder.toString(), Einstellungen.configFolder.get());
+            einstellungen.put(Einstellungen.namen.dateibaumPfad.toString(), Einstellungen.dateibaumPfad.get());
+            //einstellungen.put(Einstellungen.namen.erlaubteTypen.toString(), Einstellungen.erlaubteTypen);
+            einstellungen.put(Einstellungen.namen.ftpPasswort.toString(), Einstellungen.ftpPasswort.get());
+            einstellungen.put(Einstellungen.namen.ftpUser.toString(), Einstellungen.ftpUser.get());
             einstellungen.put(Einstellungen.namen.logFolder.toString(), Einstellungen.logFolder.get());
             einstellungen.put(Einstellungen.namen.maxLogs.toString(), String.valueOf(Einstellungen.maxLogs.get()));
+            einstellungen.put(Einstellungen.namen.onlyChange.toString(), Einstellungen.onlyChange.get());
             einstellungen.put(Einstellungen.namen.quellOrdner.toString(), Einstellungen.quellOrdner.get());
-            //einstellungen.put(Einstellungen.namen.verboteneTypen.toString(), Einstellungen.verboteneTypen);//TODO
+            //einstellungen.put(Einstellungen.namen.verboteneTypen.toString(), Einstellungen.verboteneTypen);
+            einstellungen.put(Einstellungen.namen.versionen.toString(), String.valueOf(Einstellungen.versionen.get()));
             einstellungen.put(Einstellungen.namen.writeLog.toString(), String.valueOf(Einstellungen.writeLog.get()));
             einstellungen.put(Einstellungen.namen.zielOrdner.toString(), Einstellungen.zielOrdner.get());
+            einstellungen.put(Einstellungen.namen.dateibaumPfad.toString(), Einstellungen.dateibaumPfad.get());
+            
 
             try
             {
                 FileWriter file = new FileWriter(configfiles[this.activeconfigfile]);
                 BufferedWriter writer = new BufferedWriter(file);
-                this.einstellungen.store(writer, "Dies ist die Standardeinstellungsdatei für " + Const.PROGRAMM_NAME + " version " + Const.VERSION+ "."); //TODO überprüfen ob in einstellungen alle Einstellungen vorhanden sind und ansonsten hinzufügen.
+                this.einstellungen.store(writer, "Dies ist die Standardeinstellungsdatei für " + Const.PROGRAMM_NAME + " version " + Const.VERSION+ ".");
             }
             catch (IOException e)
             {
@@ -222,5 +229,7 @@ public class Settings implements ISettings{
         }
         return this.loadSettingsResult;
     }
+
+
 
 }

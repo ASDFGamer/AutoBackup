@@ -79,7 +79,8 @@ public class Einstellungen {
     public static SimpleStringProperty logFolder = new SimpleStringProperty(stdEinstellungen.logFolder);
     
     /**
-     * Dies gibt an wie viele Log maximal abgespeichert werden können. //TODO wie kann dies umgesetzt werden.
+     * Dies gibt an wie viele Log maximal abgespeichert werden können.
+     * WIP
      */
     public static SimpleIntegerProperty maxLogs = new SimpleIntegerProperty(stdEinstellungen.maxLogs);
     
@@ -178,7 +179,7 @@ public class Einstellungen {
         
         if (config.settingexists(Einstellungen.namen.ftpPasswort.toString()) && config.getSetting(Einstellungen.namen.ftpPasswort.toString()) != null)
         {
-            Einstellungen.ftpPasswort.set(config.getSetting(Einstellungen.namen.ftpPasswort.toString()));//TODO verschlüsselung hinzufügen
+            Einstellungen.ftpPasswort.set(config.getSetting(Einstellungen.namen.ftpPasswort.toString()));
         }
         
         if (config.settingexists(Einstellungen.namen.ftpUser.toString()) && config.getSetting(Einstellungen.namen.ftpUser.toString()) != null)

@@ -158,4 +158,17 @@ public interface ILog {
      */
     public int getstdVersionen();
     
+    /**
+     * Dies gibt an ob der Klassenname for den einzelnen Logeinträgen stehen soll.
+     * @param klassenausgabe
+     * @return true, falls alles gut ging, sonst false.
+     */
+    public boolean setKlassenausgabe(boolean klassenausgabe);
+    
+    /**
+     * Dies gibt zurück ob der Klassenname vor den Logeinträgen ausgegeben wird.
+     * @return ob der Klassenname ausgegeben wird.
+     */
+    public boolean getKlassenaugabe();
+    
 }

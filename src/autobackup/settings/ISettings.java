@@ -47,4 +47,5 @@ public interface ISettings
      * @return true, falls alles geklappt, sonst false.
      */
     public abstract boolean setSettingsPath(String path);
+    
 }

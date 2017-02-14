@@ -52,7 +52,7 @@ public class Lokal implements ISichern{
     private LinkedList<Path> neueDateien = new LinkedList<>();
     
     /**
-     * Der Dateibaum wird geladen als Properties, TODO schauen ob es performanter geht.
+     * Der Dateibaum wird geladen als Properties.
      */
     private Properties dateibaum = new Properties();
     
@@ -186,7 +186,7 @@ public class Lokal implements ISichern{
     public boolean setDateibaum(Properties dateibaum)
     {
         this.dateibaum = dateibaum;
-        this.neueDateien = Backup.vergleicheDateien(dateibaum,this.quellordnerPath); //TODO überprüfen ob sinnvoll
+        this.neueDateien = Backup.vergleicheDateien(dateibaum,this.quellordnerPath);
         return true;
     }
     

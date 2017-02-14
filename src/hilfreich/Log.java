@@ -6,6 +6,7 @@
 package hilfreich;
 
 import static hilfreich.LogLevel.FEHLER;
+import static hilfreich.LogLevel.INFO;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -51,7 +52,6 @@ public class Log implements ILog{
     
     /**
      * Dies legt fest ob angezeigt wird, von welcher Klasse der Logeintrag geschrieben wurde.
-     * //TODO in Interface einfügen und GEtter/Setter hinzufügen
      */
     private static boolean stdKlassenausgabe = true;
     
@@ -187,8 +187,25 @@ public class Log implements ILog{
     //--normale Benutzung--
     @Override
     public boolean write(String text) {
-        //TODO wenn fertig dann Code aus write(text,level) kopieren für performance
-        return this.write(text, LogLevel.INFO);
+        boolean result = true;
+        if ( INFO.getLevel() >= this.minLoglevel)
+        {
+            if (this.consolenausgabe)
+            {
+                if (!consoleWrite(text,INFO))
+                {
+                    result = false;
+                }
+            }
+            if (this.fileausgabe)
+            {
+                if (!fileWrite(text,INFO))
+                {
+                    result = false;
+                }
+            }
+        }
+        return result;
     }
 
     @Override
@@ -525,6 +542,19 @@ public class Log implements ILog{
             filePath = path;
         }
         return true;
+    }
+
+    @Override
+    public boolean setKlassenausgabe(boolean klassenausgabe)
+    {
+        stdKlassenausgabe = klassenausgabe;
+        return true;
+    }
+
+    @Override
+    public boolean getKlassenaugabe()
+    {
+        return stdKlassenausgabe;
     }
 
     

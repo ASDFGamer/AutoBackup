@@ -112,7 +112,7 @@ public class FTP implements ISichern {
                     log.write(datei.toString() + " ist ein Ordner");
                     if (!isFolderFTP(zielpfad,client,false))
                     {
-                        createFolderFTP(zielpfad,client,false);
+                        createFolderFTP(zielpfad,client);
                     }
                 }
                 else if (isFile(zielpfad)) //Die Datei hat sich geändert (oder es gab noch keinen Dateibaum)
@@ -164,7 +164,7 @@ public class FTP implements ISichern {
     @Override
     public boolean setDateibaum(Properties dateibaum) {
         this.dateibaum = dateibaum;
-        this.neueDateien = Backup.vergleicheDateien(this.dateibaum,this.quellordnerPath); //TODO überprüfen ob sinnvoll
+        this.neueDateien = Backup.vergleicheDateien(this.dateibaum,this.quellordnerPath);
         return true;
     }
     

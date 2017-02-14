@@ -132,10 +132,9 @@ public class FTPUtil {
      * Dies Erstellt einen Ordner an dem angegbenen Pfad
      * @param path Der Ordnerpfad relativ zum aktuellen workingDirectory
      * @param client Der FTP-Client auf dem der Ordner erstellt werden soll
-     * @param ersteraufruf muss immer auf true sein. TODO entfernen und zweite Funtkion anlegen
      * @return true, falls der Ordner erstellt werden konnte, sonst false.
      */
-    public static boolean createFolderFTP(Path path,FTPClient client,boolean ersteraufruf)
+    public static boolean createFolderFTP(Path path,FTPClient client)
     {
         String dirnow = "";
         try
@@ -154,7 +153,7 @@ public class FTPUtil {
         if(path.getNameCount()>1)
         {
             Log.Write(path.toString() + " zu " + path.subpath(0, path.getNameCount()-1).toString());
-            if (!createFolderFTP(path.subpath(0, path.getNameCount()-1),client,false))
+            if (!createFolderFTP_rec(path.subpath(0, path.getNameCount()-1),client))
             {
                 return false;
             }
@@ -162,11 +161,41 @@ public class FTPUtil {
         try
         {
             client.makeDirectory(path.toString());
-            if (ersteraufruf)
+            changeToDirROOT(dirnow, client);
+            Log.Write("Working Directory: " + client.printWorkingDirectory() + "create Dir");
+            
+        } catch (IOException ex)
+        {
+            Log.Write("Das Verzeichnis " + path + " konnte nicht auf " + client.getRemoteAddress().getHostAddress() + " erstellt werden.",WARNUNG);
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Dies Erstellt einen Ordner an dem angegbenen Pfad
+     * @param path Der Ordnerpfad relativ zum aktuellen workingDirectory
+     * @param client Der FTP-Client auf dem der Ordner erstellt werden soll
+     * @return true, falls der Ordner erstellt werden konnte, sonst false.
+     */
+    private static boolean createFolderFTP_rec(Path path,FTPClient client)
+    {   
+        if(isFolderFTP(path,client,false))
+        {
+            Log.Write("Der Ordner " + path + " existiert schon auf dem Client " + client.getRemoteAddress().getHostAddress());
+        }
+        if(path.getNameCount()>1)
+        {
+            Log.Write(path.toString() + " zu " + path.subpath(0, path.getNameCount()-1).toString());
+            if (!createFolderFTP_rec(path.subpath(0, path.getNameCount()-1),client))
             {
-                changeToDirROOT(dirnow, client);
-                Log.Write("Working Directory: " + client.printWorkingDirectory() + "create Dir");
+                return false;
             }
+        }
+        try
+        {
+            client.makeDirectory(path.toString());
             
         } catch (IOException ex)
         {
@@ -202,7 +231,7 @@ public class FTPUtil {
             if(zieldatei.getNameCount()>1&&!isFolderFTP(zieldatei.subpath(0, zieldatei.getNameCount()),client,false))
             {
                 Log.Write("Create Folder: " + zieldatei.subpath(0, zieldatei.getNameCount()-1));
-                createFolderFTP(zieldatei.subpath(0, zieldatei.getNameCount()-1),client,true);
+                createFolderFTP(zieldatei.subpath(0, zieldatei.getNameCount()-1),client);
                 client.changeWorkingDirectory(zieldatei.subpath(0, zieldatei.getNameCount()).toString());
             }
             FileInputStream fis = new FileInputStream(quelldatei.toFile());
