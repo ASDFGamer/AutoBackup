@@ -9,6 +9,8 @@ import autobackup.AutoBackup;
 import hilfreich.Log;
 import static hilfreich.LogLevel.*;
 import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
@@ -28,6 +30,11 @@ public class NormalGUIController extends GUIController
      * Mein Log
      */
     Log log = new Log(super.getClass().getSimpleName());
+    
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        super.initialize(location, resources);
+    }
     
     /**
      * Dies wird von dem Backup Button aufgerufen und startet das Backup.

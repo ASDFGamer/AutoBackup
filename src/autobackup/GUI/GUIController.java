@@ -19,6 +19,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 /**
@@ -52,6 +53,11 @@ public class GUIController implements Initializable {
     private Log log = new Log(super.getClass().getSimpleName());
     
     /**
+     * Dies ist das Einstellungelement
+     */
+    private ISettings settings;
+    
+    /**
      * Die Argumente die der Main übergeben wurden.
      */
     private static String[] args;
@@ -61,6 +67,7 @@ public class GUIController implements Initializable {
         log.setStdFilePath(Einstellungen.logFolder.get());
         log.clearLog();
         log.write("GUI wird initialisiert.");
+        settings = new Settings(Einstellungen.configFile.get());
         Einstellungen.init();
     }
     
@@ -71,6 +78,7 @@ public class GUIController implements Initializable {
     @FXML
     private void closeAction()
     {
+        settings.saveSettings();
         log.write("Das Fenster oder die Anwendung wird regulär beendet.");
         Stage stage = (Stage)close.getScene().getWindow();
         stage.close();
@@ -83,12 +91,12 @@ public class GUIController implements Initializable {
     @FXML
     private void quellordnerAction()
     {
-        ISettings settings = new Settings(Einstellungen.configFile.get());
-        String ordner = selectFolder(Einstellungen.namen.quellOrdner.toString(),settings,quellordner);
+        
+        String ordner = selectFolder(Einstellungen.namen.quellOrdner,quellordner);
         if (ordner != null && !ordner.equals(Einstellungen.quellOrdner.get()))
         {
             Einstellungen.quellOrdner.set(ordner);
-            settings.saveSettings(); 
+            //settings.saveSettings(); 
         }
     }
     
@@ -99,12 +107,11 @@ public class GUIController implements Initializable {
     @FXML
     private void zielordnerAction()
     {
-        ISettings settings = new Settings(Einstellungen.configFile.get());
-        String ordner = selectFolder(Einstellungen.namen.zielOrdner.toString(),settings,zielordner);
+        String ordner = selectFolder(Einstellungen.namen.zielOrdner,zielordner);
         if (ordner != null && !ordner.equals(Einstellungen.zielOrdner.get()))
         {
             Einstellungen.zielOrdner.set(ordner);
-            settings.saveSettings(); 
+            //settings.saveSettings(); 
         }
     }
     
@@ -131,20 +138,47 @@ public class GUIController implements Initializable {
     /**
      * Dies öffnet ein Fenster bei dem der Ordner ausgewählt werden kann.
      * @param name Der Name der Einstellung
-     * @param settings Das Einstellungen Objekt
      * @param aufrufer Der Aufrufer, damit das Rchtige Fenster als Owner gesetzt wird.
      * @return Den ausgewählten Ordner, oder null falls abgebrochen wurde.
      */
-    protected String selectFolder(String name, ISettings settings, Button aufrufer)
+    protected String selectFolder(Einstellungen.namen name, Button aufrufer)
     {        
-        Einstellungen.load(settings);
         DirectoryChooser chooser = new DirectoryChooser();
-        if (settings.loadSettingsResult() && settings.settingexists(name) && FileUtil.isFolder(settings.getSetting(name)))
-        {
-            chooser.setInitialDirectory(new File(settings.getSetting(name)));
-        }
-        chooser.setTitle(name);
+        //if (FileUtil.isFolder(name.toString())) TODO nur sinnvoll machbar wenn die Einstelungen ein Enum sind.
+        //{
+        //    chooser.setInitialDirectory(new File(settings.getSetting(name.toString())));
+        //}
+        chooser.setTitle(name.toString());
         File ordner = chooser.showDialog((Stage)aufrufer.getScene().getWindow()); 
+        if(ordner == null)
+        {
+            log.write("Es wurde keine Datei ausgewählt",WARNUNG);
+            return null;
+        }
+        try {
+            return ordner.toURI().toURL().toExternalForm();
+        } catch (MalformedURLException ex) {
+            log.write("Es gab ein Problem beim phrasen des ausgewählten Ordners: " + ordner.getAbsolutePath(),FEHLER);
+            return null;
+        }
+    }
+    
+    /**
+     * Dies öffnet ein Fenster bei dem die Datei ausgewählt werden kann.
+     * @param name Der Name der Einstellung
+     * @param aufrufer Der Aufrufer, damit das Rchtige Fenster als Owner gesetzt wird.
+     * @return Den ausgewählten Ordner, oder null falls abgebrochen wurde.
+     */
+    protected String selectFile(Einstellungen.namen name, Button aufrufer)
+    {        
+
+        FileChooser chooser = new FileChooser();
+        //if (FileUtil.isFolder(name.toString())) TODO nur sinnvoll machbar wenn die Einstelungen ein Enum sind.
+        //{
+        //    chooser.setInitialDirectory(new File(settings.getSetting(name.toString())));
+        //}
+        chooser.setTitle(name.toString());
+        File ordner = chooser.showSaveDialog((Stage)aufrufer.getScene().getWindow()); 
         if(ordner == null)
         {
             log.write("Es wurde keine Datei ausgewählt",WARNUNG);

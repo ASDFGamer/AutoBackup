@@ -37,7 +37,7 @@ public class ConfigStage {
      */
     public ConfigStage (Stage stage) throws IOException
     {
-        URL path = ConfigStage.class.getClassLoader().getResource("assets/FXML/NormalGUI.fxml");
+        URL path = ConfigStage.class.getClassLoader().getResource("assets/FXML/ConfigGUI.fxml");
         Parent root = FXMLLoader.load(path);
         Scene scene = new Scene(root, 600, 400); //Pixel anpassen
         stage.setTitle("AutoBackup Config");
@@ -55,9 +55,9 @@ public class ConfigStage {
      */
     public ConfigStage (Stage stage, Stage uebergeordnet) throws IOException
     {
-        URL path = ConfigStage.class.getClassLoader().getResource("assets/FXML/NormalGUI.fxml");
+        URL path = ConfigStage.class.getClassLoader().getResource("assets/FXML/ConfigGUI.fxml");
         Parent root = FXMLLoader.load(path);
-        Scene scene = new Scene(root, 600, 400); //Pixel anpassen
+        Scene scene = new Scene(root, 600, 500); //Pixel anpassen
         stage.setTitle("AutoBackup Config");
         stage.initOwner(uebergeordnet);
         stage.initModality(Modality.WINDOW_MODAL);

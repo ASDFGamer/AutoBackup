@@ -97,12 +97,12 @@ public class Einstellungen {
     /**
      * Dies gibt den Benutzer für FTP an.
      */
-    public static transient SimpleStringProperty ftpUser = new SimpleStringProperty();
+    public static transient SimpleStringProperty ftpUser = new SimpleStringProperty("nichts");
     
     /**
      * Dies gibt das Passwort für den Benutzer von FTP an. TODO Verschlüsselung
      */
-    public static transient SimpleStringProperty ftpPasswort = new SimpleStringProperty();
+    public static transient SimpleStringProperty ftpPasswort = new SimpleStringProperty("nichts");
     
     /**
      * Dies ist nur für den internen Gebrauch und zeigt ob Einstellungen geändert wurden 
