@@ -481,7 +481,7 @@ public class Log implements ILog{
     private String getTimestamp()
     {
         rightNow = Calendar.getInstance();
-        return  "[" +rightNow.get(Calendar.HOUR_OF_DAY)+ ":" +rightNow.get(Calendar.MINUTE)+":"+rightNow.get(Calendar.SECOND) +"] "; //TODO alles immer zeistellig
+        return  "[" +rightNow.get(Calendar.HOUR_OF_DAY)+ ":" +rightNow.get(Calendar.MINUTE)+":"+rightNow.get(Calendar.SECOND) +"] "; //TODO alles immer zweistellig
 
     }
     

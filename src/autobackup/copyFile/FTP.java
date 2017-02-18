@@ -229,7 +229,7 @@ public class FTP implements ISichern {
                 log.write("Der FTP Server hat die verbindung abgelehnt.",FEHLER);
                 return false;
             }
-            client.login(Einstellungen.ftpUser.get(), Einstellungen.ftpPasswort.get());      
+            client.login(Einstellungen.ftpUser.getWert().get(), Einstellungen.ftpPasswort.getWert().get());      
             client.setFileTransferMode(BINARY_FILE_TYPE);
             client.setFileType(BINARY_FILE_TYPE);
         } catch (SocketException ex)

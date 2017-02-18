@@ -85,7 +85,7 @@ public class ConfigGUIController extends GUIController{
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue)
             {
                 log.write("Die Backuptiefe wurde auf " + Const.ANZAHLEN[newValue.intValue()] + " gesetzt.");
-                Einstellungen.backuptiefe.set(newValue.intValue());
+                Einstellungen.backuptiefe.getWert().setInt(newValue.intValue());
                 
             }
         });
@@ -103,10 +103,10 @@ public class ConfigGUIController extends GUIController{
     @FXML
     private void logordnerAction()
     {
-        String ordner = selectFolder(Einstellungen.namen.logFolder,logordner);
-        if (ordner != null && !ordner.equals(Einstellungen.logFolder.get()))
+        String ordner = selectFolder(Einstellungen.logFolder,logordner);
+        if (ordner != null && !ordner.equals(Einstellungen.logFolder.getWert().get()))
         {
-            Einstellungen.logFolder.set(ordner);
+            Einstellungen.logFolder.getWert().set(ordner);
             //settings.saveSettings(); 
         }
     }
@@ -114,10 +114,10 @@ public class ConfigGUIController extends GUIController{
     @FXML
     private void dateibaumpfadAction()
     {
-        String ordner = selectFile(Einstellungen.namen.dateibaumPfad,dateibaumpfad);
-        if (ordner != null && !ordner.equals(Einstellungen.dateibaumPfad.get()))
+        String ordner = selectFile(Einstellungen.dateibaumPfad,dateibaumpfad);
+        if (ordner != null && !ordner.equals(Einstellungen.dateibaumPfad.getWert().get()))
         {
-            Einstellungen.dateibaumPfad.set(ordner);
+            Einstellungen.dateibaumPfad.getWert().set(ordner);
             //settings.saveSettings(); 
         }
     }
@@ -125,10 +125,10 @@ public class ConfigGUIController extends GUIController{
     @FXML
     private void einstellungsdateiAction()
     {
-        String ordner = selectFile(Einstellungen.namen.configFile,einstellungsdatei);
-        if (ordner != null && !ordner.equals(Einstellungen.configFile.get()))
+        String ordner = selectFile(Einstellungen.configFile,einstellungsdatei);
+        if (ordner != null && !ordner.equals(Einstellungen.configFile.getWert().get()))
         {
-            Einstellungen.configFile.set(ordner);
+            Einstellungen.configFile.getWert().set(ordner);
             //settings.saveSettings(); 
         }
     }

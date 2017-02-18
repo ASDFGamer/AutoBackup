@@ -40,7 +40,7 @@ public class AutoBackup
     public static void main(String[] args)
     {
         Log log = new Log();
-        log.setStdFilePath(Einstellungen.logFolder.get());
+        log.setStdFilePath(Einstellungen.logFolder.getWert().get());
         log.clearLog();
         AutoBackup backup = new AutoBackup();
         backup.backup(args);
@@ -81,7 +81,7 @@ public class AutoBackup
         }
         if (this.configfilePath==null)
         {
-            String configFile = Einstellungen.configFile.get();
+            String configFile = Einstellungen.configFile.getWert().get();
             log.write("Es wird die standarmäßige Configfile genommen: ",WARNUNG);
             log.write(configFile,INFO);
             this.configfilePath = configFile;
@@ -103,8 +103,7 @@ public class AutoBackup
             log.write("Es gab ein Problem beim öffnen der Einstellungsdatei, es werden Stdandardeinstellungen benutzt.",WARNUNG);
             return false;
         }
-        
-        return Einstellungen.load(config);
+        return Einstellungen.backuptiefe.load(config);//Kann jedes Element sein, muss nicht bakcuptiefe sein, da alle Werte geladen werden.
     }
     
     /**
@@ -118,8 +117,8 @@ public class AutoBackup
         //Einstellungen für das Backup festlegenEinstellungen.ausgangsOrdner
         try
         {
-            backup.setSourceFolder(new URL(Einstellungen.quellOrdner.get()));
-            backup.setDestinationFolder(new URL(Einstellungen.zielOrdner.get()));
+            backup.setSourceFolder(new URL(Einstellungen.quellOrdner.getWert().get()));
+            backup.setDestinationFolder(new URL(Einstellungen.zielOrdner.getWert().get()));
         }
         catch (MalformedURLException e)
         {
@@ -127,9 +126,9 @@ public class AutoBackup
             return;
         }
 
-        backup.setOnlyChange(Einstellungen.onlyChange.get());
-        backup.setVersions(Einstellungen.versionen.get());
-        backup.setDateibaumPfad(Einstellungen.dateibaumPfad.get());
+        backup.setOnlyChange(Einstellungen.onlyChange.getWert().getBoolean());
+        backup.setVersions(Einstellungen.versionen.getWert().getInteger());
+        backup.setDateibaumPfad(Einstellungen.dateibaumPfad.getWert().get());
         //Backup starten
         if (backup.backup())
         {
@@ -146,7 +145,7 @@ public class AutoBackup
      */
     private void save()
     {
-        if (Einstellungen.einstellungenGeaendert)
+        if (Einstellungen.backuptiefe.getWert().getEinstellunggeaendert())
         {
             log.write("Die Einstellungen  haben sich geändert und werden deshalb gespeichert.");
             if (config.saveSettings())

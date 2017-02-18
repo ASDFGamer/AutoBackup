@@ -167,26 +167,13 @@ public class Settings implements ISettings{
     @Override
     public boolean saveSettings()
     {
-        if (Einstellungen.einstellungenGeaendert)
+        if (Einstellungen.backuptiefe.getWert().getEinstellunggeaendert())
         {
-            einstellungen.put(Einstellungen.namen.backuptiefe.toString(), String.valueOf(Einstellungen.backuptiefe.get()));
-            einstellungen.put(Einstellungen.namen.configFile.toString(), Einstellungen.configFile.get());
-            einstellungen.put(Einstellungen.namen.configFolder.toString(), Einstellungen.configFolder.get());
-            einstellungen.put(Einstellungen.namen.dateibaumPfad.toString(), Einstellungen.dateibaumPfad.get());
-            //einstellungen.put(Einstellungen.namen.erlaubteTypen.toString(), Einstellungen.erlaubteTypen);
-            einstellungen.put(Einstellungen.namen.ftpPasswort.toString(), Einstellungen.ftpPasswort.get());
-            einstellungen.put(Einstellungen.namen.ftpUser.toString(), Einstellungen.ftpUser.get());
-            einstellungen.put(Einstellungen.namen.logFolder.toString(), Einstellungen.logFolder.get());
-            einstellungen.put(Einstellungen.namen.maxLogs.toString(), String.valueOf(Einstellungen.maxLogs.get()));
-            einstellungen.put(Einstellungen.namen.onlyChange.toString(), Einstellungen.onlyChange.get());
-            einstellungen.put(Einstellungen.namen.quellOrdner.toString(), Einstellungen.quellOrdner.get());
-            //einstellungen.put(Einstellungen.namen.verboteneTypen.toString(), Einstellungen.verboteneTypen);
-            einstellungen.put(Einstellungen.namen.versionen.toString(), String.valueOf(Einstellungen.versionen.get()));
-            einstellungen.put(Einstellungen.namen.writeLog.toString(), String.valueOf(Einstellungen.writeLog.get()));
-            einstellungen.put(Einstellungen.namen.zielOrdner.toString(), Einstellungen.zielOrdner.get());
-            einstellungen.put(Einstellungen.namen.dateibaumPfad.toString(), Einstellungen.dateibaumPfad.get());
+            for(Einstellungen einstellung : Einstellungen.values())
+            {
+                einstellungen.put(einstellung.toString(), String.valueOf(einstellung.getWert().get()));
+            }
             
-
             try
             {
                 FileWriter file = new FileWriter(configfiles[this.activeconfigfile]);

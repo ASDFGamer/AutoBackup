@@ -64,11 +64,10 @@ public class GUIController implements Initializable {
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        log.setStdFilePath(Einstellungen.logFolder.get());
+        log.setStdFilePath(Einstellungen.logFolder.getWert().get());
         log.clearLog();
         log.write("GUI wird initialisiert.");
-        settings = new Settings(Einstellungen.configFile.get());
-        Einstellungen.init();
+        settings = new Settings(Einstellungen.configFile.getWert().get());
     }
     
     /**
@@ -92,10 +91,10 @@ public class GUIController implements Initializable {
     private void quellordnerAction()
     {
         
-        String ordner = selectFolder(Einstellungen.namen.quellOrdner,quellordner);
-        if (ordner != null && !ordner.equals(Einstellungen.quellOrdner.get()))
+        String ordner = selectFolder(Einstellungen.quellOrdner,quellordner);
+        if (ordner != null && !ordner.equals(Einstellungen.quellOrdner.getWert().get()))
         {
-            Einstellungen.quellOrdner.set(ordner);
+            Einstellungen.quellOrdner.getWert().set(ordner);
             //settings.saveSettings(); 
         }
     }
@@ -107,10 +106,10 @@ public class GUIController implements Initializable {
     @FXML
     private void zielordnerAction()
     {
-        String ordner = selectFolder(Einstellungen.namen.zielOrdner,zielordner);
-        if (ordner != null && !ordner.equals(Einstellungen.zielOrdner.get()))
+        String ordner = selectFolder(Einstellungen.zielOrdner,zielordner);
+        if (ordner != null && !ordner.equals(Einstellungen.zielOrdner.getWert().get()))
         {
-            Einstellungen.zielOrdner.set(ordner);
+            Einstellungen.zielOrdner.getWert().set(ordner);
             //settings.saveSettings(); 
         }
     }
@@ -141,13 +140,13 @@ public class GUIController implements Initializable {
      * @param aufrufer Der Aufrufer, damit das Rchtige Fenster als Owner gesetzt wird.
      * @return Den ausgewählten Ordner, oder null falls abgebrochen wurde.
      */
-    protected String selectFolder(Einstellungen.namen name, Button aufrufer)
+    protected String selectFolder(Einstellungen name, Button aufrufer)
     {        
         DirectoryChooser chooser = new DirectoryChooser();
-        //if (FileUtil.isFolder(name.toString())) TODO nur sinnvoll machbar wenn die Einstelungen ein Enum sind.
-        //{
-        //    chooser.setInitialDirectory(new File(settings.getSetting(name.toString())));
-        //}
+        if (FileUtil.isFolder(name.getWert().get()))
+        {
+            chooser.setInitialDirectory(new File(settings.getSetting(name.getWert().get())));
+        }
         chooser.setTitle(name.toString());
         File ordner = chooser.showDialog((Stage)aufrufer.getScene().getWindow()); 
         if(ordner == null)
@@ -169,14 +168,14 @@ public class GUIController implements Initializable {
      * @param aufrufer Der Aufrufer, damit das Rchtige Fenster als Owner gesetzt wird.
      * @return Den ausgewählten Ordner, oder null falls abgebrochen wurde.
      */
-    protected String selectFile(Einstellungen.namen name, Button aufrufer)
+    protected String selectFile(Einstellungen name, Button aufrufer)
     {        
 
         FileChooser chooser = new FileChooser();
-        //if (FileUtil.isFolder(name.toString())) TODO nur sinnvoll machbar wenn die Einstelungen ein Enum sind.
-        //{
-        //    chooser.setInitialDirectory(new File(settings.getSetting(name.toString())));
-        //}
+        if (FileUtil.isFolder(name.getWert().get()))
+        {
+            chooser.setInitialDirectory(new File(settings.getSetting(name.getWert().get())));
+        }
         chooser.setTitle(name.toString());
         File ordner = chooser.showSaveDialog((Stage)aufrufer.getScene().getWindow()); 
         if(ordner == null)
