@@ -14,8 +14,8 @@ import java.util.List;
 
 
 /**
- * Sinnvolle Methoden für das Arbeiten mit Dateien.
- * @author Christoph Wildhagen 
+ * Sinnvolle Methoden für das Arbeiten mit lokalen Dateien.
+ * @author ASDFGamer 
  */
 public class FileUtil {
     

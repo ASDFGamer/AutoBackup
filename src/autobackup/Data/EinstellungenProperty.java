@@ -7,8 +7,8 @@ import hilfreich.Utils;
 import javafx.beans.property.SimpleStringProperty;
 
 /**
- *
- * @author Christoph Wildhagen 
+ * Dies ist das Objekt in dem Einstellungen gespeichert werden.
+ * @author ASDFGamer
  */
 public class EinstellungenProperty extends SimpleStringProperty{
     

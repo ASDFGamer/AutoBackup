@@ -11,7 +11,6 @@ import autobackup.Data.Einstellungen;
 import hilfreich.Log;
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -22,7 +21,7 @@ import javafx.scene.control.TextField;
 
 /**
  * Dies ist der GUI controller für das Config Fenster.
- * @author WILDHACH
+ * @author ASDFGamer
  */
 public class ConfigGUIController extends GUIController{
     
@@ -61,39 +60,34 @@ public class ConfigGUIController extends GUIController{
     /**
      * Mein Log
      */
-    Log log = new Log(super.getClass().getSimpleName());
+    private Log log = new Log(super.getClass().getSimpleName());
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         super.initialize(location, resources);
-        logeigenschaften.getItems().addAll(Const.LOGEIGENSCHAFTEN);
-        logeigenschaften.getSelectionModel().select(Const.LOGEIGENSCHAFTEN[0]);
-        logeigenschaften.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue)
-            {
-                //TODO Einstellung hinzufügen
-            }
-            
+        logeigenschaften.getItems().addAll(Const.LOGEIGENSCHAFTEN.getAllText());
+        logeigenschaften.getSelectionModel().select(Const.LOGEIGENSCHAFTEN.getAllText()[0]);
+        logeigenschaften.getSelectionModel().selectedIndexProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) ->
+        {
+            log.write("Der Logtype wurde auf " + Const.LOGEIGENSCHAFTEN.values()[newValue.intValue()].getText() + " gesetzt.");
+            Einstellungen.logType.getWert().setInt(newValue.intValue());
         });
-        
         
         backuptiefe.getItems().addAll(Const.ANZAHLEN);
         backuptiefe.getSelectionModel().select(Const.ANZAHLEN[0]);
-        backuptiefe.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue)
-            {
-                log.write("Die Backuptiefe wurde auf " + Const.ANZAHLEN[newValue.intValue()] + " gesetzt.");
-                Einstellungen.backuptiefe.getWert().setInt(newValue.intValue());
-                
-            }
+        backuptiefe.getSelectionModel().selectedIndexProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) ->
+        {
+            log.write("Die Backuptiefe wurde auf " + Const.ANZAHLEN[newValue.intValue()] + " gesetzt.");
+            Einstellungen.backuptiefe.getWert().setInt(newValue.intValue());
         });
-        
         
         versionen.getItems().addAll(Const.ANZAHLEN);
         versionen.getSelectionModel().select(Const.ANZAHLEN[0]);
-        
+        versionen.getSelectionModel().selectedIndexProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) ->
+        {
+            log.write("Die maximalen Versionen wurden auf " + Const.ANZAHLEN[newValue.intValue()] + " gesetzt.");
+            Einstellungen.versionen.getWert().setInt(newValue.intValue());
+        });
     }
     
     /**
@@ -106,8 +100,7 @@ public class ConfigGUIController extends GUIController{
         String ordner = selectFolder(Einstellungen.logFolder,logordner);
         if (ordner != null && !ordner.equals(Einstellungen.logFolder.getWert().get()))
         {
-            Einstellungen.logFolder.getWert().set(ordner);
-            //settings.saveSettings(); 
+            Einstellungen.logFolder.getWert().set(ordner); 
         }
     }
     
@@ -118,7 +111,6 @@ public class ConfigGUIController extends GUIController{
         if (ordner != null && !ordner.equals(Einstellungen.dateibaumPfad.getWert().get()))
         {
             Einstellungen.dateibaumPfad.getWert().set(ordner);
-            //settings.saveSettings(); 
         }
     }
 
@@ -129,8 +121,13 @@ public class ConfigGUIController extends GUIController{
         if (ordner != null && !ordner.equals(Einstellungen.configFile.getWert().get()))
         {
             Einstellungen.configFile.getWert().set(ordner);
-            //settings.saveSettings(); 
         }
+    }
+    
+    @FXML
+    private void ftpPasswortAction()
+    {
+        log.write(ftpPasswort.getText());
     }
     
 }

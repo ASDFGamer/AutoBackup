@@ -2,7 +2,8 @@
 package hilfreich;
 
 /**
- * @author Christoph Wildhagen 
+ * Hirmit kann überprüft werden ob ein String in einen anderen Typ umwandelbar ist.
+ * @author ASDFGamer
  */
 public class Convertable {
     

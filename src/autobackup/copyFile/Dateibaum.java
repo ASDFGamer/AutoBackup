@@ -17,8 +17,8 @@ import java.io.File;
 import java.util.Properties;
 
 /**
- *
- * @author WILDHACH
+ * Dies wird zum laden/sichern des Dateibaums verwendet
+ * @author ASDFGamer
  */
 public class Dateibaum {
     

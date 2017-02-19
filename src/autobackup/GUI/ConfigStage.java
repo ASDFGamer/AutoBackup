@@ -15,8 +15,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
- *
- * @author WILDHACH
+ * Hiermit wird eine neue Stage für die Einstellungen erstellt.
+ * @author ASDFGamer
  */
 public class ConfigStage {
     

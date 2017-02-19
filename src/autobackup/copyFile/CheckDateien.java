@@ -6,8 +6,8 @@ import java.nio.file.Path;
 import java.util.LinkedList;
 
 /**
- *
- * @author Christoph Wildhagen 
+ * Hiermit wird auf geänderte Dateien geprüft.
+ * @author ASDFGamer
  */
 public class CheckDateien {
     

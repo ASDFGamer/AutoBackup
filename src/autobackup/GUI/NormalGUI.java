@@ -2,11 +2,9 @@
 package autobackup.GUI;
 
 import autobackup.AutoBackup;
-import hilfreich.FileUtil;
 import hilfreich.Log;
 import static hilfreich.LogLevel.*;
 import hilfreich.Utils;
-import java.io.File;
 import java.net.URL;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -17,7 +15,7 @@ import javafx.stage.Stage;
 
 /**
  * Dies startet das Normale Gui der Anwendung
- * @author Christoph Wildhagen 
+ * @author ASDFGamer
  */
 public class NormalGUI extends Application{
     

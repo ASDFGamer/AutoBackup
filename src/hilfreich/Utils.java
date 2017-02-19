@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * Alle mögliche sinnvolle Methoden
- * @author Christoph Wildhagen 
+ * @author ASDFGamer
  */
 public class Utils {
     

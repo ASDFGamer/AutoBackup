@@ -24,7 +24,7 @@ import javafx.stage.Stage;
 
 /**
  * Dies ist der übergeordnete GUI Controller für alle Fenster
- * @author WILDHACH
+ * @author ASDFGamer
  */
 public class GUIController implements Initializable {
     

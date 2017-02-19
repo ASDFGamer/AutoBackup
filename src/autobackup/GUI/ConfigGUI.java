@@ -15,7 +15,7 @@ import javafx.stage.Stage;
 
 /**
  * Dies öffnet die Configoberfläche für Autobackup.
- * @author WILDHACH
+ * @author ASDFGamer
  */
 public class ConfigGUI extends Application{
     

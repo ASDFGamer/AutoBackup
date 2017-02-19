@@ -15,8 +15,8 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 
 /**
- *
- * @author Christoph Wildhagen 
+ * Dies sind sinnvolle Funktionen für das Arbeiten mit FTP.
+ * @author ASDFGamer 
  */
 public class FTPUtil {
     

@@ -20,8 +20,8 @@ import static org.apache.commons.net.ftp.FTP.*;
 import org.apache.commons.net.ftp.FTPReply;
 
 /**
- *
- * @author Christoph Wildhagen 
+ * Hiermit werden die Dateien gesichert falls der Zeilordner auf einem FTP-Laufwerk liegt.
+ * @author ASDFGamer
  */
 public class FTP implements ISichern {
     
@@ -89,6 +89,9 @@ public class FTP implements ISichern {
         
     }
     
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean backupFiles()
     {
@@ -160,7 +163,10 @@ public class FTP implements ISichern {
         }
         return result;
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean setDateibaum(Properties dateibaum) {
         this.dateibaum = dateibaum;
@@ -168,12 +174,18 @@ public class FTP implements ISichern {
         return true;
     }
     
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public LinkedList<Path> getNeueDateien()
     {
         return this.neueDateien;
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean vergleicheDatei(Path datei)
     {
@@ -198,14 +210,20 @@ public class FTP implements ISichern {
         }
         return true;
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean checkBackupFiles()
     {
         CheckDateien.checkBackupFiles(quellordnerPath, this);
         return true;
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean checkAllFiles()
     {

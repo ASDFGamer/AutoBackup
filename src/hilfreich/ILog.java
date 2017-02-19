@@ -8,7 +8,7 @@ package hilfreich;
 /**
  * Dies ist ein Interface für einen Log
  * Sinnvoll wäre es, wenn noch static Methoden z.B. für write hinzugefügt werden.
- * @author Christoph
+ * @author ASDFGamer
  */
 public interface ILog {
     

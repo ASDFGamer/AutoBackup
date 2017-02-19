@@ -3,7 +3,8 @@ package autobackup.filesystem;
 
 /**
  * Diese Klasse wird benutzt um Dateiendungen zu speichern.
- * @author Christoph Wildhagen 
+ * Noch nicht in benutzung
+ * @author ASDFGamer 
  */
 public class Endung {
     

@@ -18,7 +18,7 @@ import java.util.Properties;
 /**
  * Dies erzeugt einfache Configdateien mit Hilfe von Properties.load / Properties.getProperty
  * TODO Netzwerkfähigkeiten hinzufügen, Verschachtelte Einstellungsdateien -> am besten alles neu schreiben und weiter Modularisieren.
- * @author Christoph Wildhagen 
+ * @author ASDFGamer
  */
 public class Settings implements ISettings{
     
@@ -135,14 +135,20 @@ public class Settings implements ISettings{
         log.write("Die Einstellungen aus " + this.configfiles[this.activeconfigfile].toString() + " wurden geladen.");
         return true;
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean setSetting(String key, String value)
     {
         einstellungen.setProperty(key, value);
         return true;
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean settingexists(String key)
     {
@@ -157,13 +163,19 @@ public class Settings implements ISettings{
             return false;
         }
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String getSetting(String key)
     {
         return this.einstellungen.getProperty(key);
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean saveSettings()
     {
@@ -194,7 +206,9 @@ public class Settings implements ISettings{
         return true; 
     }
    
-
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean setSettingsPath(String path)
     {
@@ -207,6 +221,9 @@ public class Settings implements ISettings{
         
     }
     
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean loadSettingsResult()
     {

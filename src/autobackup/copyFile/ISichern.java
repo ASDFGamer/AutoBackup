@@ -5,8 +5,8 @@ import java.nio.file.Path;
 import java.util.LinkedList;
 
 /**
- *
- * @author Christoph Wildhagen
+ * Dies ist ein Interface mit allen Funktionen die notwendig sind zum sichern der Dateien, egal wohin.
+ * @author ASDFGamer
  */
 public interface ISichern
 {

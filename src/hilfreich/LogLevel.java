@@ -3,7 +3,7 @@ package hilfreich;
 
 /**
  * Dies sind die verschiedenen Logginglevel.
- * @author Christoph Wildhagen 
+ * @author ASDFGamer
  */
 public enum LogLevel 
 {

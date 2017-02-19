@@ -11,7 +11,7 @@ import javafx.beans.value.ObservableValue;
 
 /**
  * Dies sind alle Einstellungen die existieren.
- * @author Christoph Wildhagen 
+ * @author ASDFGamer
  */
 public enum Einstellungen{
     backuptiefe(-1),
@@ -22,6 +22,10 @@ public enum Einstellungen{
     ftpUser(""),
     ftpPasswort(""),
     logFolder(System.getProperty("user.dir")),
+    /**
+     * Hergeleitet von Const#LOGEIGENSCHAFTEN
+     */
+    logType(0), 
     maxLogs(3),
     onlyChange(true),
     quellOrdner(""),

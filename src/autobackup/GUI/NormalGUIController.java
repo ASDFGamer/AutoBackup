@@ -16,7 +16,7 @@ import javafx.scene.control.Button;
 import javafx.stage.Stage;
 /**
  * Der Controller für das Normale GUI
- * @author WILDHACH
+ * @author ASDFGamer
  */
 public class NormalGUIController extends GUIController
 {

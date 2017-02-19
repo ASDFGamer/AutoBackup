@@ -5,7 +5,7 @@ import java.net.URL;
 
 /**
  * Dieses Interface soll benutzt werden um das Backup zu steuern
- * @author Christoph Wildhagen
+ * @author ASDFGamer
  */
 public interface IBackup
 {

@@ -2,7 +2,7 @@ package autobackup.settings;
 
 /**
  * Dieses Interface wird genutzt um Einstellungen zu Laden/Speichern.
- * @author Christoph Wildhagen
+ * @author ASDFGamer
  */
 public interface ISettings
 { 

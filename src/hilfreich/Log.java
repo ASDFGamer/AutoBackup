@@ -18,7 +18,7 @@ import java.util.Calendar;
 /**
  * Dies ist eine einfache und relativ Performante Logausgabe.
  * TODO Möglichkeit für Versionierung und mehreren Logs
- * @author Christoph
+ * @author ASDFGamer
  */
 public class Log implements ILog{
     
@@ -185,6 +185,9 @@ public class Log implements ILog{
     
     //---ILog Methoden---
     //--normale Benutzung--
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean write(String text) {
         boolean result = true;
@@ -207,7 +210,10 @@ public class Log implements ILog{
         }
         return result;
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean write(String text, LogLevel level) {
         boolean result = true;
@@ -231,6 +237,9 @@ public class Log implements ILog{
         return result;
     }
     
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean write(Exception e)
     {
@@ -247,6 +256,9 @@ public class Log implements ILog{
         return true;
     }
     
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean clearLog() {
         if (path == null)
@@ -274,52 +286,81 @@ public class Log implements ILog{
     
     //--Getter/Setter--
     //-Konsole-
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean setConsole(boolean an) {
         this.consolenausgabe = an;
         return true;
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean setStdConsole(boolean an) {
         Log.stdConsolenausgabe = an;
         return true;
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean getConsole() {
         return this.consolenausgabe;
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean getStdConsole() {
         return Log.stdConsolenausgabe;
     }
     
     //-Datei-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean setFileausgabe(boolean an) {
         this.fileausgabe = an;
         return true;
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean setStdFileausgabe(boolean an) {
         Log.stdFileausgabe = an;
         return true;
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean getFileausgabe() {
         return this.fileausgabe;
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean getStdFileausgabe() {
         return Log.stdFileausgabe;
     }
     
+    
     //-Dateipfad-
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean setStdFilePath(String path) {
         Log.path = path;
@@ -327,6 +368,9 @@ public class Log implements ILog{
         return true;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String getStdFilePath() {
         if (filePath == null)
@@ -337,13 +381,19 @@ public class Log implements ILog{
     }
     
     //-Zeitanzeige-
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean setStdTimeStamp(boolean an)
     {
         Log.stdZeitausgabe = an;
         return true;
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean getStdTimeStamp()
     {
@@ -351,26 +401,38 @@ public class Log implements ILog{
     }
     
     //-Min. Loglevel-
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean setMinLoglevel(int level)
     {
         this.minLoglevel = level;
         return true;
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public int getMinLoglevel()
     {
         return this.minLoglevel;
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean setStdMinLoglevel(int level)
     {
         Log.stdMinLoglevel = level;
         return true;
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public int getStdMinLoglevel()
     {
@@ -378,13 +440,19 @@ public class Log implements ILog{
     }
     
     //-Versionierung-
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean setstdVersionen(int version)
     {
         versionen = version;
         return true;
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public int getstdVersionen()
     {

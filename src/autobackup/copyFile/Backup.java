@@ -13,7 +13,8 @@ import java.util.LinkedList;
 import java.util.Properties;
 
 /**
- * @author Christoph Wildhagen 
+ * Dies ist die Klasse dir für das anschieben des Backups zuständig ist.
+ * @author ASDFGamer 
  */
 public class Backup implements IBackup{
     //----Variablen----
@@ -62,6 +63,9 @@ public class Backup implements IBackup{
     //----Methoden----
     //---public---
     //--Overwrite--
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean backup()
     {
@@ -98,35 +102,50 @@ public class Backup implements IBackup{
         return result;
         
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean setSourceFolder(URL path)
     {
         this.quellordner = path;
         return true;
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean setDestinationFolder(URL path)
     {
         this.zielordner=path;
         return true;
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean setVersions(int versions)
     {
         this.versions = versions;
         return true;
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean setOnlyChange(boolean onlyChange)
     {
         this.onlyChange = onlyChange;
         return true;
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean setDateibaumPfad(String pfad) {
         if (!isFile(pfad))
@@ -150,6 +169,9 @@ public class Backup implements IBackup{
         return true;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean setDateibaumPfad(File pfad) {
         this.dateibaumpfad = pfad;

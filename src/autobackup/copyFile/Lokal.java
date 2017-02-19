@@ -15,8 +15,8 @@ import java.util.Properties;
 import java.net.URL;
 
 /**
- *
- * @author Christoph Wildhagen 
+ * Hiermit werden die Dateien lokal gesichert.
+ * @author ASDFGamer
  */
 public class Lokal implements ISichern{
     
@@ -182,6 +182,9 @@ public class Lokal implements ISichern{
         return dateistruktur;
     }
     
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean setDateibaum(Properties dateibaum)
     {
@@ -190,19 +193,28 @@ public class Lokal implements ISichern{
         return true;
     }
     
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public LinkedList<Path> getNeueDateien()
     {
         return this.neueDateien;
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean checkBackupFiles()
     {
         CheckDateien.checkBackupFiles(quellordnerPath, this);
         return true;
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean checkAllFiles()
     {
