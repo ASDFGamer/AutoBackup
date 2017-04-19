@@ -41,12 +41,6 @@
             <Label layoutX="67.0" layoutY="42.0" text="TODO / WIP" />
          </children>
       </AnchorPane>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: red;" GridPane.columnIndex="2" GridPane.rowIndex="2">
-         <children>
-            <Label layoutX="55.0" layoutY="6.0" text="verbotene Typen" />
-            <Label layoutX="67.0" layoutY="42.0" text="TODO / WIP" />
-         </children>
-      </AnchorPane>
       <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
          <children>
             <Label layoutX="53.0" layoutY="6.0" text="Logeigenschaften" />
@@ -87,5 +81,6 @@
          </children>
       </AnchorPane>
       <Button fx:id="close" mnemonicParsing="false" onAction="#closeAction" text="Schließen" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+      <Button fx:id="verboteneOrdner" mnemonicParsing="false" onAction="#verboteneOrdnerAction" text="verbotener Ordner" GridPane.columnIndex="2" GridPane.rowIndex="2" />
    </children>
 </GridPane>

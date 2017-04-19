@@ -30,6 +30,7 @@ public enum Einstellungen{
     onlyChange(true),
     quellOrdner(""),
     verboteneTypen(""),
+    verbotenerOrdner(""),//TODO auf mehrere Ordner erweitern
     versionen(2),
     writeLog(true),
     zielOrdner("");

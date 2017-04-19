@@ -24,12 +24,12 @@ public class NormalGUIController extends GUIController
      * Der Button für erweiterte Einstellungen.
      */
     @FXML
-    Button erweiterteEinstellungen;
+    private Button erweiterteEinstellungen;
     
     /**
      * Mein Log
      */
-    Log log = new Log(super.getClass().getSimpleName());
+    private Log log = new Log(super.getClass().getSimpleName());
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {

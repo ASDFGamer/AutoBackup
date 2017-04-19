@@ -1,6 +1,7 @@
 
 package autobackup.copyFile;
 
+import autobackup.Data.Einstellungen;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.LinkedList;
@@ -27,7 +28,9 @@ public class CheckDateien {
             {
                 if (datei.isDirectory())
                 {
+                    
                     checkBackupFilesR(datei,sichern);
+                     
                 }
                 else
                 {

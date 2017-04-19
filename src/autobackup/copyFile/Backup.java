@@ -1,16 +1,21 @@
 
 package autobackup.copyFile;
 
+import autobackup.Data.Einstellungen;
 import hilfreich.Convertable;
 import static hilfreich.FileUtil.*;
 import hilfreich.Log;
 import static hilfreich.LogLevel.*;
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Dies ist die Klasse dir für das anschieben des Backups zuständig ist.
@@ -246,7 +251,18 @@ public class Backup implements IBackup{
             if (isFolder(path))
             {
                 Log.Write(datei.getAbsolutePath() + "ist ein Ordner.");
-                geaendert.addAll(vergleicheDateien(dateibaum, datei.toPath()));
+                try {
+                    if (!datei.getAbsolutePath().equals(Paths.get(new URI(Einstellungen.verbotenerOrdner.getWert().get())).toString()))
+                    {
+                        geaendert.addAll(vergleicheDateien(dateibaum, datei.toPath()));
+                    }
+                    else
+                    {
+                        Log.Write("Dieser Ordner ist aber vom Backup ausgeschlossen.");
+                    }
+                } catch (URISyntaxException ex) {
+                    Log.Write(ex);
+                }
             }
             else if ((!dateibaum.containsKey(path)) || !Convertable.toLong(dateibaum.getProperty(path)))
             {

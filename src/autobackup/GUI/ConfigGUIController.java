@@ -57,6 +57,12 @@ public class ConfigGUIController extends GUIController{
     
     @FXML
     private ChoiceBox<String> versionen;
+    
+    /**
+     * Dies wählte einen Ordner aus der nicht mit Syncronisert wird.
+     */
+    @FXML
+    private Button verboteneOrdner;
     /**
      * Mein Log
      */
@@ -129,5 +135,15 @@ public class ConfigGUIController extends GUIController{
     {
         log.write(ftpPasswort.getText());
     }
+    
+    @FXML
+    private void verboteneOrdnerAction()
+    {
+        String ordner = selectFolder(Einstellungen.verbotenerOrdner,verboteneOrdner);
+        if (ordner != null && !ordner.equals(Einstellungen.verbotenerOrdner.getWert().get()))
+        {
+            Einstellungen.verbotenerOrdner.getWert().set(ordner);
+        }
+    };
     
 }
