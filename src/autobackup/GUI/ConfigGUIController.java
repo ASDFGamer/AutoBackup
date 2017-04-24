@@ -76,7 +76,7 @@ public class ConfigGUIController extends GUIController{
         logeigenschaften.getSelectionModel().selectedIndexProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) ->
         {
             log.write("Der Logtype wurde auf " + Const.LOGEIGENSCHAFTEN.values()[newValue.intValue()].getText() + " gesetzt.");
-            Einstellungen.logType.getWert().setInt(newValue.intValue());
+            Einstellungen.logType.getWert().setInteger(newValue.intValue());
         });
         
         backuptiefe.getItems().addAll(Const.ANZAHLEN);
@@ -84,7 +84,7 @@ public class ConfigGUIController extends GUIController{
         backuptiefe.getSelectionModel().selectedIndexProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) ->
         {
             log.write("Die Backuptiefe wurde auf " + Const.ANZAHLEN[newValue.intValue()] + " gesetzt.");
-            Einstellungen.backuptiefe.getWert().setInt(newValue.intValue());
+            Einstellungen.backuptiefe.getWert().setInteger(newValue.intValue());
         });
         
         versionen.getItems().addAll(Const.ANZAHLEN);
@@ -92,7 +92,7 @@ public class ConfigGUIController extends GUIController{
         versionen.getSelectionModel().selectedIndexProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) ->
         {
             log.write("Die maximalen Versionen wurden auf " + Const.ANZAHLEN[newValue.intValue()] + " gesetzt.");
-            Einstellungen.versionen.getWert().setInt(newValue.intValue());
+            Einstellungen.versionen.getWert().setInteger(newValue.intValue());
         });
     }
     

@@ -233,7 +233,7 @@ public class FileUtil {
         if( !isFolder(ordner.getParent()))
         {
             Log.Write("Der übergeordnete Ordner " + ordner.getParent().toString() + " existert nicht und wird jetzt erstellt.", LogLevel.INFO);
-            createFile(ordner.getParent());
+            createFolder(ordner.getParent());
         }
         
         try

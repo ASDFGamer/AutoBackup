@@ -37,26 +37,85 @@ public enum Einstellungen{
     
     private final Log log = new Log(this.getClass().getSimpleName());
     
-    private EinstellungenProperty wert;
+    private EinstellungenProperty property;
     
-    private Einstellungen(String wert)
+    /**
+     * Der Standardkonstruktor falls kein Standardwert eingegeben wurde.
+     */
+    private Einstellungen()
     {
-        this.wert = new EinstellungenProperty(wert);
-        this.wert.addListener(einstellungenaendern);
+        this.property = new EinstellungenProperty();
+        this.property.addListener(einstellungenaendern);
     }
     
-    private Einstellungen(int wert)
+    /**
+     * Der Konstruktor für Einstellungen aus Strings.
+     * @param standardwert Der Standardwert der Einstellung.
+     */
+    private Einstellungen(String standardwert)
     {
-        this.wert = new EinstellungenProperty(String.valueOf(wert));
-        this.wert.setInt(wert);
-        this.wert.addListener(einstellungenaendern);  
+        this.property = new EinstellungenProperty(standardwert);
+        this.property.addListener(einstellungenaendern);
     }
     
-    private Einstellungen(boolean wert)
+    /**
+     * Der Konstruktor für Einstellungen aus Integern.
+     * @param standardwert Der Standardwert der Einstellung.
+     */
+    private Einstellungen(int standardwert)
     {
-        this.wert = new EinstellungenProperty(String.valueOf(wert));
-        this.wert.setBoolean(wert);
-        this.wert.addListener(einstellungenaendern);
+        this.property = new EinstellungenProperty(String.valueOf(standardwert));
+        this.property.addListener(einstellungenaendern);  
+    }
+    
+    /**
+     * Der Konstruktor für Einstellungen aus Integern.
+     * @param standardwert Der Standardwert der Einstellung.
+     * @param minimalwert Der niedrigste erlaubte Wert.
+     * @param maximalwert Der höchste erlaubte Wert.
+     */
+    private Einstellungen(int standardwert, int minimalwert, int maximalwert)
+    {
+        this.property = new EinstellungenProperty(String.valueOf(standardwert));
+        this.property.setMinWert(minimalwert);
+        this.property.setMaxWert(maximalwert);
+        this.property.addListener(einstellungenaendern);  
+    }
+    
+    /**
+     * Der Konstruktor für Einstellungen aus boolschen Wahrheitswerten.
+     * @param standardwert Der Standardwert der Einstellung.
+     */
+    private Einstellungen(boolean standardwert)
+    {
+        this.property = new EinstellungenProperty(String.valueOf(standardwert));
+        this.property.setBoolean(standardwert);
+        this.property.addListener(einstellungenaendern);
+    }
+    
+    /**
+     * Der Konstruktor für Einstellungen aus double Zahlen.
+     * @param standardwert Der Standardwert der Einstellung.
+     */
+    private Einstellungen(double standardwert)
+    {
+        this.property = new EinstellungenProperty(String.valueOf(standardwert));
+        this.property.setDouble(standardwert);
+        this.property.addListener(einstellungenaendern);  
+    }
+    
+    /**
+     * Der Konstruktor für Einstellungen aus double Zahlen.
+     * @param standardwert Der Standardwert der Einstellung.
+     * @param minimalwert Der niedrigste erlaubte Wert.
+     * @param maximalwert Der höchste erlaubte Wert.
+     */
+    private Einstellungen(double standardwert, double minimalwert, double maximalwert)
+    {
+        this.property = new EinstellungenProperty(String.valueOf(standardwert));
+        this.property.setMinWert(minimalwert);
+        this.property.setMaxWert(maximalwert);
+        this.property.addListener(einstellungenaendern);  
     }
     
     /**
@@ -66,7 +125,7 @@ public enum Einstellungen{
     {
         if (oldValue != null && newValue != null && !oldValue.equals(newValue))
         {
-            wert.setEinstellunggeaendert(true);
+            property.setEinstellunggeaendert(true);
         }
     }; 
     
@@ -76,7 +135,7 @@ public enum Einstellungen{
      */
     public EinstellungenProperty getWert()
     {
-        return this.wert;
+        return this.property;
     }
     
     /**
