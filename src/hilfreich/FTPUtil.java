@@ -58,7 +58,7 @@ public class FTPUtil {
   
             if (!stay)
             {
-                changeToDirROOT(dirnow, client);
+                client.changeWorkingDirectory(dirnow);
             }
         }
         catch (IOException e)
@@ -100,7 +100,7 @@ public class FTPUtil {
         }
         int i = -1;
         boolean result = true;
-        if (path.getNameCount()>1)
+        /*if (path.getNameCount()>1)Warum ist dieser Code da?
         {
             for (i = 0; i<path.getNameCount()-1;i++)
             {
@@ -109,7 +109,7 @@ public class FTPUtil {
                     return false;
                 }
             }
-        }
+        }*/
         try
         {
             client.changeWorkingDirectory(path.toString());
@@ -118,7 +118,7 @@ public class FTPUtil {
             
             if (!stay)
             {
-                changeToDirROOT(dirnow, client);
+                client.changeWorkingDirectory(dirnow);
             }
         }
         catch (IOException e)
@@ -132,7 +132,7 @@ public class FTPUtil {
      * Dies Erstellt einen Ordner an dem angegbenen Pfad
      * @param path Der Ordnerpfad relativ zum aktuellen workingDirectory
      * @param client Der FTP-Client auf dem der Ordner erstellt werden soll
-     * @return true, falls der Ordner erstellt werden konnte, sonst false.
+     * @return true, falls der Ordner erstellt werden konnte oder schon existiert, sonst false.
      */
     public static boolean createFolderFTP(Path path,FTPClient client)
     {
@@ -149,6 +149,7 @@ public class FTPUtil {
         if(isFolderFTP(path,client,false))
         {
             Log.Write("Der Ordner " + path + " existiert schon auf dem Client " + client.getRemoteAddress().getHostAddress());
+            return true;
         }
         if(path.getNameCount()>1)
         {
@@ -161,7 +162,7 @@ public class FTPUtil {
         try
         {
             client.makeDirectory(path.toString());
-            changeToDirROOT(dirnow, client);
+            client.changeWorkingDirectory(dirnow);
             Log.Write("Working Directory: " + client.printWorkingDirectory() + "create Dir");
             
         } catch (IOException ex)
@@ -243,7 +244,7 @@ public class FTPUtil {
                 Log.Write(client.getReplyString());
                 result =  false;
             }
-            changeToDirROOT(dirnow, client);
+            client.changeWorkingDirectory(dirnow);
             Log.Write("Working Directory: " + client.printWorkingDirectory() + "copyFile");
         } 
         catch (FileNotFoundException e)
@@ -344,6 +345,7 @@ public class FTPUtil {
      * @param directory Das Verzeichnis zu dem gewechselt werden soll.
      * @param client Der Client bei dem dies passieren soll.
      * @return true, falls es erfolgreich war, sonst false.
+     * @deprecated Nicht benutzen, da client.changeWorkingDirectory(directory) ziemlich das gleiche macht, aber auf jeden fall ohne Bug ist.
      */
     public static boolean changeToDir(String directory,FTPClient client) //noch nicht getestet
     {
@@ -389,6 +391,7 @@ public class FTPUtil {
      * @param directory Das (Root)Verzeichnis zu dem gewechselt werden soll.
      * @param client Der Client bei dem dies passieren soll.
      * @return true, falls es erfolgreich war, sonst false.
+     * @deprecated Nicht benutzen, da client.changeWorkingDirectory(directory) ziemlich das gleiche macht, aber auf jeden fall ohne Bug ist.
      */
     public static boolean changeToDirROOT(String directory,FTPClient client)
     {
@@ -400,22 +403,28 @@ public class FTPUtil {
         try
         {
             String dirnow = client.printWorkingDirectory();
+            //tempdir = dirnow;
+            System.out.println(dirnow);
             while (noError)
             {
                 client.changeToParentDirectory();
-                
+                System.out.println(client.printWorkingDirectory());
                 reply = client.getReplyCode();
+                System.out.println(reply);
                 noError = FTPReply.isPositiveCompletion(reply) && !tempdir.equals(client.printWorkingDirectory());
+                System.out.println(noError);
                 tempdir = client.printWorkingDirectory();
             }
-            client.changeWorkingDirectory(directory);
+            System.out.println(client.changeWorkingDirectory(directory));
             if (directory.equals(client.printWorkingDirectory()))
             {
+                System.out.println("Es wurde in das richtige verzeichnis gewechselt.");
                 result = true;
             }
             if(!result)
             {
                 client.changeWorkingDirectory(dirnow);
+                System.out.println("Es gab einen Fehler und es wird zurück in das anfangsverzeichis gewechselt.");
                 return false;
             }
             else
