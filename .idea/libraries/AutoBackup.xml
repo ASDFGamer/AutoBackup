@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="AutoBackup">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dist/AutoBackup.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

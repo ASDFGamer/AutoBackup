@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package autobackup.GUI;
 
 
@@ -57,6 +52,12 @@ public class ConfigGUIController extends GUIController{
     
     @FXML
     private ChoiceBox<String> versionen;
+    
+    @FXML
+    private Button addBlacklistedOrdner;
+    
+    @FXML
+    private  Button showBlacklistedOrdner;
     
     /**
      * Dies wählte einen Ordner aus der nicht mit Syncronisert wird.
@@ -144,6 +145,11 @@ public class ConfigGUIController extends GUIController{
         {
             Einstellungen.verbotenerOrdner.getWert().set(ordner);
         }
-    };
+    }
     
+    @FXML
+    private void addBlacklistedOrdnerAction()
+    {
+        //String order = selectFolder(Einstellungen., logordner)
+    }
 }

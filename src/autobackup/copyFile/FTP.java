@@ -31,6 +31,11 @@ public class FTP implements ISichern {
     private Path quellordnerPath;
     
     /**
+     * Dies speichert alle Ordner ab, die schon mal abgefragt wurden, damit nicht nochmal geprüft werden muss.
+     */
+    private LinkedList<Path> bekannteFTPOrdner = new LinkedList<>();
+    
+    /**
      * Die URL des Zielordners
      */
     private URL zielordner;

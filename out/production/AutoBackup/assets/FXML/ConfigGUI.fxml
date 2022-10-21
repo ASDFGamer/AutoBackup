@@ -73,7 +73,7 @@
       <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
          <children>
             <Label layoutX="43.0" layoutY="14.0" text="Ausgeschlossene Ordner" />
-            <Button fx:id="addBlacklistedOrdner" layoutX="61.0" layoutY="57.0" mnemonicParsing="false" onAction="#addBlacklistedOrdnerAction" text="Hinzufügen" />
+            <Button fx:id="addBlacklistedOrdner" layoutX="61.0" layoutY="57.0" mnemonicParsing="false" text="Hinzufügen" />
          </children>
       </AnchorPane>
       <Button fx:id="showBlacklistedOrdner" mnemonicParsing="false" prefHeight="60.0" prefWidth="130.0" text="zeige Ausgeschlossene Ordner" textAlignment="CENTER" wrapText="true" GridPane.rowIndex="3" />
